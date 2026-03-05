@@ -1,38 +1,35 @@
-import { NextResponse, type NextProxy } from 'next/server'
-import type { NextAuthRequest } from 'next-auth'
+import { type NextRequest, NextResponse } from "next/server"
 
-import type { CreateAuthReturn } from './auth'
-
-export interface CreateMiddlewareConfig {
-	auth: Pick<CreateAuthReturn, 'auth'> | CreateAuthReturn['auth']
+export interface MiddlewareConfig {
+	/** Routes that don't require authentication (regex patterns). */
 	publicPatterns?: RegExp[]
+	/** Path to redirect unauthenticated users to. Defaults to "/auth/login". */
+	loginPath?: string
 }
 
-export function createMiddleware(config: CreateMiddlewareConfig): NextProxy {
-	const { publicPatterns = [] } = config
+const COOKIE_NAME = "sigil-session"
 
-	// Accept either the full object ({ auth: fn }) or the bare function
-	const authFn =
-		typeof config.auth === 'function' ? config.auth : (config.auth as Pick<CreateAuthReturn, 'auth'>).auth
+function createMiddleware(config: MiddlewareConfig = {}) {
+	const { publicPatterns = [], loginPath = "/auth/login" } = config
 
-	const handler = authFn(async (req: NextAuthRequest) => {
-		const { pathname } = req.nextUrl
+	return function middleware(request: NextRequest): NextResponse {
+		const { pathname } = request.nextUrl
 
-		if (publicPatterns.some((pattern) => pattern.test(pathname))) {
+		if (publicPatterns.some((p) => p.test(pathname))) {
 			return NextResponse.next()
 		}
 
-		if (!req.auth) {
-			const loginUrl = new URL('/auth/login', req.nextUrl.origin)
+		const session = request.cookies.get(COOKIE_NAME)
 
-			loginUrl.searchParams.set('callbackUrl', req.nextUrl.href)
-
-			return NextResponse.redirect(loginUrl)
+		if (!session?.value) {
+			const url = request.nextUrl.clone()
+			url.pathname = loginPath
+			url.searchParams.set("callbackUrl", request.url)
+			return NextResponse.redirect(url)
 		}
 
 		return NextResponse.next()
-	}) as unknown as NextProxy
-
-	return (req: Parameters<NextProxy>[0], ev: Parameters<NextProxy>[1]) =>
-		handler(req as unknown as NextAuthRequest, ev as unknown as Parameters<NextProxy>[1])
+	}
 }
+
+export { createMiddleware }

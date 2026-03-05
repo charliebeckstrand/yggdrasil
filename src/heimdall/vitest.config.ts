@@ -1,3 +1,3 @@
-import { nodeConfig } from "@sigil/config/vitest/node"
+import { nodeConfig } from "@ironclad/config/vitest/node"
 
 export default nodeConfig
