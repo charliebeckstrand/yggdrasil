@@ -1,6 +1,8 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
+
 import { openApiConfig } from "./lib/openapi.js";
 import { requestLogger } from "./middleware/logger.js";
 import { health } from "./routes/health.js";
@@ -10,39 +12,47 @@ export function createApp() {
 	const app = new OpenAPIHono();
 
 	// --- Global middleware ---
+
 	app.use("*", cors());
 	app.use("*", requestLogger());
 
 	// --- Routes ---
+
 	app.route("/", health);
 	app.route("/", users);
 
-	// --- OpenAPI spec endpoint ---
+	// --- OpenAPI ---
+
 	app.doc("/openapi.json", openApiConfig);
 
-	// --- Swagger UI ---
-	app.get(
-		"/docs",
-		swaggerUI({
-			url: "/openapi.json",
-		}),
-	);
+	app.get("/docs", swaggerUI({ url: "/openapi.json" }));
 
-	// --- Global error handler ---
+	// --- Error handling ---
+
 	app.onError((err, c) => {
+		if (err instanceof HTTPException) {
+			return c.json(
+				{
+					error: err.name,
+					message: err.message,
+					statusCode: err.status,
+				},
+				err.status,
+			);
+		}
+
 		console.error(`Unhandled error: ${err.message}`, err.stack);
-		const status = "status" in err ? (err.status as number) : 500;
+
 		return c.json(
 			{
-				error: err.name,
+				error: "Internal Server Error",
 				message: err.message,
-				statusCode: status,
+				statusCode: 500,
 			},
-			status as 400 | 500,
+			500,
 		);
 	});
 
-	// --- 404 handler ---
 	app.notFound((c) => {
 		return c.json(
 			{

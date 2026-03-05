@@ -31,18 +31,17 @@ export function auth(): MiddlewareHandler<AuthEnv> {
 
 		const token = authorization.slice(7);
 
+		if (!token) {
+			throw new HTTPException(401, { message: "Invalid token" });
+		}
+
 		// TODO: Replace with actual Ironclad verification
-		// const ironcladUrl = c.env?.IRONCLAD_URL ?? process.env.IRONCLAD_URL;
+		// const ironcladUrl = process.env.IRONCLAD_URL;
 		// const response = await fetch(`${ironcladUrl}/verify`, {
 		//   method: "POST",
 		//   headers: { "Content-Type": "application/json" },
 		//   body: JSON.stringify({ token }),
 		// });
-
-		// Placeholder: decode a mock user from the token
-		if (!token) {
-			throw new HTTPException(401, { message: "Invalid token" });
-		}
 
 		c.set("user", {
 			id: "placeholder-user-id",
@@ -61,11 +60,13 @@ export function auth(): MiddlewareHandler<AuthEnv> {
 export function requireRole(...roles: string[]): MiddlewareHandler<AuthEnv> {
 	return async (c: Context<AuthEnv>, next) => {
 		const user = c.get("user");
+
 		if (!user) {
 			throw new HTTPException(401, { message: "Not authenticated" });
 		}
 
 		const hasRole = roles.some((role) => user.roles.includes(role));
+
 		if (!hasRole) {
 			throw new HTTPException(403, {
 				message: `Insufficient permissions. Required: ${roles.join(", ")}`,

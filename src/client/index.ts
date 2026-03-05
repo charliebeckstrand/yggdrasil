@@ -1,15 +1,12 @@
 /**
- * Bifrost API Client
- *
  * Type-safe client for consuming Bifrost API endpoints.
- * Use `pnpm generate:client` to regenerate types from the OpenAPI spec.
  *
  * Usage in Yggdrasil or other consuming apps:
  *
  * ```ts
- * import { createBifrostClient } from "bifrost/client";
+ * import { createClient } from "bifrost/client";
  *
- * const api = createBifrostClient({
+ * const api = createClient({
  *   baseUrl: "http://localhost:3000",
  *   token: "your-ironclad-token",
  * });
@@ -25,64 +22,67 @@ export type ClientOptions = {
 	headers?: Record<string, string>;
 };
 
-export function createBifrostClient(options: ClientOptions) {
+type RequestOptions = {
+	query?: Record<string, string | number>;
+	body?: unknown;
+};
+
+export function createClient(options: ClientOptions) {
 	const { baseUrl, token, headers: customHeaders = {} } = options;
 
-	const defaultHeaders: Record<string, string> = {
-		"Content-Type": "application/json",
+	const baseHeaders: Record<string, string> = {
+		...(token ? { Authorization: `Bearer ${token}` } : {}),
 		...customHeaders,
 	};
 
-	if (token) {
-		defaultHeaders.Authorization = `Bearer ${token}`;
-	}
-
-	async function request<T>(
-		method: string,
-		path: string,
-		opts?: { query?: Record<string, string | number>; body?: unknown },
-	): Promise<T> {
+	async function request<T>(method: string, path: string, opts?: RequestOptions): Promise<T> {
 		const url = new URL(path, baseUrl);
+
 		if (opts?.query) {
 			for (const [key, value] of Object.entries(opts.query)) {
 				url.searchParams.set(key, String(value));
 			}
 		}
 
+		const headers: Record<string, string> = {
+			...baseHeaders,
+			...(opts?.body ? { "Content-Type": "application/json" } : {}),
+		};
+
 		const res = await fetch(url, {
 			method,
-			headers: defaultHeaders,
+			headers,
 			body: opts?.body ? JSON.stringify(opts.body) : undefined,
 		});
 
 		if (!res.ok) {
 			const error = await res.json().catch(() => ({ message: res.statusText }));
-			throw new BifrostError(res.status, error as { message: string });
+			throw new ClientError(res.status, error as { message: string });
 		}
 
 		return res.json() as Promise<T>;
 	}
 
 	return {
-		get: <T>(path: string, opts?: { query?: Record<string, string | number> }) =>
-			request<T>("GET", path, opts),
-		post: <T>(path: string, opts?: { body?: unknown; query?: Record<string, string | number> }) =>
-			request<T>("POST", path, opts),
-		put: <T>(path: string, opts?: { body?: unknown; query?: Record<string, string | number> }) =>
-			request<T>("PUT", path, opts),
-		patch: <T>(path: string, opts?: { body?: unknown; query?: Record<string, string | number> }) =>
-			request<T>("PATCH", path, opts),
-		delete: <T>(path: string, opts?: { query?: Record<string, string | number> }) =>
+		get: <T>(path: string, opts?: Pick<RequestOptions, "query">) => request<T>("GET", path, opts),
+
+		post: <T>(path: string, opts?: RequestOptions) => request<T>("POST", path, opts),
+
+		put: <T>(path: string, opts?: RequestOptions) => request<T>("PUT", path, opts),
+
+		patch: <T>(path: string, opts?: RequestOptions) => request<T>("PATCH", path, opts),
+
+		delete: <T>(path: string, opts?: Pick<RequestOptions, "query">) =>
 			request<T>("DELETE", path, opts),
 	};
 }
 
-export class BifrostError extends Error {
+export class ClientError extends Error {
 	constructor(
 		public status: number,
 		public body: { message: string },
 	) {
 		super(body.message);
-		this.name = "BifrostError";
+		this.name = "ClientError";
 	}
 }

@@ -1,5 +1,7 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
+// --- Schema ---
+
 const HealthResponseSchema = z
 	.object({
 		status: z.enum(["healthy", "degraded", "unhealthy"]),
@@ -15,6 +17,8 @@ const HealthResponseSchema = z
 	})
 	.openapi("HealthResponse");
 
+// --- Route ---
+
 const healthRoute = createRoute({
 	method: "get",
 	path: "/health",
@@ -23,20 +27,17 @@ const healthRoute = createRoute({
 	description: "Returns the health status of the gateway and connected services",
 	responses: {
 		200: {
-			content: {
-				"application/json": {
-					schema: HealthResponseSchema,
-				},
-			},
+			content: { "application/json": { schema: HealthResponseSchema } },
 			description: "Service health status",
 		},
 	},
 });
 
+// --- Handler ---
+
 const startTime = Date.now();
 
 export const health = new OpenAPIHono().openapi(healthRoute, async (c) => {
-	// TODO: Actually ping downstream services
 	const uptimeSeconds = (Date.now() - startTime) / 1000;
 
 	return c.json(

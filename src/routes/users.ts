@@ -1,9 +1,8 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+
 import { ErrorSchema, PaginationSchema } from "../lib/schemas.js";
 
-// To guard routes with Ironclad auth:
-// import { auth, requireRole } from "../middleware/auth.js";
-// Then add `middleware: [auth(), requireRole("admin")]` to route configs
+// --- Schemas ---
 
 const UserSchema = z
 	.object({
@@ -25,6 +24,7 @@ const UserListSchema = z
 	.openapi("UserList");
 
 // --- Routes ---
+// To guard with Ironclad: add `middleware: [auth(), requireRole("admin")]` to route config
 
 const listUsers = createRoute({
 	method: "get",
