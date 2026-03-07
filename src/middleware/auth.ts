@@ -40,11 +40,15 @@ export function auth(): MiddlewareHandler<AuthEnv> {
 			throw new HTTPException(500, { message: "SIGIL_URL is not configured" });
 		}
 
-		const response = await fetch(`${env.SIGIL_URL}/verify`, {
+		if (!env.SIGIL_API_KEY) {
+			throw new HTTPException(500, { message: "SIGIL_API_KEY is not configured" });
+		}
+
+		const response = await fetch(`${env.SIGIL_URL}/token/verify`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				...(env.SIGIL_API_KEY && { "X-API-Key": env.SIGIL_API_KEY }),
+				"X-API-Key": env.SIGIL_API_KEY,
 			},
 			body: JSON.stringify({ token }),
 		});
