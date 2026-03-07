@@ -45,10 +45,9 @@ interface RefreshResponse {
 export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 	const { apiOrigin: rawOrigin, session: sessionConfig } = config
 
-	// Strip trailing slash once — prevents double-slash in upstream URLs
+	// Prevents double-slash in upstream URLs
 	const apiOrigin = rawOrigin.replace(/\/$/, "")
 
-	// Scoped refresh lock — one per createAuth instance, not module-global.
 	let refreshLock: Promise<Record<string, unknown>> | null = null
 
 	async function refreshAccessToken(
@@ -86,7 +85,6 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 
 		refreshLock = attempt
 
-		// Clear after settlement so subsequent expirations can refresh again.
 		void attempt.finally(() => {
 			refreshLock = null
 		})
@@ -145,7 +143,7 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 
 		callbacks: {
 			async jwt({ token, user }) {
-				// Initial sign-in — seed the JWT from the authorize response
+				// Seed the JWT from the authorize response
 				if (user) {
 					const u = user as AuthorizedUser
 
@@ -157,7 +155,7 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 					}
 				}
 
-				// Token still valid — 30s buffer prevents expiry mid-request
+				// 30s buffer prevents expiry mid-request
 				if (typeof token["expiresAt"] === "number" && Date.now() / 1000 < token["expiresAt"] - 30) {
 					return token
 				}
