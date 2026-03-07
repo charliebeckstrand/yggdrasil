@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.6",
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.3.5",
     "openapi-typescript": "^7.13.0",
     "tsup": "^8.5.1",
     "tsx": "^4.21.0",
