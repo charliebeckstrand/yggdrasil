@@ -1,5 +1,6 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
+import { loadEnv } from "../lib/env.js";
 
 export type AuthUser = {
 	id: string;
@@ -14,14 +15,14 @@ type AuthEnv = {
 };
 
 /**
- * Authentication middleware that validates requests against Bifrost.
+ * Authentication middleware that validates requests against Sigil.
  *
  * Expects a Bearer token in the Authorization header and verifies it
- * with the Bifrost auth service. On success, sets `c.get("user")`.
- *
- * TODO: Wire up to Bifrost service once available.
+ * with the Sigil auth service. On success, sets `c.get("user")`.
  */
 export function auth(): MiddlewareHandler<AuthEnv> {
+	const env = loadEnv();
+
 	return async (c: Context<AuthEnv>, next) => {
 		const authorization = c.req.header("Authorization");
 
@@ -35,19 +36,26 @@ export function auth(): MiddlewareHandler<AuthEnv> {
 			throw new HTTPException(401, { message: "Invalid token" });
 		}
 
-		// TODO: Replace with actual Bifrost verification
-		// const bifrostUrl = process.env.BIFROST_URL;
-		// const response = await fetch(`${bifrostUrl}/verify`, {
-		//   method: "POST",
-		//   headers: { "Content-Type": "application/json" },
-		//   body: JSON.stringify({ token }),
-		// });
+		if (!env.SIGIL_URL) {
+			throw new HTTPException(500, { message: "SIGIL_URL is not configured" });
+		}
 
-		c.set("user", {
-			id: "placeholder-user-id",
-			email: "user@example.com",
-			roles: ["user"],
+		const response = await fetch(`${env.SIGIL_URL}/verify`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				...(env.SIGIL_API_KEY && { "X-API-Key": env.SIGIL_API_KEY }),
+			},
+			body: JSON.stringify({ token }),
 		});
+
+		if (!response.ok) {
+			throw new HTTPException(401, { message: "Invalid or expired token" });
+		}
+
+		const user = (await response.json()) as AuthUser;
+
+		c.set("user", user);
 
 		await next();
 	};
