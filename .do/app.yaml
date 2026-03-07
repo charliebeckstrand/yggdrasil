@@ -25,7 +25,7 @@ services:
     envs:
       - key: DATABASE_URL
         scope: RUN_TIME
-        value: ${db.DATABASE_URL}
+        type: SECRET
       - key: SECRET_KEY
         scope: RUN_TIME
         type: SECRET
@@ -62,9 +62,3 @@ services:
       - key: HEIMDALL_API_KEY
         scope: RUN_TIME
         type: SECRET
-
-databases:
-  - engine: PG
-    name: db
-    version: "16"
-    size: db-s-1vcpu-1gb
