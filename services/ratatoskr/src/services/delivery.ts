@@ -1,0 +1,128 @@
+import { getPool } from "../lib/db.js"
+
+type PublishInput = {
+	topic: string
+	payload: Record<string, unknown>
+	source: string
+}
+
+type Event = {
+	id: string
+	topic: string
+	payload: Record<string, unknown>
+	source: string
+	created_at: string
+}
+
+type Subscription = {
+	id: string
+	callback_url: string
+	service: string
+}
+
+const MAX_RETRIES = 3
+const BASE_DELAY_MS = 1000
+
+export async function publishEvent(input: PublishInput): Promise<Event> {
+	const pool = getPool()
+
+	const { rows } = await pool.query<Event>(
+		`INSERT INTO ratatoskr.events (topic, payload, source)
+		 VALUES ($1, $2, $3)
+		 RETURNING id, topic, payload, source, created_at::text as created_at`,
+		[input.topic, JSON.stringify(input.payload), input.source],
+	)
+
+	const event = rows[0]
+
+	deliverEvent(event).catch((err) => {
+		console.error(`Failed to deliver event ${event.id}:`, err)
+	})
+
+	return event
+}
+
+async function deliverEvent(event: Event): Promise<void> {
+	const pool = getPool()
+
+	const { rows: subs } = await pool.query<Subscription>(
+		`SELECT id, callback_url, service
+		 FROM ratatoskr.subscriptions
+		 WHERE topic = $1 AND is_active = TRUE`,
+		[event.topic],
+	)
+
+	if (subs.length === 0) return
+
+	const deliveries = await Promise.allSettled(subs.map((sub) => deliverToSubscriber(event, sub)))
+
+	for (let i = 0; i < deliveries.length; i++) {
+		const result = deliveries[i]
+		if (result.status === "rejected") {
+			console.error(
+				`Delivery to ${subs[i].service} (${subs[i].callback_url}) failed:`,
+				result.reason,
+			)
+		}
+	}
+}
+
+async function deliverToSubscriber(event: Event, sub: Subscription): Promise<void> {
+	const pool = getPool()
+
+	const { rows } = await pool.query<{ id: string }>(
+		`INSERT INTO ratatoskr.deliveries (event_id, subscription_id, status)
+		 VALUES ($1, $2, 'pending')
+		 RETURNING id`,
+		[event.id, sub.id],
+	)
+
+	const deliveryId = rows[0].id
+	let lastError: Error | null = null
+	let responseStatus: number | null = null
+
+	for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+		try {
+			const response = await fetch(sub.callback_url, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					id: event.id,
+					topic: event.topic,
+					payload: event.payload,
+					source: event.source,
+					created_at: event.created_at,
+				}),
+				signal: AbortSignal.timeout(10000),
+			})
+
+			responseStatus = response.status
+
+			if (response.ok) {
+				await pool.query(
+					`UPDATE ratatoskr.deliveries
+					 SET status = 'delivered', attempts = $1, last_attempt_at = now(), response_status = $2
+					 WHERE id = $3`,
+					[attempt, responseStatus, deliveryId],
+				)
+				return
+			}
+
+			lastError = new Error(`HTTP ${response.status}`)
+		} catch (err) {
+			lastError = err instanceof Error ? err : new Error(String(err))
+		}
+
+		if (attempt < MAX_RETRIES) {
+			const delay = BASE_DELAY_MS * 2 ** (attempt - 1)
+			await new Promise((resolve) => setTimeout(resolve, delay))
+		}
+	}
+
+	await pool.query(
+		`UPDATE ratatoskr.deliveries
+		 SET status = 'failed', attempts = $1, last_attempt_at = now(), response_status = $2, error_message = $3
+		 WHERE id = $4`,
+		[MAX_RETRIES, responseStatus, lastError?.message ?? "Unknown error", deliveryId],
+	)
+}
