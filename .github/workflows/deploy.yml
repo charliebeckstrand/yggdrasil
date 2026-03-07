@@ -25,7 +25,37 @@ jobs:
           token: ${{ secrets.DO_API_TOKEN }}
 
       - name: Resolve app spec variables
-        run: sed -i 's|${GITHUB_REPO}|${{ github.repository }}|g' .do/app.yaml
+        run: |
+          sed -i 's|${GITHUB_REPO}|${{ github.repository }}|g' .do/app.yaml
+
+      - name: Inject secrets into app spec
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          HEIMDALL_API_KEY: ${{ secrets.HEIMDALL_API_KEY }}
+        run: |
+          python3 -c "
+          import yaml, os, sys
+
+          with open('.do/app.yaml') as f:
+              spec = yaml.safe_load(f)
+
+          secrets_map = {
+              'DATABASE_URL': os.environ.get('DATABASE_URL', ''),
+              'SECRET_KEY': os.environ.get('SECRET_KEY', ''),
+              'HEIMDALL_API_KEY': os.environ.get('HEIMDALL_API_KEY', ''),
+          }
+
+          for service in spec.get('services', []):
+              for env in service.get('envs', []):
+                  if env.get('type') == 'SECRET' and env['key'] in secrets_map:
+                      value = secrets_map[env['key']]
+                      if value:
+                          env['value'] = value
+
+          with open('.do/app.yaml', 'w') as f:
+              yaml.dump(spec, f, default_flow_style=False, sort_keys=False)
+          "
 
       - name: Get or create app
         id: app
