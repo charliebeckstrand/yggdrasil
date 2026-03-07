@@ -6,7 +6,7 @@ A microservices monorepo with the following services:
 | --- | --- | --- | --- |
 | **Heimdall** | Rust / Axum | JWT authentication | `8000` |
 | **Bifrost** | TypeScript / Hono | API gateway | `3000` |
-| **Syn** | TypeScript | Auth SDK / API proxy | |
+| **Syn** | TypeScript | API proxy | |
 
 ## Prerequisites
 
