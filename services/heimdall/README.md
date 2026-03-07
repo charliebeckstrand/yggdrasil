@@ -1,6 +1,10 @@
 # Heimdall
 
-A lightweight JWT authentication service built with Rust.
+A lightweight JWT authentication service.
+
+## Tech Stack
+
+Rust, Axum, SQLx, PostgreSQL, Argon2, JWT
 
 ### Prerequisites
 
@@ -71,10 +75,6 @@ This project uses [dotenvx](https://dotenvx.com) to manage encrypted secrets. Se
 ├── Dockerfile           # Multi-stage production build
 └── docker-compose.yml   # Local development
 ```
-
-## Tech Stack
-
-Rust, Axum, SQLx, PostgreSQL, Argon2, JWT
 
 ## Deployment
 
