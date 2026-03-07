@@ -15,6 +15,7 @@ jobs:
       bifrost: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.bifrost == 'true' }}
       syn: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.syn == 'true' }}
       heimdall: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.heimdall == 'true' }}
+      ratatoskr: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.ratatoskr == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -30,6 +31,8 @@ jobs:
               - 'services/syn/**'
             heimdall:
               - 'services/heimdall/**'
+            ratatoskr:
+              - 'services/ratatoskr/**'
 
   bifrost:
     name: Bifrost (Gateway)
@@ -63,6 +66,30 @@ jobs:
     defaults:
       run:
         working-directory: services/syn
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+
+  ratatoskr:
+    name: Ratatoskr (Event Bus)
+    needs: changes
+    if: needs.changes.outputs.ratatoskr == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/ratatoskr
     steps:
       - uses: actions/checkout@v4
 

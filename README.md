@@ -6,6 +6,7 @@ A microservices monorepo with the following services:
 | --- | --- | --- | --- |
 | **Heimdall** | Rust / Axum | JWT authentication | `8000` |
 | **Bifrost** | TypeScript / Hono | API gateway | `3000` |
+| **Ratatoskr** | TypeScript / Hono | Event bus | `3001` |
 | **Syn** | TypeScript | API proxy | |
 
 ## Prerequisites
@@ -38,6 +39,7 @@ cargo fmt --check # Format check
 GitHub Actions runs on push to `main` and on pull requests:
 
 - **Bifrost**: lint, test, build (Node 22)
+- **Ratatoskr**: lint, test, build (Node 22)
 - **Syn**: lint, test, build (Node 22)
 - **Heimdall**: fmt, clippy, test (Rust stable + Postgres)
 
