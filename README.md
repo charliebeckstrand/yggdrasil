@@ -45,6 +45,7 @@ pnpm install && pnpm dev
 ### Heimdall
 
 | Variable | Required | Default | Description |
+| `HEIMDALL_API_KEY` | no | — | Optional API key for service-to-service auth |
 | --- | --- | --- | --- |
 | `DATABASE_URL` | yes | — | Postgres connection string |
 | `SECRET_KEY` | yes | — | JWT signing secret |
@@ -52,16 +53,15 @@ pnpm install && pnpm dev
 | `CORS_ORIGINS` | no | `http://localhost:3000` | Comma-separated allowed origins |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | no | `30` | Access token lifetime |
 | `REFRESH_TOKEN_EXPIRE_DAYS` | no | `7` | Refresh token lifetime |
-| `HEIMDALL_API_KEY` | no | — | Optional API key for service-to-service auth |
 
 ### Bifrost
 
 | Variable | Required | Default | Description |
-| `HEIMDALL_API_KEY` | no | | API key for Heimdall requests |
 | --- | --- | --- | --- |
 | `PORT` | no | `3000` | Server port |
 | `NODE_ENV` | no | `development` | `development`, `production`, or `test` |
 | `HEIMDALL_URL` | no | | Heimdall service URL (e.g. `http://localhost:8000`) |
+| `HEIMDALL_API_KEY` | no | | API key for Heimdall requests |
 
 ### Syn
 
