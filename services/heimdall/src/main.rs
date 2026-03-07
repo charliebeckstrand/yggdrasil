@@ -71,6 +71,16 @@ fn cors_layer() -> CorsLayer {
     }
 }
 
+fn require_env(name: &str) -> String {
+    std::env::var(name).unwrap_or_else(|_| {
+        // Use eprintln as a fallback in case tracing isn't initialized yet.
+        eprintln!("ERROR: {name} environment variable is not set. \
+                   Set it in the DigitalOcean App Platform dashboard under \
+                   Settings > heimdall > Environment Variables.");
+        std::process::exit(1);
+    })
+}
+
 #[tokio::main]
 async fn main() {
     let _ = dotenvy::dotenv();
@@ -84,11 +94,8 @@ async fn main() {
         .flatten_event(true)
         .init();
 
-    let database_url =
-        SecretString::from(std::env::var("DATABASE_URL").expect("DATABASE_URL must be set"));
-
-    let jwt_secret =
-        SecretString::from(std::env::var("SECRET_KEY").expect("SECRET_KEY must be set"));
+    let database_url = SecretString::from(require_env("DATABASE_URL"));
+    let jwt_secret = SecretString::from(require_env("SECRET_KEY"));
 
     let pool = match PgPoolOptions::new()
         .max_connections(5)
