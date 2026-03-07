@@ -1,4 +1,4 @@
-# Sigil
+# Heimdall
 
 A lightweight JWT authentication service built with Rust. Provides user registration, login, token refresh, and account management via REST API.
 
@@ -20,13 +20,13 @@ cp .env.example .env
 docker-compose up
 ```
 
-This starts PostgreSQL and the Sigil service at `http://localhost:8000`.
+This starts PostgreSQL and the Heimdall service at `http://localhost:8000`.
 
 ### Building from Source
 
 ```bash
 # Set required environment variables
-export DATABASE_URL=postgres://sigil:sigil@localhost:5432/sigil
+export DATABASE_URL=postgres://heimdall:heimdall@localhost:5432/heimdall
 export SECRET_KEY=$(openssl rand -hex 32)
 
 # Build and run
@@ -38,13 +38,13 @@ cargo run
 
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
-| `GET` | `/health` | Health check | No |
 | `POST` | `/auth/register` | Register a new user | No |
 | `POST` | `/auth/login` | Login (returns access + refresh tokens) | No |
-| `POST` | `/token/refresh` | Refresh an access token | No |
-| `POST` | `/token/verify` | Verify an access token | API key |
 | `GET` | `/auth/me` | Get current user | Bearer |
 | `DELETE` | `/auth/me` | Deactivate account | Bearer |
+| `POST` | `/token/refresh` | Refresh an access token | No |
+| `POST` | `/token/verify` | Verify an access token | API key |
+| `GET` | `/health` | Health check | No |
 
 ### Example
 
@@ -72,25 +72,18 @@ curl -X POST http://localhost:8000/token/verify \
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
+| `HEIMDALL_API_KEY` | No | — | API key for `/token/verify` (disabled when unset) |
 | `DATABASE_URL` | Yes | — | PostgreSQL connection string |
 | `SECRET_KEY` | Yes | — | JWT signing secret |
 | `CORS_ORIGINS` | No | `http://localhost:3000` | Comma-separated allowed origins |
 | `PORT` | No | `8000` | Server port |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | No | `30` | Access token lifetime |
 | `REFRESH_TOKEN_EXPIRE_DAYS` | No | `7` | Refresh token lifetime |
-| `SIGIL_API_KEY` | No | — | API key for `/token/verify` (disabled when unset) |
-| `RUST_LOG` | No | `sigil=info,tower_http=info` | Log level filter |
+| `RUST_LOG` | No | `heimdall=info,tower_http=info` | Log level filter |
 
 ## Secrets Management
 
 This project uses [dotenvx](https://dotenvx.com) to manage encrypted secrets. See the dotenvx docs for usage.
-
-### Required GitHub Actions Secrets
-
-| Secret | Description |
-|--------|-------------|
-| `DIGITALOCEAN_ACCESS_TOKEN` | DigitalOcean API token |
-| `DOTENV_PRIVATE_KEY_PRODUCTION` | Private key from `.env.keys` |
 
 ## Project Structure
 
@@ -103,13 +96,12 @@ This project uses [dotenvx](https://dotenvx.com) to manage encrypted secrets. Se
 │   └── error.rs         # Error types & responses
 ├── migrations/          # SQL migrations
 ├── Dockerfile           # Multi-stage production build
-├── docker-compose.yml   # Local development
-└── .do/app.yaml         # DigitalOcean deployment config
+└── docker-compose.yml   # Local development
 ```
 
 ## Deployment
 
-Deployed to DigitalOcean App Platform via GitHub Actions. On push to `main`, CI runs lint, tests, and security scan, then deploys.
+Deployed to DigitalOcean App Platform via GitHub Actions. On push to `main`, CI runs lint, tests, and security scan, then deploys. See the root [README](../../README.md) for CI/CD details.
 
 ## Development
 

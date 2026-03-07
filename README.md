@@ -136,6 +136,8 @@ export const { GET, POST, PUT, PATCH, DELETE } = createProxyRoute({
 | `POST` | `/token/verify` | Verify token validity |
 | `GET` | `/health` | Health check |
 
+See the Heimdall [README](services/heimdall/README.md) for curl examples and full configuration.
+
 ### Bifrost
 
 | Method | Path | Description |
