@@ -60,16 +60,14 @@ pnpm install && pnpm dev
 | --- | --- | --- | --- |
 | `PORT` | no | `3000` | Server port |
 | `NODE_ENV` | no | `development` | `development`, `production`, or `test` |
-| `HEIMDALL_URL` | no | — | Heimdall service URL (e.g. `http://localhost:8000`) |
-| `HEIMDALL_API_KEY` | no | — | API key for Heimdall requests |
+| `HEIMDALL_URL` | no | | Heimdall service URL (e.g. `http://localhost:8000`) |
+| `HEIMDALL_API_KEY` | no | | API key for Heimdall requests |
 
 ### Syn
 
-Syn is a library — no env vars. Configuration is passed at call time via `apiOrigin`.
-
 ## Using Syn in a Next.js App
 
-Install `syn` (or reference via workspace), plus its peer dependencies `next` and `next-auth`.
+Install `syn`
 
 ### Auth setup (`lib/auth.ts`)
 
@@ -111,15 +109,15 @@ export const { GET, POST, PUT, PATCH, DELETE } = createProxyRoute({
 
 | Method | Path | Description |
 | --- | --- | --- |
+| `GET` | `/health` | Health check |
 | `POST` | `/auth/register` | Register a new user |
 | `POST` | `/auth/login` | Login, returns JWT tokens |
 | `GET` | `/auth/me` | Get current user (Bearer token) |
 | `DELETE` | `/auth/me` | Deactivate account |
 | `POST` | `/token/refresh` | Refresh access token |
 | `POST` | `/token/verify` | Verify token validity |
-| `GET` | `/health` | Health check |
 
-See the Heimdall [README](services/heimdall/README.md) for curl examples and full configuration.
+See the Heimdall [README](services/heimdall/README.md) for examples and full configuration.
 
 ### Bifrost
 
