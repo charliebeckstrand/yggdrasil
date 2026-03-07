@@ -1,6 +1,6 @@
 # Heimdall
 
-A lightweight JWT authentication service built with Rust. Provides user registration, login, token refresh, and account management via REST API.
+A lightweight JWT authentication service built with Rust.
 
 ## Tech Stack
 
