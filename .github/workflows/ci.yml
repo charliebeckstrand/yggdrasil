@@ -5,14 +5,34 @@ on:
     branches: [main]
   push:
     branches: [main]
+  workflow_call:
 
 jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      bifrost: ${{ github.event_name == 'push' || steps.filter.outputs.bifrost }}
+      syn: ${{ github.event_name == 'push' || steps.filter.outputs.syn }}
+      heimdall: ${{ github.event_name == 'push' || steps.filter.outputs.heimdall }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            bifrost:
+              - 'services/bifrost/**'
+            syn:
+              - 'services/syn/**'
+            heimdall:
+              - 'services/heimdall/**'
+
   bifrost:
     name: Bifrost (Gateway)
+    needs: changes
+    if: needs.changes.outputs.bifrost == 'true'
     runs-on: ubuntu-latest
-    if: >-
-      github.event_name == 'push' ||
-      contains(join(github.event.pull_request.*.changed_files.**, ','), 'services/bifrost/')
     defaults:
       run:
         working-directory: services/bifrost
@@ -36,10 +56,9 @@ jobs:
 
   syn:
     name: Syn (Auth SDK)
+    needs: changes
+    if: needs.changes.outputs.syn == 'true'
     runs-on: ubuntu-latest
-    if: >-
-      github.event_name == 'push' ||
-      contains(join(github.event.pull_request.*.changed_files.**, ','), 'services/syn/')
     defaults:
       run:
         working-directory: services/syn
@@ -63,10 +82,9 @@ jobs:
 
   heimdall:
     name: Heimdall (Auth)
+    needs: changes
+    if: needs.changes.outputs.heimdall == 'true'
     runs-on: ubuntu-latest
-    if: >-
-      github.event_name == 'push' ||
-      contains(join(github.event.pull_request.*.changed_files.**, ','), 'services/heimdall/')
     defaults:
       run:
         working-directory: services/heimdall
