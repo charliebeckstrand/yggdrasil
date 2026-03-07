@@ -1,6 +1,6 @@
 # Bifrost
 
-API gateway and Backend-for-Frontend (BFF) bridging services. Built with [Hono](https://hono.dev), [Zod](https://zod.dev), and TypeScript.
+An API gateway and Backend-for-Frontend (BFF) bridging service. Built with [Hono](https://hono.dev), [Zod](https://zod.dev), and TypeScript.
 
 Bifrost ships two exports:
 
