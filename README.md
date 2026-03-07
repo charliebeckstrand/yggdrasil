@@ -1,6 +1,6 @@
 # Yggdrasil
 
-A microservices monorepo with three services:
+A microservices monorepo with the following services:
 
 | Service | Language | Role | Port |
 | --- | --- | --- | --- |
