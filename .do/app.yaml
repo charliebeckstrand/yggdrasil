@@ -1,0 +1,61 @@
+name: yggdrasil
+region: nyc
+
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+
+services:
+  - name: heimdall
+    github:
+      repo: ${GITHUB_REPO}
+      branch: main
+      deploy_on_push: false
+    source_dir: services/heimdall
+    dockerfile_path: services/heimdall/Dockerfile
+    http_port: 8000
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-1gb
+    routes:
+      - path: /
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 30
+      period_seconds: 10
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        value: ${db.DATABASE_URL}
+
+  - name: bifrost
+    github:
+      repo: ${GITHUB_REPO}
+      branch: main
+      deploy_on_push: false
+    source_dir: services/bifrost
+    dockerfile_path: services/bifrost/Dockerfile
+    http_port: 8000
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-1gb
+    routes:
+      - path: /bifrost
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 10
+      period_seconds: 10
+    envs:
+      - key: NODE_ENV
+        scope: RUN_AND_BUILD_TIME
+        value: production
+      - key: HEIMDALL_URL
+        scope: RUN_TIME
+        value: ${heimdall.PRIVATE_URL}
+      - key: HEIMDALL_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+
+databases:
+  - engine: PG
+    name: db
+    version: "16"
+    size: db-s-1vcpu-1gb
