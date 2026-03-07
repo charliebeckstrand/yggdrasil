@@ -6,33 +6,10 @@ A lightweight JWT authentication service built with Rust. Provides user registra
 
 Rust, Axum, SQLx, PostgreSQL, Argon2, JWT
 
-## Getting Started
-
 ### Prerequisites
 
 - Rust 1.88+ (or Docker)
 - PostgreSQL 16
-
-### Quick Start with Docker Compose
-
-```bash
-cp .env.example .env
-docker-compose up
-```
-
-This starts PostgreSQL and the Heimdall service at `http://localhost:8000`.
-
-### Building from Source
-
-```bash
-# Set required environment variables
-export DATABASE_URL=postgres://heimdall:heimdall@localhost:5432/heimdall
-export SECRET_KEY=$(openssl rand -hex 32)
-
-# Build and run
-cargo build --release
-cargo run
-```
 
 ## API Endpoints
 
