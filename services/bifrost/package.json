@@ -8,9 +8,9 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./heimdall": {
-      "types": "./dist/heimdall.d.ts",
-      "default": "./dist/heimdall.js"
+    "./auth": {
+      "types": "./dist/auth.d.ts",
+      "default": "./dist/auth.js"
     }
   },
   "scripts": {

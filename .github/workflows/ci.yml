@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  bifrost:
+    name: Bifrost (Gateway)
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'push' ||
+      contains(join(github.event.pull_request.*.changed_files.**, ','), 'services/bifrost/')
+    defaults:
+      run:
+        working-directory: services/bifrost
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: services/bifrost/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+
+  heimdall:
+    name: Heimdall (Auth)
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'push' ||
+      contains(join(github.event.pull_request.*.changed_files.**, ','), 'services/heimdall/')
+    defaults:
+      run:
+        working-directory: services/heimdall
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: services/heimdall
+
+      - run: cargo fmt --check
+      - run: cargo clippy -- -D warnings
+      - run: cargo test

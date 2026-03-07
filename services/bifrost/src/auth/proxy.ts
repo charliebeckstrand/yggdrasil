@@ -95,7 +95,7 @@ export function createProxyRoute(config: CreateProxyConfig): RouteHandler {
 				headers: responseHeaders
 			})
 		} catch (err) {
-			console.error('[sigil/proxy] upstream unreachable', {
+			console.error('[bifrost/proxy] upstream unreachable', {
 				upstream,
 				method: req.method,
 				error: err instanceof Error ? err.message : String(err)

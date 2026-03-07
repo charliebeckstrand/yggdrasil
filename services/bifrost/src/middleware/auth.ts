@@ -15,10 +15,10 @@ type AuthEnv = {
 };
 
 /**
- * Authentication middleware that validates requests against Sigil.
+ * Authentication middleware that validates requests against Heimdall.
  *
  * Expects a Bearer token in the Authorization header and verifies it
- * with the Sigil auth service. On success, sets `c.get("user")`.
+ * with the Heimdall auth service. On success, sets `c.get("user")`.
  */
 export function auth(): MiddlewareHandler<AuthEnv> {
 	const env = loadEnv();
@@ -36,19 +36,19 @@ export function auth(): MiddlewareHandler<AuthEnv> {
 			throw new HTTPException(401, { message: "Invalid token" });
 		}
 
-		if (!env.SIGIL_URL) {
-			throw new HTTPException(500, { message: "SIGIL_URL is not configured" });
+		if (!env.HEIMDALL_URL) {
+			throw new HTTPException(500, { message: "HEIMDALL_URL is not configured" });
 		}
 
-		if (!env.SIGIL_API_KEY) {
-			throw new HTTPException(500, { message: "SIGIL_API_KEY is not configured" });
+		if (!env.HEIMDALL_API_KEY) {
+			throw new HTTPException(500, { message: "HEIMDALL_API_KEY is not configured" });
 		}
 
-		const response = await fetch(`${env.SIGIL_URL}/token/verify`, {
+		const response = await fetch(`${env.HEIMDALL_URL}/token/verify`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				"X-API-Key": env.SIGIL_API_KEY,
+				"X-API-Key": env.HEIMDALL_API_KEY,
 			},
 			body: JSON.stringify({ token }),
 		});
