@@ -25,7 +25,34 @@ jobs:
           token: ${{ secrets.DO_API_TOKEN }}
 
       - name: Resolve app spec variables
-        run: sed -i 's|${GITHUB_REPO}|${{ github.repository }}|g' .do/app.yaml
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          HEIMDALL_API_KEY: ${{ secrets.HEIMDALL_API_KEY }}
+        run: |
+          sed -i 's|${GITHUB_REPO}|${{ github.repository }}|g' .do/app.yaml
+          pip install pyyaml -q
+          python3 << 'PYEOF'
+          import os, yaml
+
+          with open('.do/app.yaml') as f:
+              spec = yaml.safe_load(f)
+
+          secrets = {
+              'DATABASE_URL': os.environ['DATABASE_URL'],
+              'SECRET_KEY': os.environ['SECRET_KEY'],
+              'HEIMDALL_API_KEY': os.environ['HEIMDALL_API_KEY'],
+          }
+
+          for svc in spec.get('services', []):
+              for env in svc.get('envs', []):
+                  if env.get('key') in secrets:
+                      env.pop('type', None)
+                      env['value'] = secrets[env['key']]
+
+          with open('.do/app.yaml', 'w') as f:
+              yaml.dump(spec, f, default_flow_style=False, sort_keys=False)
+          PYEOF
 
       - name: Get or create app
         id: app
