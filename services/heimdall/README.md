@@ -19,15 +19,15 @@ Rust, Axum, SQLx, PostgreSQL, Argon2, JWT
 | `POST` | `/auth/login` | Login (returns access + refresh tokens) | No |
 | `GET` | `/auth/me` | Get current user | Bearer |
 | `DELETE` | `/auth/me` | Deactivate account | Bearer |
-| `POST` | `/token/refresh` | Refresh an access token | No |
-| `POST` | `/token/verify` | Verify an access token | API key |
-| `GET` | `/health` | Health check | No |
+| `POST` | `/auth/token/refresh` | Refresh an access token | No |
+| `POST` | `/auth/token/verify` | Verify an access token | API key |
+| `GET` | `/auth/health` | Health check | No |
 
 ### Example
 
 ```bash
 # Health
-curl -X GET http://localhost:8000/health -H "Content-Type: application/json"
+curl -X GET http://localhost:8000/auth/health -H "Content-Type: application/json"
 
 # Login
 curl -X POST http://localhost:8000/auth/login \
@@ -39,7 +39,7 @@ curl http://localhost:8000/auth/me \
   -H "Authorization: Bearer <access_token>"
 
 # Verify a token (service-to-service)
-curl -X POST http://localhost:8000/token/verify \
+curl -X POST http://localhost:8000/auth/token/verify \
   -H "Content-Type: application/json" \
   -H "x-api-key: <your_api_key>" \
   -d '{"token": "<access_token>"}'
@@ -49,7 +49,7 @@ curl -X POST http://localhost:8000/token/verify \
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `HEIMDALL_API_KEY` | No | | API key for `/token/verify` (disabled when unset) |
+| `HEIMDALL_API_KEY` | No | | API key for `/auth/token/verify` (disabled when unset) |
 | `DATABASE_URL` | Yes | | PostgreSQL connection string |
 | `SECRET_KEY` | Yes | | JWT signing secret |
 | `CORS_ORIGINS` | No | `http://localhost:3000` | Comma-separated allowed origins |
