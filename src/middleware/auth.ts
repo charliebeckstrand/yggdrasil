@@ -5,7 +5,7 @@ import { loadEnv } from "../lib/env.js";
 export type AuthUser = {
 	id: string;
 	email: string;
-	roles: string[];
+	roles?: string[];
 };
 
 type AuthEnv = {
@@ -77,7 +77,7 @@ export function requireRole(...roles: string[]): MiddlewareHandler<AuthEnv> {
 			throw new HTTPException(401, { message: "Not authenticated" });
 		}
 
-		const hasRole = roles.some((role) => user.roles.includes(role));
+		const hasRole = roles.some((role) => user.roles?.includes(role));
 
 		if (!hasRole) {
 			throw new HTTPException(403, {
