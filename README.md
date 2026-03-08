@@ -4,10 +4,10 @@ Hono + TypeScript Microservices
 
 | Service | Role | Port |
 | --- | --- | --- |
-| **Heimdall** | JWT authentication | `8000` |
 | **Bifrost** | API gateway | `3000` |
-| **Ratatoskr** | Event bus | `3001` |
+| **Heimdall** | JWT authentication | `8000` |
 | **Mimir** | Database connection | |
+| **Ratatoskr** | Event bus | `3001` |
 | **Syn** | API proxy | |
 
 ## Prerequisites
