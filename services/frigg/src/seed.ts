@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { loadEnv } from './lib/env.js'
 
 const env = loadEnv()
-const seedPath = resolve(import.meta.dirname, '..', 'env.seed.json')
+const seedPath = resolve(import.meta.dirname, '..', '..', '..', 'environments.json')
 
 let seedData: Record<string, Record<string, string>>
 
