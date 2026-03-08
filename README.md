@@ -10,7 +10,7 @@ Hono + TypeScript Microservices
 | **Saga** | Events | `3001` |
 | **Vidar** | Monitoring | `3002` |
 | **Frigg** | Secrets Management | `3003` |
-| **Mimir** | Database Connection | |
+| **Mimir** | Database Pool | |
 
 ## Prerequisites
 
