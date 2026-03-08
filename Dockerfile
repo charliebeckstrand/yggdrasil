@@ -17,7 +17,7 @@ ARG SERVICE
 WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY --from=manifests /tmp/manifests/services/ ./services/
-RUN pnpm install --frozen-lockfile --filter ${SERVICE}
+RUN pnpm install --frozen-lockfile --filter ${SERVICE}...
 COPY tsup.config.ts ./
 COPY services/ ./services/
 RUN pnpm --filter ${SERVICE}... build
