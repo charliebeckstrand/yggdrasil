@@ -21,41 +21,28 @@ export const HealthResponseSchema = z
 	})
 	.openapi('HealthResponse')
 
-export const ConfigDataSchema = z.record(z.string(), z.string()).openapi('ConfigData')
+const ValidationIssueSchema = z.object({
+	level: z.enum(['error', 'warning']),
+	message: z.string(),
+})
 
-export const ConfigResponseSchema = z
+const ServiceValidationSchema = z.object({
+	service: z.string(),
+	status: z.enum(['pass', 'warn', 'fail']),
+	issues: z.array(ValidationIssueSchema),
+})
+
+export const ValidateResponseSchema = z
 	.object({
-		namespace: z.string(),
-		data: ConfigDataSchema,
+		status: z.enum(['pass', 'warn', 'fail']),
+		services: z.array(ServiceValidationSchema),
 	})
-	.openapi('ConfigResponse')
+	.openapi('ValidateResponse')
 
-export const PutConfigSchema = z.record(z.string(), z.string()).openapi('PutConfig')
-
-export const HistoryEntrySchema = z
+export const ValidateServiceResponseSchema = z
 	.object({
-		value: z.string(),
-		created_at: z.string(),
+		service: z.string(),
+		status: z.enum(['pass', 'warn', 'fail']),
+		issues: z.array(ValidationIssueSchema),
 	})
-	.openapi('HistoryEntry')
-
-export const HistoryResponseSchema = z
-	.object({
-		namespace: z.string(),
-		history: z.record(z.string(), HistoryEntrySchema),
-	})
-	.openapi('HistoryResponse')
-
-export const RollbackResponseSchema = z
-	.object({
-		namespace: z.string(),
-		key: z.string(),
-		value: z.string(),
-	})
-	.openapi('RollbackResponse')
-
-export const DeleteResponseSchema = z
-	.object({
-		deleted: z.number(),
-	})
-	.openapi('DeleteResponse')
+	.openapi('ValidateServiceResponse')

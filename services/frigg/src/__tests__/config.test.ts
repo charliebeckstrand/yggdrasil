@@ -1,10 +1,22 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createApp } from '../app.js'
+import { clearCache } from '../lib/environments.js'
+
+beforeEach(() => {
+	process.env.NODE_ENV = 'development'
+	process.env.FRIGG_API_KEY = 'test-api-key'
+})
+
+afterEach(() => {
+	clearCache()
+	delete process.env.NODE_ENV
+	delete process.env.FRIGG_API_KEY
+})
 
 describe('health route', () => {
-	it('GET /frigg/health returns healthy status', async () => {
+	it('GET /services/health returns healthy status', async () => {
 		const app = createApp()
-		const res = await app.request('/frigg/health')
+		const res = await app.request('/services/health')
 
 		expect(res.status).toBe(200)
 
@@ -15,56 +27,55 @@ describe('health route', () => {
 	})
 })
 
-describe('environment routes', () => {
-	it('GET /frigg/environment/:namespace returns 401 without API key', async () => {
+describe('validate routes', () => {
+	it('GET /services/validate returns 401 without API key', async () => {
 		const app = createApp()
-		const res = await app.request('/frigg/environment/test.dev')
+		const res = await app.request('/services/validate')
 
 		expect(res.status).toBe(401)
 	})
 
-	it('PUT /frigg/environment/:namespace returns 401 without API key', async () => {
+	it('GET /services/validate returns validation results', async () => {
 		const app = createApp()
-		const res = await app.request('/frigg/environment/test.dev', {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ KEY: 'value' }),
+		const res = await app.request('/services/validate', {
+			headers: { 'X-API-Key': 'test-api-key' },
 		})
 
-		expect(res.status).toBe(401)
+		expect(res.status).toBe(200)
+
+		const body = await res.json()
+
+		expect(body.status).toBeDefined()
+		expect(body.services).toBeInstanceOf(Array)
+		expect(body.services.length).toBeGreaterThan(0)
+
+		for (const svc of body.services) {
+			expect(svc.service).toBeDefined()
+			expect(['pass', 'warn', 'fail']).toContain(svc.status)
+			expect(svc.issues).toBeInstanceOf(Array)
+		}
 	})
 
-	it('GET /frigg/environment/:namespace/history returns 401 without API key', async () => {
+	it('GET /services/validate/:service validates a single service', async () => {
 		const app = createApp()
-		const res = await app.request('/frigg/environment/test.dev/history')
-
-		expect(res.status).toBe(401)
-	})
-
-	it('POST /frigg/environment/:namespace/:key/rollback returns 401 without API key', async () => {
-		const app = createApp()
-		const res = await app.request('/frigg/environment/test.dev/SECRET_KEY/rollback', {
-			method: 'POST',
+		const res = await app.request('/services/validate/heimdall', {
+			headers: { 'X-API-Key': 'test-api-key' },
 		})
 
-		expect(res.status).toBe(401)
+		expect(res.status).toBe(200)
+
+		const body = await res.json()
+
+		expect(body.service).toBe('heimdall')
+		expect(['pass', 'warn', 'fail']).toContain(body.status)
 	})
 
-	it('DELETE /frigg/environment/:namespace returns 401 without API key', async () => {
+	it('GET /services/validate/:service returns 404 for unknown service', async () => {
 		const app = createApp()
-		const res = await app.request('/frigg/environment/test.dev', {
-			method: 'DELETE',
+		const res = await app.request('/services/validate/unknown', {
+			headers: { 'X-API-Key': 'test-api-key' },
 		})
 
-		expect(res.status).toBe(401)
-	})
-
-	it('DELETE /frigg/environment/:namespace/:key returns 401 without API key', async () => {
-		const app = createApp()
-		const res = await app.request('/frigg/environment/test.dev/SECRET_KEY', {
-			method: 'DELETE',
-		})
-
-		expect(res.status).toBe(401)
+		expect(res.status).toBe(404)
 	})
 })
