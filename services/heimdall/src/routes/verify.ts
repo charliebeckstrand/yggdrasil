@@ -14,19 +14,19 @@ const verifyRoute = createRoute({
 	request: {
 		body: {
 			content: { 'application/json': { schema: VerifySchema } },
-			required: true
-		}
+			required: true,
+		},
 	},
 	responses: {
 		200: {
 			content: { 'application/json': { schema: UserResponseSchema } },
-			description: 'Token is valid'
+			description: 'Token is valid',
 		},
 		401: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Invalid token or API key'
-		}
-	}
+			description: 'Invalid token or API key',
+		},
+	},
 })
 
 export const verify = new OpenAPIHono()
@@ -60,8 +60,8 @@ verify.openapi(verifyRoute, async (c) => {
 			email: user.email,
 			is_active: user.is_active,
 			is_verified: user.is_verified,
-			created_at: user.created_at
+			created_at: user.created_at,
 		},
-		200
+		200,
 	)
 })

@@ -1,5 +1,10 @@
 import 'server-only'
-import NextAuth, { type NextAuthConfig, type NextAuthResult, type Session, type User } from 'next-auth'
+import NextAuth, {
+	type NextAuthConfig,
+	type NextAuthResult,
+	type Session,
+	type User,
+} from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 
 export interface CreateAuthConfig {
@@ -9,7 +14,9 @@ export interface CreateAuthConfig {
 	}
 }
 
-export type AuthHandler<TArgs extends unknown[] = [], TResult = unknown> = (...args: TArgs) => Promise<TResult>
+export type AuthHandler<TArgs extends unknown[] = [], TResult = unknown> = (
+	...args: TArgs
+) => Promise<TResult>
 
 export type CreateAuthReturn = {
 	auth: AuthHandler
@@ -45,7 +52,9 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 
 	let refreshLock: Promise<Record<string, unknown>> | null = null
 
-	async function refreshAccessToken(token: Record<string, unknown>): Promise<Record<string, unknown>> {
+	async function refreshAccessToken(
+		token: Record<string, unknown>,
+	): Promise<Record<string, unknown>> {
 		if (refreshLock) {
 			return refreshLock
 		}
@@ -55,7 +64,7 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 				const res = await fetch(`${apiOrigin}/auth/token/refresh`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ refresh_token: token.refreshToken })
+					body: JSON.stringify({ refresh_token: token.refreshToken }),
 				})
 
 				if (!res.ok) {
@@ -69,7 +78,7 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 					accessToken: data.access_token,
 					refreshToken: data.refresh_token,
 					expiresAt: Math.floor(Date.now() / 1000) + data.expires_in,
-					error: undefined
+					error: undefined,
 				}
 			} catch {
 				return { ...token, error: 'RefreshTokenError' }
@@ -91,7 +100,7 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 				name: 'credentials',
 				credentials: {
 					email: { label: 'Email', type: 'email' },
-					password: { label: 'Password', type: 'password' }
+					password: { label: 'Password', type: 'password' },
 				},
 
 				async authorize(credentials): Promise<User | null> {
@@ -105,8 +114,8 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 							headers: { 'Content-Type': 'application/json' },
 							body: JSON.stringify({
 								email: credentials.email,
-								password: credentials.password
-							})
+								password: credentials.password,
+							}),
 						})
 
 						if (!res.ok) return null
@@ -118,20 +127,20 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 							email: data.user?.email ?? '',
 							accessToken: data.access_token,
 							refreshToken: data.refresh_token,
-							expiresIn: data.expires_in
+							expiresIn: data.expires_in,
 						}
 
 						return authorizedUser
 					} catch {
 						return null
 					}
-				}
-			})
+				},
+			}),
 		],
 
 		session: {
 			strategy: 'jwt',
-			maxAge: sessionConfig?.maxAge ?? 60 * 60 * 24 * 7
+			maxAge: sessionConfig?.maxAge ?? 60 * 60 * 24 * 7,
 		},
 
 		callbacks: {
@@ -144,7 +153,7 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 						...token,
 						accessToken: u.accessToken,
 						refreshToken: u.refreshToken,
-						expiresAt: Math.floor(Date.now() / 1000) + u.expiresIn
+						expiresAt: Math.floor(Date.now() / 1000) + u.expiresIn,
 					}
 				}
 
@@ -164,15 +173,15 @@ export function createAuth(config: CreateAuthConfig): CreateAuthReturn {
 				return {
 					...session,
 					accessToken,
-					error
+					error,
 				}
-			}
+			},
 		},
 
 		pages: {
 			signIn: '/auth/login',
-			error: '/auth/error'
-		}
+			error: '/auth/error',
+		},
 	}
 
 	return NextAuth(nextAuthConfig) as CreateAuthReturn

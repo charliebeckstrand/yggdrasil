@@ -1,4 +1,4 @@
-import type { MiddlewareHandler } from "hono"
+import type { MiddlewareHandler } from 'hono'
 
 export function requestLogger(): MiddlewareHandler {
 	return async (c, next) => {

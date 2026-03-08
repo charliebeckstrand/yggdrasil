@@ -15,7 +15,8 @@ export interface Claims {
 export function signToken(sub: string, type: TokenType): { token: string; expiresIn: number } {
 	const env = loadEnv()
 
-	const expiresIn = type === 'access' ? env.ACCESS_TOKEN_EXPIRE_MINUTES * 60 : env.REFRESH_TOKEN_EXPIRE_DAYS * 86400
+	const expiresIn =
+		type === 'access' ? env.ACCESS_TOKEN_EXPIRE_MINUTES * 60 : env.REFRESH_TOKEN_EXPIRE_DAYS * 86400
 
 	const now = Math.floor(Date.now() / 1000)
 
@@ -24,7 +25,7 @@ export function signToken(sub: string, type: TokenType): { token: string; expire
 		type,
 		exp: now + expiresIn,
 		iat: now,
-		jti: randomUUID()
+		jti: randomUUID(),
 	}
 
 	const token = jwt.sign(payload, env.SECRET_KEY, { algorithm: 'HS256' })

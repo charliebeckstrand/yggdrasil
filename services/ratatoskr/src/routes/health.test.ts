@@ -71,7 +71,7 @@ describe('Auth middleware', () => {
 		const res = await app.request('/events/publish', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ topic: 'test', payload: {}, source: 'test' })
+			body: JSON.stringify({ topic: 'test', payload: {}, source: 'test' }),
 		})
 
 		expect(res.status).toBe(401)

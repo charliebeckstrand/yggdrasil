@@ -11,19 +11,19 @@ const refreshRoute = createRoute({
 	request: {
 		body: {
 			content: { 'application/json': { schema: RefreshSchema } },
-			required: true
-		}
+			required: true,
+		},
 	},
 	responses: {
 		200: {
 			content: { 'application/json': { schema: TokenResponseSchema } },
-			description: 'Tokens refreshed'
+			description: 'Tokens refreshed',
 		},
 		401: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Invalid refresh token'
-		}
-	}
+			description: 'Invalid refresh token',
+		},
+	},
 })
 
 export const refresh = new OpenAPIHono().openapi(refreshRoute, async (c) => {
@@ -55,8 +55,8 @@ export const refresh = new OpenAPIHono().openapi(refreshRoute, async (c) => {
 			access_token: access.token,
 			refresh_token: newRefresh.token,
 			token_type: 'bearer' as const,
-			expires_in: access.expiresIn
+			expires_in: access.expiresIn,
 		},
-		200
+		200,
 	)
 })

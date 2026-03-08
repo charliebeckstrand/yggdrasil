@@ -30,7 +30,7 @@ export function createPool(databaseUrl: string, options?: PoolOptions): pg.Pool 
 		max: options?.max ?? 5,
 		idleTimeoutMillis: options?.idleTimeoutMillis ?? 30000,
 		connectionTimeoutMillis: options?.connectionTimeoutMillis ?? 5000,
-		ssl: requiresSsl ? { rejectUnauthorized: false } : false
+		ssl: requiresSsl ? { rejectUnauthorized: false } : false,
 	})
 }
 

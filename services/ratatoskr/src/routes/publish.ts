@@ -14,19 +14,19 @@ const publishRoute = createRoute({
 	request: {
 		body: {
 			content: { 'application/json': { schema: PublishEventSchema } },
-			required: true
-		}
+			required: true,
+		},
 	},
 	responses: {
 		202: {
 			content: { 'application/json': { schema: EventSchema } },
-			description: 'Event accepted for delivery'
+			description: 'Event accepted for delivery',
 		},
 		401: {
 			content: { 'application/json': { schema: ErrorSchema } },
-			description: 'Unauthorized'
-		}
-	}
+			description: 'Unauthorized',
+		},
+	},
 })
 
 export const publish = new OpenAPIHono()

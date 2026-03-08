@@ -6,7 +6,7 @@ import { createMiddleware } from '../middleware'
 
 function makeAuthHandler(session: Session | null): CreateAuthReturn['auth'] {
 	return vi.fn(
-		(handler) => (req: NextRequest) => handler(Object.assign(req, { auth: session }))
+		(handler) => (req: NextRequest) => handler(Object.assign(req, { auth: session })),
 	) as unknown as CreateAuthReturn['auth']
 }
 
@@ -18,7 +18,7 @@ const baseAuth: CreateAuthReturn = {
 	auth: makeAuthHandler(null),
 	handlers: {} as CreateAuthReturn['handlers'],
 	signIn: vi.fn() as unknown as CreateAuthReturn['signIn'],
-	signOut: vi.fn() as unknown as CreateAuthReturn['signOut']
+	signOut: vi.fn() as unknown as CreateAuthReturn['signOut'],
 }
 
 describe('createMiddleware', () => {
@@ -34,7 +34,7 @@ describe('createMiddleware', () => {
 		it('allows unauthenticated requests through on a matched pattern', async () => {
 			const middleware = createMiddleware({
 				auth: { ...baseAuth, auth: makeAuthHandler(null) },
-				publicPatterns: [/^\/auth(\/.*)?$/i]
+				publicPatterns: [/^\/auth(\/.*)?$/i],
 			})
 
 			const response = await middleware(makeRequest('/auth/login'))
@@ -45,7 +45,7 @@ describe('createMiddleware', () => {
 		it('allows nested public routes', async () => {
 			const middleware = createMiddleware({
 				auth: { ...baseAuth, auth: makeAuthHandler(null) },
-				publicPatterns: [/^\/auth(\/.*)?$/i]
+				publicPatterns: [/^\/auth(\/.*)?$/i],
 			})
 
 			const response = await middleware(makeRequest('/auth/reset-password/token123'))
@@ -56,7 +56,7 @@ describe('createMiddleware', () => {
 		it('allows multiple public patterns', async () => {
 			const middleware = createMiddleware({
 				auth: { ...baseAuth, auth: makeAuthHandler(null) },
-				publicPatterns: [/^\/auth(\/.*)?$/i, /^\/api\/health$/]
+				publicPatterns: [/^\/auth(\/.*)?$/i, /^\/api\/health$/],
 			})
 
 			const response = await middleware(makeRequest('/api/health'))
@@ -68,7 +68,7 @@ describe('createMiddleware', () => {
 	describe('protected routes', () => {
 		it('redirects unauthenticated requests to /auth/login', async () => {
 			const middleware = createMiddleware({
-				auth: { ...baseAuth, auth: makeAuthHandler(null) }
+				auth: { ...baseAuth, auth: makeAuthHandler(null) },
 			})
 
 			const response = await middleware(makeRequest('/dashboard'))
@@ -82,7 +82,7 @@ describe('createMiddleware', () => {
 
 		it('includes callbackUrl in the redirect', async () => {
 			const middleware = createMiddleware({
-				auth: { ...baseAuth, auth: makeAuthHandler(null) }
+				auth: { ...baseAuth, auth: makeAuthHandler(null) },
 			})
 
 			const response = await middleware(makeRequest('/dashboard/settings'))
@@ -97,11 +97,11 @@ describe('createMiddleware', () => {
 		it('allows authenticated requests through', async () => {
 			const session: Session = {
 				user: { id: '1', email: 'test@example.com' },
-				expires: new Date(Date.now() + 3600 * 1000).toISOString()
+				expires: new Date(Date.now() + 3600 * 1000).toISOString(),
 			}
 
 			const middleware = createMiddleware({
-				auth: { ...baseAuth, auth: makeAuthHandler(session) }
+				auth: { ...baseAuth, auth: makeAuthHandler(session) },
 			})
 
 			const response = await middleware(makeRequest('/dashboard'))
@@ -114,7 +114,7 @@ describe('createMiddleware', () => {
 		it('returns 401 JSON for unauthenticated API requests', async () => {
 			const middleware = createMiddleware({
 				auth: { ...baseAuth, auth: makeAuthHandler(null) },
-				apiPatterns: [/^\/api(\/.*)?$/]
+				apiPatterns: [/^\/api(\/.*)?$/],
 			})
 
 			const response = await middleware(makeRequest('/api/users'))
@@ -129,12 +129,12 @@ describe('createMiddleware', () => {
 		it('allows authenticated API requests through', async () => {
 			const session: Session = {
 				user: { id: '1', email: 'test@example.com' },
-				expires: new Date(Date.now() + 3600 * 1000).toISOString()
+				expires: new Date(Date.now() + 3600 * 1000).toISOString(),
 			}
 
 			const middleware = createMiddleware({
 				auth: { ...baseAuth, auth: makeAuthHandler(session) },
-				apiPatterns: [/^\/api(\/.*)?$/]
+				apiPatterns: [/^\/api(\/.*)?$/],
 			})
 
 			const response = await middleware(makeRequest('/api/users'))
@@ -145,7 +145,7 @@ describe('createMiddleware', () => {
 		it('still redirects non-API unauthenticated requests', async () => {
 			const middleware = createMiddleware({
 				auth: { ...baseAuth, auth: makeAuthHandler(null) },
-				apiPatterns: [/^\/api(\/.*)?$/]
+				apiPatterns: [/^\/api(\/.*)?$/],
 			})
 
 			const response = await middleware(makeRequest('/dashboard'))
@@ -161,7 +161,7 @@ describe('createMiddleware', () => {
 			const middleware = createMiddleware({
 				auth: { ...baseAuth, auth: makeAuthHandler(null) },
 				publicPatterns: [/^\/api\/health$/],
-				apiPatterns: [/^\/api(\/.*)?$/]
+				apiPatterns: [/^\/api(\/.*)?$/],
 			})
 
 			const response = await middleware(makeRequest('/api/health'))
@@ -175,7 +175,7 @@ describe('createMiddleware', () => {
 		it('does not treat partial matches as public', async () => {
 			const middleware = createMiddleware({
 				auth: { ...baseAuth, auth: makeAuthHandler(null) },
-				publicPatterns: [/^\/auth$/]
+				publicPatterns: [/^\/auth$/],
 			})
 
 			// /auth/login does NOT match /^\/auth$/ — should redirect
@@ -186,7 +186,7 @@ describe('createMiddleware', () => {
 
 		it('protects all routes when publicPatterns is empty', async () => {
 			const middleware = createMiddleware({
-				auth: { ...baseAuth, auth: makeAuthHandler(null) }
+				auth: { ...baseAuth, auth: makeAuthHandler(null) },
 			})
 
 			const response = await middleware(makeRequest('/auth/login'))

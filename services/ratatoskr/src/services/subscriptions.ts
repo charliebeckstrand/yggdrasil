@@ -1,4 +1,4 @@
-import { getPool } from "../lib/db.js"
+import { getPool } from '../lib/db.js'
 
 type CreateInput = {
 	topic: string
@@ -30,11 +30,11 @@ export async function listSubscriptions(topic?: string): Promise<SubscriptionLis
 	const params: string[] = []
 
 	if (topic) {
-		query += " AND topic = $1"
+		query += ' AND topic = $1'
 		params.push(topic)
 	}
 
-	query += " ORDER BY created_at DESC"
+	query += ' ORDER BY created_at DESC'
 
 	const { rows } = await pool.query<Subscription>(query, params)
 

@@ -30,7 +30,7 @@ export async function publishEvent(input: PublishInput): Promise<Event> {
 		`INSERT INTO ratatoskr.events (topic, payload, source)
 		 VALUES ($1, $2, $3)
 		 RETURNING id, topic, payload, source, created_at::text as created_at`,
-		[input.topic, JSON.stringify(input.payload), input.source]
+		[input.topic, JSON.stringify(input.payload), input.source],
 	)
 
 	const event = rows[0]
@@ -49,7 +49,7 @@ async function deliverEvent(event: Event): Promise<void> {
 		`SELECT id, callback_url, service
 		 FROM ratatoskr.subscriptions
 		 WHERE topic = $1 AND is_active = TRUE`,
-		[event.topic]
+		[event.topic],
 	)
 
 	if (subs.length === 0) return
@@ -59,7 +59,10 @@ async function deliverEvent(event: Event): Promise<void> {
 	for (let i = 0; i < deliveries.length; i++) {
 		const result = deliveries[i]
 		if (result.status === 'rejected') {
-			console.error(`Delivery to ${subs[i].service} (${subs[i].callback_url}) failed:`, result.reason)
+			console.error(
+				`Delivery to ${subs[i].service} (${subs[i].callback_url}) failed:`,
+				result.reason,
+			)
 		}
 	}
 }
@@ -71,7 +74,7 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 		`INSERT INTO ratatoskr.deliveries (event_id, subscription_id, status)
 		 VALUES ($1, $2, 'pending')
 		 RETURNING id`,
-		[event.id, sub.id]
+		[event.id, sub.id],
 	)
 
 	const deliveryId = rows[0].id
@@ -89,9 +92,9 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 					topic: event.topic,
 					payload: event.payload,
 					source: event.source,
-					created_at: event.created_at
+					created_at: event.created_at,
 				}),
-				signal: AbortSignal.timeout(10000)
+				signal: AbortSignal.timeout(10000),
 			})
 
 			responseStatus = response.status
@@ -101,7 +104,7 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 					`UPDATE ratatoskr.deliveries
 					 SET status = 'delivered', attempts = $1, last_attempt_at = now(), response_status = $2
 					 WHERE id = $3`,
-					[attempt, responseStatus, deliveryId]
+					[attempt, responseStatus, deliveryId],
 				)
 
 				return
@@ -123,6 +126,6 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 		`UPDATE ratatoskr.deliveries
 		 SET status = 'failed', attempts = $1, last_attempt_at = now(), response_status = $2, error_message = $3
 		 WHERE id = $4`,
-		[MAX_RETRIES, responseStatus, lastError?.message ?? 'Unknown error', deliveryId]
+		[MAX_RETRIES, responseStatus, lastError?.message ?? 'Unknown error', deliveryId],
 	)
 }

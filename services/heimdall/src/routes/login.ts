@@ -18,23 +18,23 @@ const loginRoute = createRoute({
 	request: {
 		body: {
 			content: { 'application/json': { schema: LoginSchema } },
-			required: true
-		}
+			required: true,
+		},
 	},
 	responses: {
 		200: {
 			content: { 'application/json': { schema: TokenResponseSchema } },
-			description: 'Login successful'
+			description: 'Login successful',
 		},
 		401: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Invalid credentials'
+			description: 'Invalid credentials',
 		},
 		403: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Account inactive'
-		}
-	}
+			description: 'Account inactive',
+		},
+	},
 })
 
 export const login = new OpenAPIHono()
@@ -70,8 +70,8 @@ login.openapi(loginRoute, async (c) => {
 			access_token: access.token,
 			refresh_token: refresh.token,
 			token_type: 'bearer' as const,
-			expires_in: access.expiresIn
+			expires_in: access.expiresIn,
 		},
-		200
+		200,
 	)
 })

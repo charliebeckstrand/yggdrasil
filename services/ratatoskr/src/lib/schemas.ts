@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from 'zod'
 
 export const ErrorSchema = z
 	.object({
@@ -6,13 +6,13 @@ export const ErrorSchema = z
 		message: z.string(),
 		statusCode: z.number(),
 	})
-	.openapi("Error")
+	.openapi('Error')
 
 export const MessageSchema = z
 	.object({
 		message: z.string(),
 	})
-	.openapi("Message")
+	.openapi('Message')
 
 export const PublishEventSchema = z
 	.object({
@@ -20,18 +20,18 @@ export const PublishEventSchema = z
 			.string()
 			.min(1)
 			.max(255)
-			.openapi({ description: "Event topic", example: "user.registered" }),
+			.openapi({ description: 'Event topic', example: 'user.registered' }),
 		payload: z
 			.record(z.string(), z.unknown())
 			.default({})
-			.openapi({ description: "Event payload data" }),
+			.openapi({ description: 'Event payload data' }),
 		source: z
 			.string()
 			.min(1)
 			.max(100)
-			.openapi({ description: "Service that published the event", example: "heimdall" }),
+			.openapi({ description: 'Service that published the event', example: 'heimdall' }),
 	})
-	.openapi("PublishEvent")
+	.openapi('PublishEvent')
 
 export const EventSchema = z
 	.object({
@@ -41,7 +41,7 @@ export const EventSchema = z
 		source: z.string(),
 		created_at: z.string().datetime(),
 	})
-	.openapi("Event")
+	.openapi('Event')
 
 export const CreateSubscriptionSchema = z
 	.object({
@@ -49,18 +49,18 @@ export const CreateSubscriptionSchema = z
 			.string()
 			.min(1)
 			.max(255)
-			.openapi({ description: "Event topic to subscribe to", example: "user.registered" }),
+			.openapi({ description: 'Event topic to subscribe to', example: 'user.registered' }),
 		callback_url: z.string().url().openapi({
-			description: "URL to receive event callbacks",
-			example: "http://bifrost:8000/api/webhooks/user-registered",
+			description: 'URL to receive event callbacks',
+			example: 'http://bifrost:8000/api/webhooks/user-registered',
 		}),
 		service: z
 			.string()
 			.min(1)
 			.max(100)
-			.openapi({ description: "Name of the subscribing service", example: "bifrost" }),
+			.openapi({ description: 'Name of the subscribing service', example: 'bifrost' }),
 	})
-	.openapi("CreateSubscription")
+	.openapi('CreateSubscription')
 
 export const SubscriptionSchema = z
 	.object({
@@ -72,11 +72,11 @@ export const SubscriptionSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 	})
-	.openapi("Subscription")
+	.openapi('Subscription')
 
 export const SubscriptionListSchema = z
 	.object({
 		data: z.array(SubscriptionSchema),
 		total: z.number(),
 	})
-	.openapi("SubscriptionList")
+	.openapi('SubscriptionList')
