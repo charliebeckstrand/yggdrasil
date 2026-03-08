@@ -6,9 +6,11 @@ FROM base AS build
 WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY services/ratatoskr/package.json ./services/ratatoskr/
+COPY services/mimir/package.json ./services/mimir/
 RUN pnpm install --frozen-lockfile --filter ratatoskr
 COPY tsup.config.ts ./
 COPY services/ratatoskr/ ./services/ratatoskr/
+COPY services/mimir/ ./services/mimir/
 RUN pnpm --filter ratatoskr build
 
 # --- Production stage ---

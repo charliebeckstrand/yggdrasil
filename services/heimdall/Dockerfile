@@ -6,9 +6,11 @@ FROM base AS build
 WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY services/heimdall/package.json ./services/heimdall/
+COPY services/mimir/package.json ./services/mimir/
 RUN pnpm install --frozen-lockfile --filter heimdall
 COPY tsup.config.ts ./
 COPY services/heimdall/ ./services/heimdall/
+COPY services/mimir/ ./services/mimir/
 RUN pnpm --filter heimdall build
 
 # --- Production stage ---
