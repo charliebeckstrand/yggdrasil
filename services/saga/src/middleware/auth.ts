@@ -12,11 +12,11 @@ export function apiKeyAuth(): MiddlewareHandler {
 			throw new HTTPException(401, { message: 'Missing API key' })
 		}
 
-		if (!env.RATATOSKR_API_KEY) {
-			throw new HTTPException(500, { message: 'RATATOSKR_API_KEY is not configured' })
+		if (!env.SAGA_API_KEY) {
+			throw new HTTPException(500, { message: 'SAGA_API_KEY is not configured' })
 		}
 
-		if (apiKey !== env.RATATOSKR_API_KEY) {
+		if (apiKey !== env.SAGA_API_KEY) {
 			throw new HTTPException(401, { message: 'Invalid API key' })
 		}
 

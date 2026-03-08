@@ -18,17 +18,17 @@
 		"VIDAR_URL": "http://localhost:3002",
 		"VIDAR_API_KEY": "dev-vidar-api-key"
 	},
-	"ratatoskr.development": {
+	"saga.development": {
 		"PORT": "3001",
 		"DATABASE_URL": "postgres://user:password@localhost:5432/yggdrasil",
-		"RATATOSKR_API_KEY": "dev-ratatoskr-api-key"
+		"SAGA_API_KEY": "dev-saga-api-key"
 	},
 	"vidar.development": {
 		"PORT": "3002",
 		"DATABASE_URL": "postgres://vidar:vidar@localhost:5432/vidar",
 		"VIDAR_API_KEY": "dev-vidar-api-key",
-		"RATATOSKR_URL": "http://localhost:3001",
-		"RATATOSKR_API_KEY": "dev-ratatoskr-api-key",
+		"SAGA_URL": "http://localhost:3001",
+		"SAGA_API_KEY": "dev-saga-api-key",
 		"AI_ENABLED": "false"
 	},
 	"frigg.development": {

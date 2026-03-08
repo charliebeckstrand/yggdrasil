@@ -5,8 +5,8 @@ const envSchema = z.object({
 	NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 	DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
 	VIDAR_API_KEY: z.string().optional(),
-	RATATOSKR_URL: z.string().optional(),
-	RATATOSKR_API_KEY: z.string().optional(),
+	SAGA_URL: z.string().optional(),
+	SAGA_API_KEY: z.string().optional(),
 	AI_ENABLED: z
 		.enum(['true', 'false'])
 		.default('false')

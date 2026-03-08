@@ -27,7 +27,7 @@ export async function publishEvent(input: PublishInput): Promise<Event> {
 	const pool = getPool()
 
 	const { rows } = await pool.query<Event>(
-		`INSERT INTO ratatoskr.events (topic, payload, source)
+		`INSERT INTO saga.events (topic, payload, source)
 		 VALUES ($1, $2, $3)
 		 RETURNING id, topic, payload, source, created_at::text as created_at`,
 		[input.topic, JSON.stringify(input.payload), input.source],
@@ -47,7 +47,7 @@ async function deliverEvent(event: Event): Promise<void> {
 
 	const { rows: subs } = await pool.query<Subscription>(
 		`SELECT id, callback_url, service
-		 FROM ratatoskr.subscriptions
+		 FROM saga.subscriptions
 		 WHERE topic = $1 AND is_active = TRUE`,
 		[event.topic],
 	)
@@ -71,7 +71,7 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 	const pool = getPool()
 
 	const { rows } = await pool.query<{ id: string }>(
-		`INSERT INTO ratatoskr.deliveries (event_id, subscription_id, status)
+		`INSERT INTO saga.deliveries (event_id, subscription_id, status)
 		 VALUES ($1, $2, 'pending')
 		 RETURNING id`,
 		[event.id, sub.id],
@@ -101,7 +101,7 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 
 			if (response.ok) {
 				await pool.query(
-					`UPDATE ratatoskr.deliveries
+					`UPDATE saga.deliveries
 					 SET status = 'delivered', attempts = $1, last_attempt_at = now(), response_status = $2
 					 WHERE id = $3`,
 					[attempt, responseStatus, deliveryId],
@@ -123,7 +123,7 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 	}
 
 	await pool.query(
-		`UPDATE ratatoskr.deliveries
+		`UPDATE saga.deliveries
 		 SET status = 'failed', attempts = $1, last_attempt_at = now(), response_status = $2, error_message = $3
 		 WHERE id = $4`,
 		[MAX_RETRIES, responseStatus, lastError?.message ?? 'Unknown error', deliveryId],
