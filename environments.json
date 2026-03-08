@@ -1,0 +1,40 @@
+{
+	"$defaults": {
+		"NODE_ENV": "development"
+	},
+	"bifrost.development": {
+		"PORT": "3000",
+		"HEIMDALL_URL": "http://localhost:8000",
+		"HEIMDALL_API_KEY": "dev-heimdall-api-key"
+	},
+	"heimdall.development": {
+		"PORT": "8000",
+		"DATABASE_URL": "postgres://heimdall:heimdall@localhost:5432/heimdall",
+		"CORS_ORIGINS": "http://localhost:3000",
+		"SECRET_KEY": "dev-secret-key-change-in-production",
+		"HEIMDALL_API_KEY": "dev-heimdall-api-key",
+		"ACCESS_TOKEN_EXPIRE_MINUTES": "30",
+		"REFRESH_TOKEN_EXPIRE_DAYS": "7",
+		"VIDAR_URL": "http://localhost:3002",
+		"VIDAR_API_KEY": "dev-vidar-api-key"
+	},
+	"ratatoskr.development": {
+		"PORT": "3001",
+		"DATABASE_URL": "postgres://user:password@localhost:5432/yggdrasil",
+		"RATATOSKR_API_KEY": "dev-ratatoskr-api-key"
+	},
+	"vidar.development": {
+		"PORT": "3002",
+		"DATABASE_URL": "postgres://vidar:vidar@localhost:5432/vidar",
+		"VIDAR_API_KEY": "dev-vidar-api-key",
+		"RATATOSKR_URL": "http://localhost:3001",
+		"RATATOSKR_API_KEY": "dev-ratatoskr-api-key",
+		"AI_ENABLED": "false"
+	},
+	"frigg.development": {
+		"PORT": "3003",
+		"DATABASE_URL": "postgres://localhost:5432/frigg",
+		"FRIGG_SECRET_KEY": "0000000000000000000000000000000000000000000000000000000000000000",
+		"FRIGG_API_KEY": "frigg-dev-api-key"
+	}
+}

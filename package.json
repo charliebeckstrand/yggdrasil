@@ -15,6 +15,7 @@
     "prepare": "husky || true",
     "lint": "biome check services/",
     "lint:fix": "biome check --write services/",
-    "format": "biome format --write services/"
+    "format": "biome format --write services/",
+    "env:init": "node scripts/env-init.mjs"
   }
 }
