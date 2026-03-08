@@ -46,7 +46,7 @@ export function createClient(options: ClientOptions) {
 
 		const headers: Record<string, string> = {
 			...baseHeaders,
-			...(opts?.body ? { "Content-Type": "application/json" } : {}),
+			...(opts?.body ? { 'Content-Type': 'application/json' } : {}),
 		}
 
 		const res = await fetch(url, {
@@ -65,16 +65,16 @@ export function createClient(options: ClientOptions) {
 	}
 
 	return {
-		get: <T>(path: string, opts?: Pick<RequestOptions, "query">) => request<T>("GET", path, opts),
+		get: <T>(path: string, opts?: Pick<RequestOptions, 'query'>) => request<T>('GET', path, opts),
 
-		post: <T>(path: string, opts?: RequestOptions) => request<T>("POST", path, opts),
+		post: <T>(path: string, opts?: RequestOptions) => request<T>('POST', path, opts),
 
-		put: <T>(path: string, opts?: RequestOptions) => request<T>("PUT", path, opts),
+		put: <T>(path: string, opts?: RequestOptions) => request<T>('PUT', path, opts),
 
-		patch: <T>(path: string, opts?: RequestOptions) => request<T>("PATCH", path, opts),
+		patch: <T>(path: string, opts?: RequestOptions) => request<T>('PATCH', path, opts),
 
-		delete: <T>(path: string, opts?: Pick<RequestOptions, "query">) =>
-			request<T>("DELETE", path, opts),
+		delete: <T>(path: string, opts?: Pick<RequestOptions, 'query'>) =>
+			request<T>('DELETE', path, opts),
 	}
 }
 
@@ -84,6 +84,6 @@ export class ClientError extends Error {
 		public body: { message: string },
 	) {
 		super(body.message)
-		this.name = "ClientError"
+		this.name = 'ClientError'
 	}
 }

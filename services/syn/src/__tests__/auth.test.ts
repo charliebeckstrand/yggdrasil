@@ -8,12 +8,12 @@ vi.mock('next-auth', () => ({
 		handlers: { GET: vi.fn(), POST: vi.fn() },
 		signIn: vi.fn(),
 		signOut: vi.fn(),
-		_config: config
-	})
+		_config: config,
+	}),
 }))
 
 vi.mock('next-auth/providers/credentials', () => ({
-	default: (opts: Record<string, unknown>) => ({ id: 'credentials', ...opts })
+	default: (opts: Record<string, unknown>) => ({ id: 'credentials', ...opts }),
 }))
 
 const mockFetch = vi.fn()
@@ -47,8 +47,8 @@ describe('createAuth', () => {
 		expect(() =>
 			createAuth({
 				apiOrigin: 'http://localhost:8000',
-				session: { maxAge: 60 * 60 * 24 }
-			})
+				session: { maxAge: 60 * 60 * 24 },
+			}),
 		).not.toThrow()
 	})
 

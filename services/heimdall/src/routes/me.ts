@@ -12,13 +12,13 @@ const getMeRoute = createRoute({
 	responses: {
 		200: {
 			content: { 'application/json': { schema: UserResponseSchema } },
-			description: 'Current user profile'
+			description: 'Current user profile',
 		},
 		401: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Not authenticated'
-		}
-	}
+			description: 'Not authenticated',
+		},
+	},
 })
 
 const deleteMeRoute = createRoute({
@@ -29,13 +29,13 @@ const deleteMeRoute = createRoute({
 	security: [{ Bearer: [] }],
 	responses: {
 		204: {
-			description: 'Account deactivated'
+			description: 'Account deactivated',
 		},
 		401: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Not authenticated'
-		}
-	}
+			description: 'Not authenticated',
+		},
+	},
 })
 
 export const me = new OpenAPIHono<AuthEnv>()
@@ -51,9 +51,9 @@ me.openapi(getMeRoute, async (c) => {
 			email: user.email,
 			is_active: user.is_active,
 			is_verified: user.is_verified,
-			created_at: user.created_at
+			created_at: user.created_at,
 		},
-		200
+		200,
 	)
 })
 

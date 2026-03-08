@@ -28,8 +28,8 @@ export function createApp() {
 				origin: origins,
 				allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 				allowHeaders: ['Authorization', 'Accept', 'Content-Type'],
-				credentials: true
-			})
+				credentials: true,
+			}),
 		)
 	} else {
 		app.use('*', cors())

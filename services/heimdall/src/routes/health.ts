@@ -11,13 +11,13 @@ const healthRoute = createRoute({
 	responses: {
 		200: {
 			content: { 'application/json': { schema: HealthResponseSchema } },
-			description: 'Service is healthy'
+			description: 'Service is healthy',
 		},
 		500: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Service is unhealthy'
-		}
-	}
+			description: 'Service is unhealthy',
+		},
+	},
 })
 
 export const health = new OpenAPIHono().openapi(healthRoute, async (c) => {

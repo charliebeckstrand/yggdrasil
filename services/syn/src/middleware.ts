@@ -1,10 +1,10 @@
-import { type NextProxy, NextResponse } from "next/server"
-import type { NextAuthRequest } from "next-auth"
+import { type NextProxy, NextResponse } from 'next/server'
+import type { NextAuthRequest } from 'next-auth'
 
-import type { CreateAuthReturn } from "./auth"
+import type { CreateAuthReturn } from './auth'
 
 export interface CreateMiddlewareConfig {
-	auth: Pick<CreateAuthReturn, "auth"> | CreateAuthReturn["auth"]
+	auth: Pick<CreateAuthReturn, 'auth'> | CreateAuthReturn['auth']
 	publicPatterns?: RegExp[]
 	apiPatterns?: RegExp[]
 }
@@ -14,9 +14,9 @@ export function createMiddleware(config: CreateMiddlewareConfig): NextProxy {
 
 	// Accept either the full object ({ auth: fn }) or the bare function
 	const authFn =
-		typeof config.auth === "function"
+		typeof config.auth === 'function'
 			? config.auth
-			: (config.auth as Pick<CreateAuthReturn, "auth">).auth
+			: (config.auth as Pick<CreateAuthReturn, 'auth'>).auth
 
 	const handler = authFn(async (req: NextAuthRequest) => {
 		const { pathname } = req.nextUrl
@@ -28,14 +28,14 @@ export function createMiddleware(config: CreateMiddlewareConfig): NextProxy {
 		if (!req.auth) {
 			if (apiPatterns.some((pattern) => pattern.test(pathname))) {
 				return NextResponse.json(
-					{ message: "Unauthorized", error: "Unauthorized", statusCode: 401 },
+					{ message: 'Unauthorized', error: 'Unauthorized', statusCode: 401 },
 					{ status: 401 },
 				)
 			}
 
-			const loginUrl = new URL("/auth/login", req.nextUrl.origin)
+			const loginUrl = new URL('/auth/login', req.nextUrl.origin)
 
-			loginUrl.searchParams.set("callbackUrl", req.nextUrl.href)
+			loginUrl.searchParams.set('callbackUrl', req.nextUrl.href)
 
 			return NextResponse.redirect(loginUrl)
 		}

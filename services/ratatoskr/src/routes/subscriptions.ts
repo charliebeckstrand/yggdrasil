@@ -5,10 +5,14 @@ import {
 	ErrorSchema,
 	MessageSchema,
 	SubscriptionListSchema,
-	SubscriptionSchema
+	SubscriptionSchema,
 } from '../lib/schemas.js'
 import { apiKeyAuth } from '../middleware/auth.js'
-import { createSubscription, deleteSubscription, listSubscriptions } from '../services/subscriptions.js'
+import {
+	createSubscription,
+	deleteSubscription,
+	listSubscriptions,
+} from '../services/subscriptions.js'
 
 const listRoute = createRoute({
 	method: 'get',
@@ -19,19 +23,19 @@ const listRoute = createRoute({
 	security: [{ ApiKey: [] }],
 	request: {
 		query: z.object({
-			topic: z.string().optional().openapi({ description: 'Filter by topic' })
-		})
+			topic: z.string().optional().openapi({ description: 'Filter by topic' }),
+		}),
 	},
 	responses: {
 		200: {
 			content: { 'application/json': { schema: SubscriptionListSchema } },
-			description: 'List of subscriptions'
+			description: 'List of subscriptions',
 		},
 		401: {
 			content: { 'application/json': { schema: ErrorSchema } },
-			description: 'Unauthorized'
-		}
-	}
+			description: 'Unauthorized',
+		},
+	},
 })
 
 const createRoute_ = createRoute({
@@ -44,19 +48,19 @@ const createRoute_ = createRoute({
 	request: {
 		body: {
 			content: { 'application/json': { schema: CreateSubscriptionSchema } },
-			required: true
-		}
+			required: true,
+		},
 	},
 	responses: {
 		201: {
 			content: { 'application/json': { schema: SubscriptionSchema } },
-			description: 'Subscription created'
+			description: 'Subscription created',
 		},
 		401: {
 			content: { 'application/json': { schema: ErrorSchema } },
-			description: 'Unauthorized'
-		}
-	}
+			description: 'Unauthorized',
+		},
+	},
 })
 
 const deleteRoute = createRoute({
@@ -68,23 +72,23 @@ const deleteRoute = createRoute({
 	security: [{ ApiKey: [] }],
 	request: {
 		params: z.object({
-			id: z.string().uuid().openapi({ description: 'Subscription ID' })
-		})
+			id: z.string().uuid().openapi({ description: 'Subscription ID' }),
+		}),
 	},
 	responses: {
 		200: {
 			content: { 'application/json': { schema: MessageSchema } },
-			description: 'Subscription deleted'
+			description: 'Subscription deleted',
 		},
 		401: {
 			content: { 'application/json': { schema: ErrorSchema } },
-			description: 'Unauthorized'
+			description: 'Unauthorized',
 		},
 		404: {
 			content: { 'application/json': { schema: ErrorSchema } },
-			description: 'Subscription not found'
-		}
-	}
+			description: 'Subscription not found',
+		},
+	},
 })
 
 export const subscriptions = new OpenAPIHono()

@@ -1,6 +1,6 @@
-import "next-auth"
+import 'next-auth'
 
-declare module "next-auth" {
+declare module 'next-auth' {
 	interface Session {
 		/** Bearer token forwarded to upstream API requests. */
 		accessToken?: string

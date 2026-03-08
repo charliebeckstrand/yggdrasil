@@ -15,23 +15,23 @@ const registerRoute = createRoute({
 	request: {
 		body: {
 			content: { 'application/json': { schema: RegisterSchema } },
-			required: true
-		}
+			required: true,
+		},
 	},
 	responses: {
 		201: {
 			content: { 'application/json': { schema: UserResponseSchema } },
-			description: 'User created'
+			description: 'User created',
 		},
 		400: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Validation error'
+			description: 'Validation error',
 		},
 		409: {
 			content: { 'application/json': { schema: DetailSchema } },
-			description: 'Email already registered'
-		}
-	}
+			description: 'Email already registered',
+		},
+	},
 })
 
 export const register = new OpenAPIHono()
@@ -62,8 +62,8 @@ register.openapi(registerRoute, async (c) => {
 			email: user.email,
 			is_active: user.is_active,
 			is_verified: user.is_verified,
-			created_at: user.created_at
+			created_at: user.created_at,
 		},
-		201
+		201,
 	)
 })
