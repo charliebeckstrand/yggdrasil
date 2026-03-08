@@ -9,6 +9,7 @@ export function vidarBanCheck(): MiddlewareHandler {
 
 		if (!env.VIDAR_URL) {
 			await next()
+
 			return
 		}
 

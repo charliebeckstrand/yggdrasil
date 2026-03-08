@@ -58,6 +58,7 @@ register.openapi(registerRoute, async (c) => {
 	}
 
 	const ip = c.req.header('x-forwarded-for') ?? c.req.header('x-real-ip') ?? 'unknown'
+
 	reportEvent('registration', ip, { email })
 
 	return c.json(

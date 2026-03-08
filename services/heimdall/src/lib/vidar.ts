@@ -17,6 +17,7 @@ export async function checkIpBan(ip: string): Promise<BanCheckResult | null> {
 
 	try {
 		const url = new URL('/vidar/check-ip', env.VIDAR_URL)
+
 		url.searchParams.set('ip', ip)
 
 		const headers: Record<string, string> = {}

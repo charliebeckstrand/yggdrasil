@@ -57,6 +57,7 @@ login.openapi(loginRoute, async (c) => {
 
 	if (!creds || !passwordOk) {
 		const ip = c.req.header('x-forwarded-for') ?? c.req.header('x-real-ip') ?? 'unknown'
+
 		reportEvent('login_failed', ip, { email })
 
 		return c.json({ detail: 'Incorrect email or password' }, 401)
