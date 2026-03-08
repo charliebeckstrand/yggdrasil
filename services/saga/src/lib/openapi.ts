@@ -1,7 +1,7 @@
 export const openApiConfig = {
 	openapi: '3.0.0',
 	info: {
-		title: 'Ratatoskr Event Bus',
+		title: 'Saga Events and Changelog',
 		version: '0.1.0',
 		description: 'Event bus microservice for inter-service messaging',
 	},

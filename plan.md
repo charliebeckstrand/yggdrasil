@@ -4,7 +4,7 @@
 Vidar is a security monitoring microservice that detects suspicious activity (brute force, registration spam, credential stuffing), enforces bans, and optionally integrates an AI assistant for threat analysis.
 
 ## Architecture
-- **Event ingestion**: Direct HTTP API for real-time events + Ratatoskr subscription for async events
+- **Event ingestion**: Direct HTTP API for real-time events + Saga subscription for async events
 - **Rule engine**: Predefined rules that evaluate ingested events and trigger actions
 - **Ban enforcement**: PostgreSQL-backed IP ban list with expiration, queryable by other services
 - **AI placeholder**: Interface for plugging in an AI provider later

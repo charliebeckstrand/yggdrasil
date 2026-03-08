@@ -1,7 +1,7 @@
-CREATE SCHEMA IF NOT EXISTS ratatoskr;
+CREATE SCHEMA IF NOT EXISTS saga;
 
 -- Subscriptions: which services want which events
-CREATE TABLE ratatoskr.subscriptions (
+CREATE TABLE saga.subscriptions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic VARCHAR(255) NOT NULL,
     callback_url TEXT NOT NULL,
@@ -11,10 +11,10 @@ CREATE TABLE ratatoskr.subscriptions (
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_subscriptions_topic ON ratatoskr.subscriptions(topic) WHERE is_active = TRUE;
+CREATE INDEX idx_subscriptions_topic ON saga.subscriptions(topic) WHERE is_active = TRUE;
 
 -- Events: log of all published events
-CREATE TABLE ratatoskr.events (
+CREATE TABLE saga.events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic VARCHAR(255) NOT NULL,
     payload JSONB NOT NULL DEFAULT '{}',
@@ -22,14 +22,14 @@ CREATE TABLE ratatoskr.events (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_events_topic ON ratatoskr.events(topic);
-CREATE INDEX idx_events_created_at ON ratatoskr.events(created_at);
+CREATE INDEX idx_events_topic ON saga.events(topic);
+CREATE INDEX idx_events_created_at ON saga.events(created_at);
 
 -- Deliveries: track delivery attempts per event per subscription
-CREATE TABLE ratatoskr.deliveries (
+CREATE TABLE saga.deliveries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    event_id UUID NOT NULL REFERENCES ratatoskr.events(id),
-    subscription_id UUID NOT NULL REFERENCES ratatoskr.subscriptions(id),
+    event_id UUID NOT NULL REFERENCES saga.events(id),
+    subscription_id UUID NOT NULL REFERENCES saga.subscriptions(id),
     status VARCHAR(20) NOT NULL DEFAULT 'pending',
     attempts INTEGER NOT NULL DEFAULT 0,
     last_attempt_at TIMESTAMPTZ,
@@ -38,4 +38,4 @@ CREATE TABLE ratatoskr.deliveries (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_deliveries_status ON ratatoskr.deliveries(status) WHERE status = 'pending';
+CREATE INDEX idx_deliveries_status ON saga.deliveries(status) WHERE status = 'pending';

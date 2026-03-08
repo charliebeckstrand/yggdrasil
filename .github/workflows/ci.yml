@@ -16,7 +16,7 @@ jobs:
       syn: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.syn == 'true' }}
       mimir: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.mimir == 'true' }}
       heimdall: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.heimdall == 'true' || steps.filter.outputs.mimir == 'true' }}
-      ratatoskr: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.ratatoskr == 'true' || steps.filter.outputs.mimir == 'true' }}
+      saga: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.saga == 'true' || steps.filter.outputs.mimir == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -34,8 +34,8 @@ jobs:
               - 'services/mimir/**'
             heimdall:
               - 'services/heimdall/**'
-            ratatoskr:
-              - 'services/ratatoskr/**'
+            saga:
+              - 'services/saga/**'
 
   bifrost:
     name: Bifrost (Gateway)
@@ -109,14 +109,14 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
-  ratatoskr:
-    name: Ratatoskr (Event Bus)
+  saga:
+    name: Saga (Event Bus)
     needs: changes
-    if: needs.changes.outputs.ratatoskr == 'true'
+    if: needs.changes.outputs.saga == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: services/ratatoskr
+        working-directory: services/saga
     steps:
       - uses: actions/checkout@v4
 

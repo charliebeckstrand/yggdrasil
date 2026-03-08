@@ -1,5 +1,5 @@
 {
-  "name": "ratatoskr",
+  "name": "saga",
   "version": "0.1.0",
   "description": "Event bus microservice for inter-service messaging",
   "type": "module",
