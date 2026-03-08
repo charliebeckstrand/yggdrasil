@@ -7,6 +7,7 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY services/ratatoskr/package.json ./services/ratatoskr/
 RUN pnpm install --frozen-lockfile --filter ratatoskr
+COPY tsup.config.ts ./
 COPY services/ratatoskr/ ./services/ratatoskr/
 RUN pnpm --filter ratatoskr build
 
