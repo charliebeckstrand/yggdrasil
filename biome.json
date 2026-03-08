@@ -26,7 +26,6 @@
 	},
 	"files": {
 		"includes": ["**/*.ts"],
-		"ignore": ["node_modules/", "dist/", "coverage/", ".turbo/"],
 		"ignoreUnknown": true
 	},
 	"vcs": {
