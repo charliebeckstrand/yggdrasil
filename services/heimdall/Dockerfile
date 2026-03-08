@@ -7,6 +7,7 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY services/heimdall/package.json ./services/heimdall/
 RUN pnpm install --frozen-lockfile --filter heimdall
+COPY tsup.config.ts ./
 COPY services/heimdall/ ./services/heimdall/
 RUN pnpm --filter heimdall build
 

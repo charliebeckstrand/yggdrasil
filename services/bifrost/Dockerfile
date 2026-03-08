@@ -7,6 +7,7 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY services/bifrost/package.json ./services/bifrost/
 RUN pnpm install --frozen-lockfile --filter bifrost
+COPY tsup.config.ts ./
 COPY services/bifrost/ ./services/bifrost/
 RUN pnpm --filter bifrost build
 
