@@ -1,6 +1,6 @@
-import type { MiddlewareHandler } from "hono"
-import { HTTPException } from "hono/http-exception"
-import { loadEnv } from "../lib/env.js"
+import type { MiddlewareHandler } from 'hono'
+import { HTTPException } from 'hono/http-exception'
+import { loadEnv } from '../lib/env.js'
 
 export function apiKeyAuth(): MiddlewareHandler {
 	const env = loadEnv()
@@ -8,13 +8,14 @@ export function apiKeyAuth(): MiddlewareHandler {
 	return async (c, next) => {
 		if (!env.HEIMDALL_API_KEY) {
 			await next()
+
 			return
 		}
 
-		const provided = c.req.header("x-api-key") ?? ""
+		const provided = c.req.header('x-api-key') ?? ''
 
 		if (provided !== env.HEIMDALL_API_KEY) {
-			throw new HTTPException(401, { message: "Invalid or missing API key" })
+			throw new HTTPException(401, { message: 'Invalid or missing API key' })
 		}
 
 		await next()

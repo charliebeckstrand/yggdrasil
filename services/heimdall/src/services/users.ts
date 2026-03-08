@@ -1,4 +1,4 @@
-import { getPool } from "../lib/db.js"
+import { getPool } from '../lib/db.js'
 
 export interface UserRow {
 	id: string
@@ -15,18 +15,14 @@ export interface CredentialsRow {
 	is_active: boolean
 }
 
-export async function createUser(
-	id: string,
-	email: string,
-	hashedPassword: string,
-): Promise<UserRow> {
+export async function createUser(id: string, email: string, hashedPassword: string): Promise<UserRow> {
 	const pool = getPool()
 
 	const { rows } = await pool.query<UserRow>(
 		`INSERT INTO users (id, email, hashed_password)
 		 VALUES ($1, $2, $3)
 		 RETURNING id, email, is_active, is_verified, created_at, updated_at`,
-		[id, email, hashedPassword],
+		[id, email, hashedPassword]
 	)
 
 	return rows[0]
@@ -36,8 +32,8 @@ export async function findCredentialsByEmail(email: string): Promise<Credentials
 	const pool = getPool()
 
 	const { rows } = await pool.query<CredentialsRow>(
-		"SELECT id, hashed_password, is_active FROM users WHERE email = $1",
-		[email],
+		'SELECT id, hashed_password, is_active FROM users WHERE email = $1',
+		[email]
 	)
 
 	return rows[0] ?? null
@@ -47,8 +43,8 @@ export async function findUserById(id: string): Promise<UserRow | null> {
 	const pool = getPool()
 
 	const { rows } = await pool.query<UserRow>(
-		"SELECT id, email, is_active, is_verified, created_at, updated_at FROM users WHERE id = $1",
-		[id],
+		'SELECT id, email, is_active, is_verified, created_at, updated_at FROM users WHERE id = $1',
+		[id]
 	)
 
 	return rows[0] ?? null
@@ -56,5 +52,6 @@ export async function findUserById(id: string): Promise<UserRow | null> {
 
 export async function deactivateUser(id: string): Promise<void> {
 	const pool = getPool()
-	await pool.query("UPDATE users SET is_active = false WHERE id = $1", [id])
+
+	await pool.query('UPDATE users SET is_active = false WHERE id = $1', [id])
 }

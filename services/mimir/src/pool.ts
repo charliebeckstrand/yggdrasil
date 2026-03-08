@@ -1,4 +1,4 @@
-import pg from "pg"
+import pg from 'pg'
 
 const { Pool } = pg
 
@@ -18,7 +18,8 @@ export interface PoolOptions {
  */
 export function createPool(databaseUrl: string, options?: PoolOptions): pg.Pool {
 	const url = new URL(databaseUrl)
-	const requiresSsl = url.searchParams.has("sslmode")
+
+	const requiresSsl = url.searchParams.has('sslmode')
 
 	return new Pool({
 		host: url.hostname,
@@ -29,7 +30,7 @@ export function createPool(databaseUrl: string, options?: PoolOptions): pg.Pool 
 		max: options?.max ?? 5,
 		idleTimeoutMillis: options?.idleTimeoutMillis ?? 30000,
 		connectionTimeoutMillis: options?.connectionTimeoutMillis ?? 5000,
-		ssl: requiresSsl ? { rejectUnauthorized: false } : false,
+		ssl: requiresSsl ? { rejectUnauthorized: false } : false
 	})
 }
 

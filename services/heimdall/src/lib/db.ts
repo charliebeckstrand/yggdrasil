@@ -1,5 +1,5 @@
-import { closePool as closeMimirPool, createPool } from "mimir"
-import { loadEnv } from "./env.js"
+import { closePool as closeMimirPool, createPool } from 'mimir'
+import { loadEnv } from './env.js'
 
 let pool: ReturnType<typeof createPool> | null = null
 
@@ -15,6 +15,7 @@ export function getPool() {
 export async function closePool(): Promise<void> {
 	if (pool) {
 		await closeMimirPool(pool)
+
 		pool = null
 	}
 }

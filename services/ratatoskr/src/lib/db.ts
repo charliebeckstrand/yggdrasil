@@ -1,5 +1,5 @@
-import { closePool as closeMimirPool, createPool } from "mimir"
-import { loadEnv } from "./env.js"
+import { closePool as closeMimirPool, createPool } from 'mimir'
+import { loadEnv } from './env.js'
 
 let pool: ReturnType<typeof createPool> | null = null
 
@@ -8,7 +8,7 @@ export function getPool() {
 		const env = loadEnv()
 
 		if (!env.DATABASE_URL) {
-			throw new Error("DATABASE_URL is not configured")
+			throw new Error('DATABASE_URL is not configured')
 		}
 
 		pool = createPool(env.DATABASE_URL, { max: 10 })
