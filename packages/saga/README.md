@@ -2,7 +2,7 @@
 
 PostgreSQL logging and search for Hono services. 
 
-Store structured log entries, query by service, level, type, and time range, and mount a full OpenAPI-documented router directly into any Hono app.
+Store and query structured log entries via a mountable, OpenAPI-documented router.
 
 ## Usage
 
