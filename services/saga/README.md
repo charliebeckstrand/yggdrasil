@@ -1,6 +1,6 @@
 # saga
 
-Centralized logging service for structured log ingestion and querying.
+Structured log ingestion and querying service.
 
 - **Structured logging** — services send typed log entries with metadata
 - **Persistent storage** — logs are stored in PostgreSQL for querying
