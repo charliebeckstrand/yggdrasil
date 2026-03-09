@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -207,5 +207,6 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 }
 
 // Phase 3: Save secrets cache
+mkdirSync(environmentsDir, { recursive: true })
 writeFileSync(secretsCachePath, JSON.stringify(secretsCache, null, '\t') + '\n')
 console.log('  saved secrets cache')
