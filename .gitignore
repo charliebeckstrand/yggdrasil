@@ -9,4 +9,3 @@ coverage/
 .turbo/
 .vscode/
 .secrets.json
-overrides.json

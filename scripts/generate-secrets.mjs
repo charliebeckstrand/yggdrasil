@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const servicesDir = resolve(root, 'services')
 const secretsCachePath = resolve(root, '.secrets.json')
-const overridesPath = resolve(root, 'overrides.json')
 
 // --- Parse CLI flags ---
 
@@ -54,18 +53,6 @@ function loadSecretsCache() {
 	}
 }
 
-// --- Load overrides ---
-
-function loadOverrides() {
-	if (!existsSync(overridesPath)) return {}
-
-	try {
-		return JSON.parse(readFileSync(overridesPath, 'utf-8'))
-	} catch {
-		return {}
-	}
-}
-
 // --- Generate a secret ---
 
 function generateSecret(length = 32) {
@@ -76,7 +63,6 @@ function generateSecret(length = 32) {
 
 const manifests = loadManifests()
 const secretsCache = loadSecretsCache()
-const overrides = loadOverrides()
 
 if (Object.keys(manifests).length === 0) {
 	console.error('No service manifests found.')
@@ -131,15 +117,7 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 		PORT: String(manifest.port),
 	}
 
-	const serviceOverrides = overrides[serviceName] || {}
-
 	for (const [varName, config] of Object.entries(manifest.vars || {})) {
-		// Overrides take priority over everything
-		if (serviceOverrides[varName] !== undefined) {
-			resolved[varName] = serviceOverrides[varName]
-			continue
-		}
-
 		switch (config.type) {
 			case 'value': {
 				resolved[varName] = config.default ?? ''
