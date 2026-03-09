@@ -1,5 +1,6 @@
 import { serve } from '@hono/node-server'
 import { createNodeWebSocket } from '@hono/node-ws'
+import { reportReady } from 'startup'
 import { createApp } from './app.js'
 import { loadEnv } from './lib/env.js'
 import { createWsHandler } from './ws/handler.js'
@@ -17,9 +18,10 @@ const server = serve(
 		port: env.PORT,
 	},
 	(info) => {
-		console.log(`Hermes running on http://localhost:${info.port}`)
-		console.log(`API docs available at http://localhost:${info.port}/messages/docs`)
-		console.log(`WebSocket at ws://localhost:${info.port}/messages/ws`)
+		reportReady(info.port, [
+			{ label: 'docs', path: '/messages/docs' },
+			{ label: 'ws', path: '/messages/ws' },
+		])
 	},
 )
 

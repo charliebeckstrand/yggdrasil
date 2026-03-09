@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server'
+import { reportReady } from 'startup'
 import { createApp } from './app.js'
 import { loadEnv } from './lib/env.js'
 import { loadEnvironments } from './lib/environments.js'
@@ -18,8 +19,7 @@ serve(
 		port: env.PORT,
 	},
 	(info) => {
-		console.log(`Frigg config oracle running on http://localhost:${info.port}`)
 		console.log(`  ${serviceCount} services loaded from ${env.NODE_ENV} environment`)
-		console.log(`  API docs available at http://localhost:${info.port}/services/docs`)
+		reportReady(info.port, [{ label: 'docs', path: '/services/docs' }])
 	},
 )

@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server'
+import { reportReady } from 'startup'
 import { createApp } from './app.js'
 import { loadEnv } from './lib/env.js'
 
@@ -11,7 +12,6 @@ serve(
 		port: env.PORT,
 	},
 	(info) => {
-		console.log(`Heimdall auth service running on http://localhost:${info.port}`)
-		console.log(`API docs available at http://localhost:${info.port}/auth/docs`)
+		reportReady(info.port, [{ label: 'docs', path: '/auth/docs' }])
 	},
 )

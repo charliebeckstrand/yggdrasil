@@ -1,0 +1,22 @@
+{
+  "name": "startup",
+  "version": "0.1.0",
+  "description": "Coordinated startup logging for Yggdrasil services",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "packageManager": "pnpm@10.29.3",
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

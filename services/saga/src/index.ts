@@ -1,6 +1,7 @@
 // TODO: Add saga service to .do/app.yaml and secrets to .github/workflows/deploy.yml when ready to deploy
 
 import { serve } from '@hono/node-server'
+import { reportReady } from 'startup'
 import { createApp } from './app.js'
 import { loadEnv } from './lib/env.js'
 
@@ -13,8 +14,9 @@ serve(
 		port: env.PORT,
 	},
 	(info) => {
-		console.log(`Saga running on http://localhost:${info.port}`)
-		console.log(`API docs available at http://localhost:${info.port}/events/docs`)
-		console.log(`OpenAPI spec at http://localhost:${info.port}/events/openapi.json`)
+		reportReady(info.port, [
+			{ label: 'docs', path: '/events/docs' },
+			{ label: 'openapi', path: '/events/openapi.json' },
+		])
 	},
 )

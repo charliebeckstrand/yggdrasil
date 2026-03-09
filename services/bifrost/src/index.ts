@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server'
+import { reportReady } from 'startup'
 import { createApp } from './app.js'
 import { loadEnv } from './lib/env.js'
 
@@ -11,8 +12,9 @@ serve(
 		port: env.PORT,
 	},
 	(info) => {
-		console.log(`Bifrost gateway running on http://localhost:${info.port}`)
-		console.log(`API docs available at http://localhost:${info.port}/api/docs`)
-		console.log(`OpenAPI spec at http://localhost:${info.port}/openapi.json`)
+		reportReady(info.port, [
+			{ label: 'docs', path: '/api/docs' },
+			{ label: 'openapi', path: '/openapi.json' },
+		])
 	},
 )
