@@ -17,10 +17,10 @@ TypeScript Microservices (Hono + Turborepo)
 | Package | Description |
 | --- | --- |
 | **[Heimdall](packages/heimdall)** | JWT authentication and user management |
-| **[Frigg](packages/frigg)** | Config, secrets, and environment resolution |
-| **[Grid](packages/grid)** | Shared Hono middleware, schemas, and OpenAPI config |
 | **[Mimir](packages/mimir)** | Shared PostgreSQL connection pool |
+| **[Grid](packages/grid)** | Shared Hono middleware, schemas, and OpenAPI config |
 | **[Norns](packages/norns)** | Server lifecycle and graceful shutdown |
+| **[Frigg](packages/frigg)** | Config, secrets, and environment resolution |
 
 ## Prerequisites
 
