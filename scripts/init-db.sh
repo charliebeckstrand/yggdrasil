@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# This script runs as the POSTGRES_USER (bifrost) during container init.
+# This script runs as the POSTGRES_USER (heimdall) during container init.
 # It creates additional roles and databases needed by other services,
 # then applies the schema migrations to each database.
 
