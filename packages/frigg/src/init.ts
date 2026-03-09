@@ -39,5 +39,5 @@ export function initEnvironments(options: InitOptions): void {
 
 	saveSecretsCache(updatedCache, secretsCachePath)
 
-	console.log('  saved secrets cache')
+	console.log('saved secrets cache')
 }
