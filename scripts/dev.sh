@@ -4,28 +4,40 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 COMPOSE_FILE="$ROOT_DIR/docker-compose.dev.yml"
 
-RED='\033[0;31m'
+YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 DIM='\033[2m'
 RESET='\033[0m'
 
+DOCKER_RUNNING=false
+
 cleanup() {
-	echo ""
-	echo -e "${CYAN}Stopping dev containers...${RESET}"
+	if [ "$DOCKER_RUNNING" = true ]; then
+		echo ""
+		echo -e "${CYAN}Stopping dev containers...${RESET}"
 
-	docker compose -f "$COMPOSE_FILE" down 2>/dev/null
+		docker compose -f "$COMPOSE_FILE" down 2>/dev/null
 
-	echo -e "${GREEN}Dev containers stopped.${RESET}"
+		echo -e "${GREEN}Dev containers stopped.${RESET}"
+	fi
 }
 
 trap cleanup EXIT INT TERM
 
-echo -e "${CYAN}Starting dev containers...${RESET}"
+if command -v docker &>/dev/null && docker info &>/dev/null; then
+	echo -e "${CYAN}Starting dev containers...${RESET}"
 
-docker compose -f "$COMPOSE_FILE" up -d --wait
+	docker compose -f "$COMPOSE_FILE" up -d --wait
 
-echo -e "${GREEN}Redis is ready${RESET} ${DIM}(localhost:6379)${RESET}"
-echo ""
+	DOCKER_RUNNING=true
+
+	echo -e "${GREEN}Redis is ready${RESET} ${DIM}(localhost:6379)${RESET}"
+	echo ""
+else
+	echo -e "${YELLOW}Docker not available — skipping dev containers${RESET}"
+	echo -e "${DIM}Install Docker to enable Redis and other dev services${RESET}"
+	echo ""
+fi
 
 exec pnpm turbo run dev --concurrency=15
