@@ -32,7 +32,8 @@ if command -v docker &>/dev/null && docker info &>/dev/null; then
 
 	DOCKER_RUNNING=true
 
-	echo -e "${GREEN}Redis is ready${RESET} ${DIM}(localhost:6379)${RESET}"
+	echo -e "${GREEN}PostgreSQL is ready${RESET} ${DIM}(localhost:5432)${RESET}"
+	echo -e "${GREEN}Redis is ready${RESET}      ${DIM}(localhost:6379)${RESET}"
 	echo ""
 else
 	echo -e "${YELLOW}Docker not available — skipping dev containers${RESET}"
