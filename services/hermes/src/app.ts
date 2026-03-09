@@ -1,4 +1,3 @@
-import type { createNodeWebSocket } from '@hono/node-ws'
 import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
@@ -10,9 +9,8 @@ import { broadcastMessage } from './routes/broadcast.js'
 import { channels } from './routes/channels.js'
 import { health } from './routes/health.js'
 import { sendMessage } from './routes/send.js'
-import { createWsHandler } from './ws/handler.js'
 
-export function createApp(getWs: () => ReturnType<typeof createNodeWebSocket>) {
+export function createApp() {
 	const app = new OpenAPIHono()
 
 	// --- Global middleware ---
@@ -26,11 +24,6 @@ export function createApp(getWs: () => ReturnType<typeof createNodeWebSocket>) {
 	app.route('/messages', sendMessage)
 	app.route('/messages', broadcastMessage)
 	app.route('/messages', channels)
-
-	// --- WebSocket ---
-
-	const getWsHandler = createWsHandler(getWs)
-	app.get('/messages/ws', getWsHandler())
 
 	// --- OpenAPI ---
 
