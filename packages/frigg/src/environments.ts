@@ -94,9 +94,16 @@ export function resolveEnvironments(
 
 /**
  * Write .env files for each service into their respective directories.
+ * When `filter` is provided, only writes .env files for the specified services.
  */
-export function writeEnvFiles(environments: EnvironmentData, servicesDir: string): void {
+export function writeEnvFiles(
+	environments: EnvironmentData,
+	servicesDir: string,
+	filter?: string[],
+): void {
 	for (const [serviceName, vars] of Object.entries(environments)) {
+		if (filter && !filter.includes(serviceName)) continue
+
 		const serviceDir = resolve(servicesDir, serviceName)
 
 		if (!existsSync(serviceDir)) continue

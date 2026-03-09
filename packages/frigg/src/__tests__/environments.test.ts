@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest'
-import { resolveEnvironments } from '../environments.js'
+import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { resolveEnvironments, writeEnvFiles } from '../environments.js'
 import type { ManifestData } from '../types.js'
 
 const manifests: ManifestData = {
@@ -90,5 +93,49 @@ describe('resolveEnvironments', () => {
 		const result = resolveEnvironments(manifests, {})
 
 		expect(result.test.UNKNOWN_URL).toBe('')
+	})
+})
+
+describe('writeEnvFiles', () => {
+	let servicesDir: string
+
+	beforeEach(() => {
+		servicesDir = join(tmpdir(), `frigg-test-${Date.now()}`)
+
+		mkdirSync(join(servicesDir, 'heimdall'), { recursive: true })
+		mkdirSync(join(servicesDir, 'bifrost'), { recursive: true })
+	})
+
+	afterEach(() => {
+		rmSync(servicesDir, { recursive: true, force: true })
+	})
+
+	it('writes .env files for all services when no filter is provided', () => {
+		const environments = resolveEnvironments(manifests, secretsCache)
+
+		writeEnvFiles(environments, servicesDir)
+
+		expect(existsSync(join(servicesDir, 'heimdall', '.env'))).toBe(true)
+		expect(existsSync(join(servicesDir, 'bifrost', '.env'))).toBe(true)
+	})
+
+	it('writes .env only for filtered services', () => {
+		const environments = resolveEnvironments(manifests, secretsCache)
+
+		writeEnvFiles(environments, servicesDir, ['bifrost'])
+
+		expect(existsSync(join(servicesDir, 'bifrost', '.env'))).toBe(true)
+		expect(existsSync(join(servicesDir, 'heimdall', '.env'))).toBe(false)
+	})
+
+	it('resolves cross-service refs even when only writing filtered service', () => {
+		const environments = resolveEnvironments(manifests, secretsCache)
+
+		writeEnvFiles(environments, servicesDir, ['bifrost'])
+
+		const content = readFileSync(join(servicesDir, 'bifrost', '.env'), 'utf-8')
+
+		expect(content).toContain('HEIMDALL_URL=http://localhost:3001')
+		expect(content).toContain('HEIMDALL_API_KEY=api-key-value')
 	})
 })
