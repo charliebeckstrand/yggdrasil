@@ -10,7 +10,6 @@ Hono + TypeScript Microservices
 | **Hermes** | WebSockets | `3002` |
 | **Vidar** | Monitoring | `3003` |
 | **Frigg** | Config Validation | `3004` |
-| **Mimir** | Database Pool | |
 
 ## Prerequisites
 
