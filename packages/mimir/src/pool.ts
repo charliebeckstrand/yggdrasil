@@ -9,12 +9,10 @@ export interface PoolOptions {
 }
 
 /**
- * Creates a PostgreSQL connection pool by decomposing a DATABASE_URL into
- * individual connection parameters.
+ * Creates a PostgreSQL connection pool from a DATABASE_URL.
  *
- * DigitalOcean managed Postgres breaks SSL validation when using a single
- * connection string, causing SELF_SIGNED_CERT_IN_CHAIN errors. Decomposing
- * the URL into host/port/database/user/password avoids this issue.
+ * Uses decomposed connection params instead of a connection string to avoid
+ * SELF_SIGNED_CERT_IN_CHAIN errors on DigitalOcean managed Postgres.
  */
 export function createPool(databaseUrl: string, options?: PoolOptions): pg.Pool {
 	const url = new URL(databaseUrl)

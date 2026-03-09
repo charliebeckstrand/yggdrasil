@@ -15,17 +15,23 @@ export function setupLifecycle({ server, name, port, onShutdown }: LifecycleOpti
 		if (error.code === 'EADDRINUSE') {
 			if (portRetried) {
 				console.error(`Port ${port} is still in use after retry, exiting.`)
+
 				process.exit(1)
 			}
 
 			portRetried = true
+
 			console.warn(`Port ${port} is in use, attempting to free it...`)
 
+			const killPortByPlatform: Partial<Record<NodeJS.Platform, string>> = {
+				darwin: `lsof -i :${port} | grep LISTEN | awk '{print $2}' | xargs kill -9`,
+			}
+
+			const defaultKillPortCmd = `fuser -k ${port}/tcp`
+
 			try {
-				const cmd =
-					process.platform === 'darwin'
-						? `lsof -i :${port} | grep LISTEN | awk '{print $2}' | xargs kill -9`
-						: `fuser -k ${port}/tcp`
+				const cmd = killPortByPlatform[process.platform] ?? defaultKillPortCmd
+
 				execSync(cmd, { stdio: 'ignore' })
 			} catch {
 				// Process may have already exited
@@ -57,6 +63,7 @@ export function setupLifecycle({ server, name, port, onShutdown }: LifecycleOpti
 		await onShutdown?.()
 
 		console.log(`${name} shut down after ${signal}`)
+
 		process.exit(0)
 	}
 
