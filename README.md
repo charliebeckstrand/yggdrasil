@@ -1,6 +1,6 @@
 # Yggdrasil
 
-Hono + TypeScript Microservices
+Hono + TypeScript Microservices Turborepo
 
 | Service | Role | Port |
 | --- | --- | --- |
