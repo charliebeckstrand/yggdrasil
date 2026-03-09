@@ -20,7 +20,7 @@ TypeScript Microservices (Hono + Turborepo)
 | **[Mimir](packages/mimir)** | PostgreSQL connection pool |
 | **[Grid](packages/grid)** | Hono middleware, schemas, and OpenAPI config |
 | **[Norns](packages/norns)** | Server lifecycle and graceful shutdown |
-| **[Frigg](packages/frigg)** | Config, secrets, and environment resolution |
+| **[Frigg](packages/frigg)** | Config, secrets, and .env provisioning |
 
 ## Prerequisites
 
