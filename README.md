@@ -10,7 +10,6 @@ Hono + TypeScript Microservices
 | **[Hermes](services/hermes)** | WebSockets | `3002` |
 | **[Huginn](services/huginn)** | Event Bus | `3003` |
 | **[Vidar](services/vidar)** | Monitoring | `3004` |
-| **[Frigg](services/frigg)** | Config Validation | `3005` |
 
 ## Prerequisites
 
