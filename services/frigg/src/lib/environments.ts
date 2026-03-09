@@ -8,11 +8,11 @@ export type EnvironmentData = Record<string, Record<string, string>>
 let cached: EnvironmentData | null = null
 
 function getSecretsPath(): string {
-	return resolve(import.meta.dirname, '..', '..', '..', '..', 'environments', '.secrets.json')
+	return resolve(import.meta.dirname, '..', '..', '..', '..', '.secrets.json')
 }
 
 function getOverridesPath(): string {
-	return resolve(import.meta.dirname, '..', '..', '..', '..', 'environments', 'overrides.json')
+	return resolve(import.meta.dirname, '..', '..', '..', '..', 'overrides.json')
 }
 
 function loadSecretsCache(): Record<string, string> {

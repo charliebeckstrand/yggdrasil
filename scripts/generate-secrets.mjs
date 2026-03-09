@@ -1,13 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const servicesDir = resolve(root, 'services')
-const environmentsDir = resolve(root, 'environments')
-const secretsCachePath = resolve(environmentsDir, '.secrets.json')
-const overridesPath = resolve(environmentsDir, 'overrides.json')
+const secretsCachePath = resolve(root, '.secrets.json')
+const overridesPath = resolve(root, 'overrides.json')
 
 // --- Parse CLI flags ---
 
@@ -207,6 +206,5 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 }
 
 // Phase 3: Save secrets cache
-mkdirSync(environmentsDir, { recursive: true })
 writeFileSync(secretsCachePath, JSON.stringify(secretsCache, null, '\t') + '\n')
 console.log('  saved secrets cache')
