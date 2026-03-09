@@ -1,5 +1,6 @@
 // TODO: Add saga service to .do/app.yaml and secrets to .github/workflows/deploy.yml when ready to deploy
 
+import { execSync } from 'node:child_process'
 import { serve } from '@hono/node-server'
 import { createApp } from './app.js'
 import { closePool } from './lib/db.js'
@@ -19,6 +20,28 @@ const server = serve(
 		console.log(`OpenAPI spec at http://localhost:${info.port}/events/openapi.json`)
 	},
 )
+
+let portRetried = false
+
+server.on('error', (error: NodeJS.ErrnoException) => {
+	if (error.code === 'EADDRINUSE') {
+		if (portRetried) {
+			console.error(`Port ${env.PORT} is still in use after retry, exiting.`)
+			process.exit(1)
+		}
+
+		portRetried = true
+		console.warn(`Port ${env.PORT} is in use, attempting to free it...`)
+
+		try {
+			execSync(`lsof -ti :${env.PORT} | xargs kill -9`, { stdio: 'ignore' })
+		} catch {
+			// Process may have already exited
+		}
+
+		server.listen(env.PORT)
+	}
+})
 
 let shuttingDown = false
 
