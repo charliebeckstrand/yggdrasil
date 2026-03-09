@@ -26,7 +26,7 @@ TypeScript Microservices (Hono + Turborepo)
 
 - Node.js 22+
 - pnpm 10+
-- PostgreSQL 16+ (or Docker)
+- PostgreSQL 16+ (or Docker 20.10+)
 
 ## Development
 
