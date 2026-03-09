@@ -1,7 +1,5 @@
 # grid
 
-Now this:
-
 Shared Hono service utilities — middleware, error handling, schemas, and OpenAPI config.
 
 Eliminates boilerplate that services would otherwise duplicate.
