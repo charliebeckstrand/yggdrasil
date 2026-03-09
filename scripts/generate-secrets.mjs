@@ -4,17 +4,22 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+
 const servicesDir = resolve(root, 'services')
+
 const secretsCachePath = resolve(root, '.secrets.json')
 
 // --- Parse CLI flags ---
 
 const args = process.argv.slice(2)
+
 const rotateFlag = args.find((a) => a.startsWith('--rotate'))
+
 let rotateKeys = null // null = no rotation, [] = rotate all, ['KEY'] = rotate specific
 
 if (rotateFlag) {
 	const match = rotateFlag.match(/^--rotate=(.+)$/)
+
 	rotateKeys = match ? match[1].split(',') : []
 }
 
@@ -32,6 +37,7 @@ function loadManifests() {
 
 		try {
 			const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'))
+
 			manifests[manifest.name || entry.name] = manifest
 		} catch (err) {
 			console.error(`  error: could not parse ${entry.name}/manifest.json: ${err.message}`)
@@ -76,6 +82,7 @@ if (rotateKeys !== null) {
 		for (const key of Object.keys(secretsCache)) {
 			delete secretsCache[key]
 		}
+
 		console.log('  rotating all secrets')
 	} else {
 		// Rotate specific keys
@@ -83,6 +90,7 @@ if (rotateKeys !== null) {
 			for (const cacheKey of Object.keys(secretsCache)) {
 				if (cacheKey.endsWith(`:${keyName}`)) {
 					delete secretsCache[cacheKey]
+
 					console.log(`  rotating ${cacheKey}`)
 				}
 			}
@@ -99,6 +107,7 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 
 		if (!secretsCache[cacheKey]) {
 			secretsCache[cacheKey] = generateSecret()
+
 			console.log(`  generated ${cacheKey}`)
 		}
 	}
@@ -121,12 +130,15 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 		switch (config.type) {
 			case 'value': {
 				resolved[varName] = config.default ?? ''
+
 				break
 			}
 
 			case 'secret': {
 				const cacheKey = `${serviceName}:${varName}`
+
 				resolved[varName] = secretsCache[cacheKey]
+
 				break
 			}
 
@@ -137,7 +149,9 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 					console.error(
 						`  warning: ${serviceName}.${varName} references unknown service '${config.service}'`,
 					)
+
 					resolved[varName] = ''
+
 					break
 				}
 
@@ -149,10 +163,12 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 						console.error(
 							`  warning: ${serviceName}.${varName} references '${config.service}.${config.key}' which does not exist`,
 						)
+
 						resolved[varName] = ''
 					} else if (refVarConfig.type === 'secret') {
 						// Pull the secret from the owner
 						const cacheKey = `${config.service}:${config.key}`
+
 						resolved[varName] = secretsCache[cacheKey] || ''
 					} else if (refVarConfig.type === 'value') {
 						resolved[varName] = refVarConfig.default ?? ''
@@ -160,6 +176,7 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 						console.error(
 							`  warning: ${serviceName}.${varName} references '${config.service}.${config.key}' which is itself a ref (not supported)`,
 						)
+						
 						resolved[varName] = ''
 					}
 				} else {
@@ -171,6 +188,7 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 
 			default:
 				console.error(`  warning: ${serviceName}.${varName} has unknown type '${config.type}'`)
+
 				resolved[varName] = ''
 		}
 	}
@@ -180,9 +198,11 @@ for (const [serviceName, manifest] of Object.entries(manifests)) {
 		.join('\n')
 
 	writeFileSync(resolve(serviceDir, '.env'), `${content}\n`)
+
 	console.log(`  wrote ${serviceName}/.env`)
 }
 
 // Phase 3: Save secrets cache
 writeFileSync(secretsCachePath, JSON.stringify(secretsCache, null, '\t') + '\n')
+
 console.log('  saved secrets cache')
