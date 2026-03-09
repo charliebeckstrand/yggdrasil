@@ -1,11 +1,8 @@
 # norns
 
-Shared server lifecycle utilities for Hono services.
+Hono server startup and shutdown. 
 
-Handles two things:
-
-- **EADDRINUSE recovery** — if a port is occupied by an orphaned process (e.g. after a force kill), automatically kills it and retries
-- **Graceful shutdown** — listens for SIGINT/SIGTERM, closes the server, and runs an optional cleanup callback
+Recovers from occupied ports and handles graceful shutdown on `SIGINT`/`SIGTERM`.
 
 ## Usage
 
