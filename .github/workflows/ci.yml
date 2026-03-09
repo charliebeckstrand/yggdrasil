@@ -39,9 +39,6 @@ jobs:
         needs: changes
         if: needs.changes.outputs.bifrost == 'true'
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: services/bifrost
         steps:
             - uses: actions/checkout@v4
 
@@ -54,9 +51,8 @@ jobs:
                   cache-dependency-path: pnpm-lock.yaml
 
             - run: pnpm install --frozen-lockfile
-            - run: pnpm lint
-            - run: pnpm test
-            - run: pnpm build
+            - run: pnpm turbo run lint test --filter=bifrost
+            - run: pnpm turbo run build --filter=bifrost...
 
     mimir:
         name: Mimir (Database)
