@@ -1,8 +1,8 @@
 # saga
 
-Structured log ingestion and querying service.
+Log ingestion and querying service.
 
-- **Structured logging** — services send typed log entries with metadata
+- **Typed entries** — services send structured log entries with metadata
 - **Persistent storage** — logs are stored in PostgreSQL for querying
 - **Search API** — filter logs by service, level, type, and time range
 - **Event bus integration** — subscribes to Huginn for event-driven log ingestion
