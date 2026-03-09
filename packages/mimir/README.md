@@ -1,8 +1,8 @@
 # mimir
 
-Shared PostgreSQL connection pool for services that need database access.
+PostgreSQL connection pool with SSL support for DigitalOcean managed databases. 
 
-Decomposes `DATABASE_URL` into individual connection parameters to work around DigitalOcean managed Postgres SSL issues (`SELF_SIGNED_CERT_IN_CHAIN`).
+Decomposes `DATABASE_URL` into individual connection parameters to work around `SELF_SIGNED_CERT_IN_CHAIN` errors.
 
 ## Usage
 
