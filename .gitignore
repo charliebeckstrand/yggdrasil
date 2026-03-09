@@ -10,3 +10,4 @@ coverage/
 .vscode/
 .secrets.json
 CLAUDE.local.md
+*.zip
