@@ -1,13 +1,16 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "tasks": {
+        "//#env:init": {
+            "cache": false
+        },
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["src/**"],
             "outputs": ["dist/**"]
         },
         "dev": {
-            "dependsOn": ["^build"],
+            "dependsOn": ["^build", "//#env:init"],
             "cache": false,
             "persistent": true
         },
