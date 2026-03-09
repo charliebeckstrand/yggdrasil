@@ -6,7 +6,7 @@ TypeScript Microservices (Hono + Turborepo)
 
 | Service | Role | Port |
 | --- | --- | --- |
-| **[Bifrost](services/bifrost)** | API Gateway + Auth | `3000` |
+| **[Bifrost](services/bifrost)** | API Gateway | `3000` |
 | **[Saga](services/saga)** | Logging | `3001` |
 | **[Hermes](services/hermes)** | WebSockets | `3002` |
 | **[Huginn](services/huginn)** | Event Bus | `3003` |
