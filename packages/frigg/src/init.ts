@@ -10,6 +10,8 @@ export interface InitOptions {
 	rotate?: true | string[]
 	/** NODE_ENV value. Defaults to process.env.NODE_ENV or 'development'. */
 	nodeEnv?: string
+	/** Only write .env files for these services. All manifests are still loaded for cross-references. */
+	services?: string[]
 }
 
 /**
@@ -36,7 +38,7 @@ export function initEnvironments(options: InitOptions): void {
 
 	const environments = resolveEnvironments(manifests, updatedCache, nodeEnv)
 
-	writeEnvFiles(environments, servicesDir)
+	writeEnvFiles(environments, servicesDir, options.services)
 
 	saveSecretsCache(updatedCache, secretsCachePath)
 
