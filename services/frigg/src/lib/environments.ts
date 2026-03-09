@@ -8,11 +8,7 @@ export type EnvironmentData = Record<string, Record<string, string>>
 let cached: EnvironmentData | null = null
 
 function getSecretsPath(): string {
-	return resolve(import.meta.dirname, '..', '..', '..', '..', 'environments', '.secrets.json')
-}
-
-function getOverridesPath(): string {
-	return resolve(import.meta.dirname, '..', '..', '..', '..', 'environments', 'overrides.json')
+	return resolve(import.meta.dirname, '..', '..', '..', '..', '.secrets.json')
 }
 
 function loadSecretsCache(): Record<string, string> {
@@ -27,20 +23,8 @@ function loadSecretsCache(): Record<string, string> {
 	}
 }
 
-function loadOverrides(): Record<string, Record<string, string>> {
-	const overridesPath = getOverridesPath()
-
-	if (!existsSync(overridesPath)) return {}
-
-	try {
-		return JSON.parse(readFileSync(overridesPath, 'utf-8'))
-	} catch {
-		return {}
-	}
-}
-
 /**
- * Resolves all service configurations from manifests, secrets cache, and overrides.
+ * Resolves all service configurations from manifests and secrets cache.
  * Returns a map of service name -> resolved environment variables.
  */
 export function loadEnvironments(): EnvironmentData {
@@ -49,7 +33,6 @@ export function loadEnvironments(): EnvironmentData {
 	const env = loadEnv()
 	const manifests = loadManifests()
 	const secretsCache = loadSecretsCache()
-	const overrides = loadOverrides()
 
 	const result: EnvironmentData = {}
 
@@ -59,15 +42,7 @@ export function loadEnvironments(): EnvironmentData {
 			PORT: String(manifest.port),
 		}
 
-		const serviceOverrides = overrides[serviceName] ?? {}
-
 		for (const [varName, config] of Object.entries(manifest.vars)) {
-			if (serviceOverrides[varName] !== undefined) {
-				resolved[varName] = serviceOverrides[varName]
-
-				continue
-			}
-
 			switch (config.type) {
 				case 'value': {
 					resolved[varName] = config.default ?? ''
