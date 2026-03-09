@@ -2,11 +2,6 @@
 
 Security monitoring microservice for threat detection, IP ban enforcement, and rule-based analysis.
 
-- **Threat tracking** — logs and queries security threats with severity levels
-- **IP bans** — check, create, and manage IP bans consumed by other services
-- **Rules engine** — configurable detection rules for automated threat analysis
-- **Event integration** — publishes security events to Huginn for downstream consumers
-
 ## Routes
 
 All routes are prefixed with `/vidar`.
