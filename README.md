@@ -9,7 +9,7 @@ Hono + TypeScript Microservices
 | **Saga** | Event Bus | `3001` |
 | **Hermes** | WebSockets | `3004` |
 | **Vidar** | Monitoring | `3002` |
-| **Frigg** | Secrets / Config | `3003` |
+| **Frigg** | Config Validation | `3003` |
 | **Mimir** | Database Pool | |
 
 ## Prerequisites
