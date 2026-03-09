@@ -6,7 +6,7 @@ Hono + TypeScript Microservices
 | --- | --- | --- |
 | **Heimdall** | Auth | `8000` |
 | **Bifrost** | API | `3000` |
-| **Saga** | Events | `3001` |
+| **Saga** | Event Bus | `3001` |
 | **Hermes** | WebSockets | `3004` |
 | **Vidar** | Monitoring | `3002` |
 | **Frigg** | Secrets / Config | `3003` |
