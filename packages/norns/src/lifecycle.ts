@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process'
-import type { Server } from 'node:http'
+import type { Server } from 'node:net'
 
 export interface LifecycleOptions {
 	server: Server
