@@ -1,32 +1,11 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import type { ManifestData, ServiceManifest } from './types.js'
 
-export interface VarConfig {
-	type: 'value' | 'secret' | 'ref'
-	default?: string
-	service?: string
-	key?: string
-}
-
-export interface ServiceManifest {
-	name: string
-	port: number
-	vars: Record<string, VarConfig>
-}
-
-export type ManifestData = Record<string, ServiceManifest>
-
-let cached: ManifestData | null = null
-
-function getServicesDir(): string {
-	return resolve(import.meta.dirname, '..', '..', '..', '..')
-}
-
-export function loadManifests(): ManifestData {
-	if (cached) return cached
-
-	const servicesDir = resolve(getServicesDir(), 'services')
-
+/**
+ * Load all service manifests from a services directory.
+ */
+export function loadManifests(servicesDir: string): ManifestData {
 	const manifests: ManifestData = {}
 
 	for (const entry of readdirSync(servicesDir, { withFileTypes: true })) {
@@ -45,31 +24,13 @@ export function loadManifests(): ManifestData {
 		}
 	}
 
-	cached = manifests
-	return cached
-}
-
-export function getManifest(service: string): ServiceManifest | null {
-	const manifests = loadManifests()
-
-	return manifests[service] ?? null
-}
-
-export function getManifestNames(): string[] {
-	return Object.keys(loadManifests())
-}
-
-export function clearManifestCache(): void {
-	cached = null
+	return manifests
 }
 
 /**
- * Build a map of secret ownership: { "HEIMDALL_API_KEY": "heimdall", ... }
- * showing which service owns each secret.
+ * Build a map of secret ownership: which service owns each secret.
  */
-export function getSecretOwnership(): Record<string, string> {
-	const manifests = loadManifests()
-
+export function getSecretOwnership(manifests: ManifestData): Record<string, string> {
 	const ownership: Record<string, string> = {}
 
 	for (const [serviceName, manifest] of Object.entries(manifests)) {
@@ -84,12 +45,9 @@ export function getSecretOwnership(): Record<string, string> {
 }
 
 /**
- * Build a map of secret consumers: { "HEIMDALL_API_KEY": ["heimdall", "bifrost"], ... }
- * showing which services use each secret (either as owner or via ref).
+ * Build a map of secret consumers: which services use each secret.
  */
-export function getSecretConsumers(): Record<string, string[]> {
-	const manifests = loadManifests()
-
+export function getSecretConsumers(manifests: ManifestData): Record<string, string[]> {
 	const consumers: Record<string, string[]> = {}
 
 	for (const [serviceName, manifest] of Object.entries(manifests)) {
