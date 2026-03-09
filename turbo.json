@@ -2,6 +2,7 @@
     "$schema": "https://turbo.build/schema.json",
     "tasks": {
         "//#env:init": {
+            "dependsOn": ["frigg#build"],
             "cache": false
         },
         "build": {
