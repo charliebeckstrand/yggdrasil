@@ -38,3 +38,5 @@ export {
 export type { CredentialsRow, UserRow } from './services/users.js'
 // User service functions
 export { deactivateUser, findUserById } from './services/users.js'
+// Vidar integration
+export { reportEvent } from './vidar.js'
