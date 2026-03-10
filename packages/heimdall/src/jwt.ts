@@ -13,13 +13,13 @@ export async function signToken(sub: string, type: TokenType): Promise<string> {
 
 	const now = Math.floor(Date.now() / 1000)
 
-	const expiresIn = type === 'access' ? ms('30m') / 1000 : ms('7d') / 1000
+	const expiry = type === 'access' ? ms('30m') / 1000 : ms('7d') / 1000
 
 	const payload: JWTPayload = {
 		sub,
 		type,
 		iss: 'heimdall',
-		exp: now + expiresIn,
+		exp: now + expiry,
 		iat: now,
 		jti: randomUUID(),
 	}

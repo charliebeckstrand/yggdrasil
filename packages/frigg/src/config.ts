@@ -18,14 +18,14 @@ export function getManifestPort(): number {
 	return manifest.port
 }
 
-function getBaseSchema() {
-	return z.object({
-		PORT: z.coerce.number().default(() => getManifestPort()),
-		NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-	})
-}
+const baseSchema = z.object({
+	PORT: z.coerce.number().default(() => getManifestPort()),
+	NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+})
 
-type BaseEnvironment = z.infer<ReturnType<typeof getBaseSchema>>
+type BaseSchema = typeof baseSchema
+
+type BaseEnvironment = z.infer<BaseSchema>
 
 export function createEnvironment(): () => BaseEnvironment
 
@@ -34,8 +34,6 @@ export function createEnvironment<T extends z.ZodRawShape>(
 ): () => BaseEnvironment & z.infer<z.ZodObject<T>>
 
 export function createEnvironment<T extends z.ZodRawShape>(extra?: T) {
-	const baseSchema = getBaseSchema()
-
 	const schema = extra ? baseSchema.extend(extra) : baseSchema
 
 	let cached: z.infer<typeof schema> | null = null
@@ -50,7 +48,7 @@ export function createEnvironment<T extends z.ZodRawShape>(extra?: T) {
 		const result = schema.safeParse(env)
 
 		if (!result.success) {
-			console.error('Invalid environment variables:', result.error.format())
+			console.error(`Invalid environment variables:\n${z.prettifyError(result.error)}`)
 
 			process.exit(1)
 		}

@@ -1,16 +1,22 @@
 import type { UserRepository } from './types.js'
 
-export interface HeimdallConfig {
+type Event = {
+	type: string
+	ip: string
+	details?: Record<string, unknown>
+}
+
+export interface Config {
 	userRepository: UserRepository
 	secretKey: string
 	apiKey?: string
-	onSecurityEvent?: (eventType: string, ip: string, details?: Record<string, unknown>) => void
+	onSecurityEvent?: (event: Event) => void
 }
 
-let _config: HeimdallConfig | null = null
+let _config: Config | null = null
 
 export function configure(
-	config: Partial<HeimdallConfig> & Pick<HeimdallConfig, 'userRepository' | 'secretKey'>,
+	config: Partial<Config> & Pick<Config, 'userRepository' | 'secretKey'>,
 ): void {
 	if (config.secretKey.length < 32) {
 		throw new Error('Heimdall secretKey must be at least 32 characters')
@@ -19,7 +25,7 @@ export function configure(
 	_config = { ...config }
 }
 
-export function getConfig(): HeimdallConfig {
+export function getConfig(): Config {
 	if (!_config) throw new Error('Heimdall not configured. Call configure() first.')
 
 	return _config

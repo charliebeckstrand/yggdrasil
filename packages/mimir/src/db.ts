@@ -1,4 +1,6 @@
 import type { Pool, PoolClient, QueryResultRow } from 'pg'
+import { createLazyPool } from './lazy-pool.js'
+import type { PoolOptions } from './pool.js'
 import type { SqlFragment } from './sql.js'
 
 export class NoRowsError extends Error {
@@ -96,4 +98,18 @@ export function createDatabaseClient(pool: Pool): Db {
 			}
 		},
 	}
+}
+
+export function createDatabase(getDatabaseUrl: () => string, options?: PoolOptions) {
+	const { getPool, closePool } = createLazyPool(getDatabaseUrl, options)
+
+	let _db: Db | null = null
+
+	const db = (): Db => {
+		if (!_db) _db = createDatabaseClient(getPool())
+
+		return _db
+	}
+
+	return { closePool, db, getPool }
 }
