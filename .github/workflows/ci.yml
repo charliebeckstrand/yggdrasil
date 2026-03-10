@@ -23,6 +23,9 @@ jobs:
             frigg: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.frigg == 'true' }}
         steps:
             - uses: actions/checkout@v6
+              with:
+                  persist-credentials: true
+                  fetch-depth: 0
             - uses: dorny/paths-filter@v3
               id: filter
               with:
