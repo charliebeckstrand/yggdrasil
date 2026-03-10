@@ -12,7 +12,9 @@
  * });
  *
  * const health = await api.get("/api/health");
- * const users = await api.get("/api/users", { query: { page: 1, limit: 10 } });
+ * const user = await api.post("/api/users", {
+ *   body: { email: "user@example.com", password: "password123" },
+ * });
  * ```
  */
 

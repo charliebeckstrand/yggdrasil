@@ -1,39 +1,50 @@
 # saga
 
-PostgreSQL logging and search for Hono services. 
+PostgreSQL logging and search for Hono services.
 
-Store and query structured log entries via a mountable, OpenAPI-documented router.
+Store and query structured log entries via service-layer functions and schemas.
 
 ## Usage
 
 ```ts
-import { createLogsApp, createLog, queryLogs } from 'saga'
-```
-
-### Mount the full app (with OpenAPI docs)
-
-```ts
-import { createLogsApp } from 'saga'
-
-const logsApp = createLogsApp(pool)
-
-app.route('/', logsApp)
-```
-
-### Mount just the router
-
-```ts
-import { createLogsRouter } from 'saga'
-
-app.route('/logs', createLogsRouter(pool))
+import { createBatch, createLog, queryLogs } from 'saga'
 ```
 
 ### Use service functions directly
 
 ```ts
-import { createLog, createBatch, queryLogs } from 'saga'
+import { createBatch, createLog, queryLogs } from 'saga'
 
-await createLog(pool, { level: 'info', service: 'bifrost', message: 'Request received', type: 'server', metadata: {} })
+await createLog(db, {
+	type: 'server',
+	level: 'info',
+	service: 'bifrost',
+	message: 'Request received',
+	metadata: {},
+})
 
-await queryLogs(pool, { limit: 50, offset: 0, service: 'bifrost' })
+await createBatch(db, [
+	{
+		type: 'server',
+		level: 'info',
+		service: 'bifrost',
+		message: 'Request received',
+		metadata: {},
+	},
+])
+
+const logs = await queryLogs(db, {
+	limit: 50,
+	offset: 0,
+	service: 'bifrost',
+})
 ```
+
+### Use exported schemas in your own routes
+
+```ts
+import { CreateLogSchema, LogListSchema, LogQuerySchema } from 'saga'
+
+// Reuse Saga schemas when defining your service's own HTTP routes.
+```
+

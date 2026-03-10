@@ -4,7 +4,7 @@ export {
 	authenticateUser,
 	checkHealth,
 	refreshTokenPair,
-	registerNewUser,
+	registerUser,
 	verifyAccessToken,
 } from './auth.js'
 export { configure } from './config.js'

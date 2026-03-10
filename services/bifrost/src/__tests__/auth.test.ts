@@ -5,7 +5,7 @@ vi.stubEnv('DATABASE_URL', 'postgres://test:test@localhost:5432/test')
 vi.stubEnv('SECRET_KEY', 'test-secret-key-that-is-at-least-32-chars')
 
 // Use vi.hoisted so mock values are available when vi.mock is hoisted
-const { MockAuthError, mockAuthenticateUser, mockRegisterNewUser } = vi.hoisted(() => {
+const { MockAuthError, mockAuthenticateUser, mockRegisterUser } = vi.hoisted(() => {
 	class MockAuthError extends Error {
 		code: string
 		constructor(code: string, message: string) {
@@ -17,14 +17,14 @@ const { MockAuthError, mockAuthenticateUser, mockRegisterNewUser } = vi.hoisted(
 	return {
 		MockAuthError,
 		mockAuthenticateUser: vi.fn(),
-		mockRegisterNewUser: vi.fn(),
+		mockRegisterUser: vi.fn(),
 	}
 })
 
 vi.mock('heimdall', () => ({
 	configure: vi.fn(),
 	authenticateUser: (...args: unknown[]) => mockAuthenticateUser(...args),
-	registerNewUser: (...args: unknown[]) => mockRegisterNewUser(...args),
+	registerUser: (...args: unknown[]) => mockRegisterUser(...args),
 	AuthError: MockAuthError,
 	vidarBanCheck: vi.fn().mockReturnValue(async (_c: unknown, next: () => Promise<void>) => {
 		await next()
@@ -54,7 +54,7 @@ function getCookieFromResponse(res: Response): string | undefined {
 describe('Auth routes', () => {
 	beforeEach(() => {
 		mockAuthenticateUser.mockReset()
-		mockRegisterNewUser.mockReset()
+		mockRegisterUser.mockReset()
 	})
 
 	afterEach(() => {
@@ -202,7 +202,7 @@ describe('Auth routes', () => {
 
 	describe('POST /auth/register', () => {
 		it('registers a new user and returns 201', async () => {
-			mockRegisterNewUser.mockResolvedValueOnce({
+			mockRegisterUser.mockResolvedValueOnce({
 				id: 'user-123',
 				email: 'new@example.com',
 				is_active: true,
@@ -226,7 +226,7 @@ describe('Auth routes', () => {
 		})
 
 		it('returns 409 when email already exists', async () => {
-			mockRegisterNewUser.mockRejectedValueOnce(
+			mockRegisterUser.mockRejectedValueOnce(
 				new MockAuthError('email_exists', 'Email already registered'),
 			)
 
@@ -237,6 +237,16 @@ describe('Auth routes', () => {
 			})
 
 			expect(res.status).toBe(409)
+		})
+
+		it('requires an active session for POST /api/users', async () => {
+			const res = await app.request('/api/users', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email: 'guarded@example.com', password: 'password123' }),
+			})
+
+			expect(res.status).toBe(401)
 		})
 	})
 })

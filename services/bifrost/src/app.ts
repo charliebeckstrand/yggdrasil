@@ -5,6 +5,7 @@ import { environment } from './lib/env.js'
 import { session } from './middleware/session.js'
 import { authRoutes } from './routes/auth.js'
 import { health } from './routes/health.js'
+import { usersRoutes } from './routes/users.js'
 
 export function createBifrostApp() {
 	const env = environment()
@@ -35,6 +36,7 @@ export function createBifrostApp() {
 
 	app.route('/auth', authRoutes)
 	app.route('/api', health)
+	app.route('/api/users', usersRoutes)
 
 	// --- Finalize ---
 

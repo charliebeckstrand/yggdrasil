@@ -11,6 +11,6 @@ API gateway and Backend-for-Frontend (BFF).
 | /auth | `/logout` | Clear session |
 | /auth | `/session` | Check session status |
 | /api | `/health` | Health check |
-| /api | `/users` | User listing |
+| /api | `/users` | Guarded user management |
 | /api | `/docs` | Swagger UI |
 | /api | `/openapi.json` | OpenAPI spec |

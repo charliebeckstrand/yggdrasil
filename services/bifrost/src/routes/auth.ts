@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { getIpAddress } from 'grid'
-import { AuthError, authenticateUser, registerNewUser } from 'heimdall'
+import { AuthError, authenticateUser, registerUser } from 'heimdall'
 import { environment } from '../lib/env.js'
 import { ErrorSchema } from '../lib/schemas.js'
 import {
@@ -210,7 +210,7 @@ export const authRoutes = new OpenAPIHono<SessionEnv>()
 		const ip = getIpAddress(c)
 
 		try {
-			const user = await registerNewUser(email, password, ip)
+			const user = await registerUser(email, password, ip)
 
 			return c.json({ id: user.id, email: user.email }, 201)
 		} catch (err) {

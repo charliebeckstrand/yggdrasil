@@ -1,13 +1,13 @@
 # heimdall
 
-JWT authentication and user management.
+JWT authentication primitives and guard utilities.
 
-Mountable Hono app or individual service functions — with optional [Vidar](services/vidar) integration.
+Service-layer auth primitives for Bifrost and other services, with optional Vidar integration.
 
 ## Usage
 
 ```typescript
-import { configure, authenticateUser, verifyAccessToken, refreshTokenPair } from 'heimdall'
+import { configure, authenticateUser, registerUser, verifyAccessToken, refreshTokenPair } from 'heimdall'
 import { createLazyPool } from 'mimir'
 
 // Configure once at startup
@@ -22,17 +22,7 @@ configure({
 
 // Use service functions directly
 const tokens = await authenticateUser('user@example.com', 'password', '127.0.0.1')
+const createdUser = await registerUser('user@example.com', 'password', '127.0.0.1')
 const user = await verifyAccessToken(tokens.access_token)
 const newTokens = await refreshTokenPair(tokens.refresh_token)
-```
-
-### Standalone app
-
-```typescript
-import { createAuthApp } from 'heimdall'
-
-const authApp = createAuthApp({ getPool, secretKey: '...' })
-
-// Mount under /auth in your Hono app
-app.route('/auth', authApp)
 ```

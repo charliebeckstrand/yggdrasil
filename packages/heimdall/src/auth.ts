@@ -3,7 +3,7 @@ import { hash, verify } from '@node-rs/argon2'
 import { getConfig } from './config.js'
 import { signToken, verifyToken } from './jwt.js'
 import type { UserRow } from './users.js'
-import { createUser, findCredentialsByEmail, findUserById } from './users.js'
+import { getCredentialsByEmail, getUserById, insertUser } from './users.js'
 import { reportEvent } from './vidar.js'
 
 export interface TokenPair {
@@ -35,7 +35,7 @@ export async function authenticateUser(
 ): Promise<TokenPair> {
 	const normalizedEmail = email.trim().toLowerCase()
 
-	const creds = await findCredentialsByEmail(normalizedEmail)
+	const creds = await getCredentialsByEmail(normalizedEmail)
 
 	const dummyHash = await dummyHashPromise
 
@@ -64,17 +64,13 @@ export async function authenticateUser(
 	}
 }
 
-export async function registerNewUser(
-	email: string,
-	password: string,
-	ip?: string,
-): Promise<UserRow> {
+export async function registerUser(email: string, password: string, ip?: string): Promise<UserRow> {
 	const normalizedEmail = email.trim().toLowerCase()
 
 	const hashedPassword = await hash(password, { algorithm: 2 /* Argon2id */ })
 
 	try {
-		const user = await createUser(randomUUID(), normalizedEmail, hashedPassword)
+		const user = await insertUser(randomUUID(), normalizedEmail, hashedPassword)
 
 		if (ip) reportEvent('registration', ip, { email: normalizedEmail })
 
@@ -101,7 +97,7 @@ export async function verifyAccessToken(token: string): Promise<UserRow> {
 		throw new AuthError('invalid_token', 'Invalid token type')
 	}
 
-	const user = await findUserById(claims.sub)
+	const user = await getUserById(claims.sub)
 
 	if (!user || !user.is_active) {
 		throw new AuthError('invalid_token', 'Invalid or expired token')
@@ -123,7 +119,7 @@ export async function refreshTokenPair(refreshToken: string): Promise<TokenPair>
 		throw new AuthError('invalid_token', 'Invalid or expired refresh token')
 	}
 
-	const user = await findUserById(claims.sub)
+	const user = await getUserById(claims.sub)
 
 	if (!user || !user.is_active) {
 		throw new AuthError('invalid_token', 'Invalid or expired refresh token')

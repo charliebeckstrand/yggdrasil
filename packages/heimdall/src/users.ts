@@ -1,5 +1,5 @@
 import { sql } from 'mimir'
-import { createDb } from './db.js'
+import { createDatabase } from './db.js'
 
 export interface UserRow {
 	id: string
@@ -16,12 +16,12 @@ export interface CredentialsRow {
 	is_active: boolean
 }
 
-export async function createUser(
+export async function insertUser(
 	id: string,
 	email: string,
 	hashedPassword: string,
 ): Promise<UserRow> {
-	const db = createDb()
+	const db = createDatabase()
 
 	return db.get<UserRow>(
 		sql`
@@ -32,8 +32,8 @@ export async function createUser(
 	)
 }
 
-export async function findCredentialsByEmail(email: string): Promise<CredentialsRow | null> {
-	const db = createDb()
+export async function getCredentialsByEmail(email: string): Promise<CredentialsRow | null> {
+	const db = createDatabase()
 
 	return db.query<CredentialsRow>(
 		sql`
@@ -44,8 +44,8 @@ export async function findCredentialsByEmail(email: string): Promise<Credentials
 	)
 }
 
-export async function findUserById(id: string): Promise<UserRow | null> {
-	const db = createDb()
+export async function getUserById(id: string): Promise<UserRow | null> {
+	const db = createDatabase()
 
 	return db.query<UserRow>(
 		sql`

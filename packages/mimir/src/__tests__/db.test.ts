@@ -1,12 +1,12 @@
 import type { Mock } from 'vitest'
-import { createDb, NoRowsError } from '../db.js'
+import { createDatabaseClient, NoRowsError } from '../db.js'
 import { sql } from '../sql.js'
 
 function createMockPool(queryResult: { rows: unknown[]; rowCount?: number }) {
 	return {
 		query: vi.fn().mockResolvedValue(queryResult),
 		connect: vi.fn(),
-	} as unknown as Parameters<typeof createDb>[0]
+	} as unknown as Parameters<typeof createDatabaseClient>[0]
 }
 
 function createMockClient(queryResult: { rows: unknown[]; rowCount?: number }) {
@@ -16,12 +16,12 @@ function createMockClient(queryResult: { rows: unknown[]; rowCount?: number }) {
 	}
 }
 
-describe('createDb', () => {
+describe('createDatabaseClient', () => {
 	describe('query', () => {
 		it('returns the first row', async () => {
 			const pool = createMockPool({ rows: [{ id: 1, name: 'Alice' }] })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.query<{ id: number; name: string }>(
 				sql`
@@ -37,7 +37,7 @@ describe('createDb', () => {
 		it('returns null when no rows', async () => {
 			const pool = createMockPool({ rows: [] })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.query(sql`
 				SELECT *
@@ -53,7 +53,7 @@ describe('createDb', () => {
 		it('returns the first row', async () => {
 			const pool = createMockPool({ rows: [{ id: 1 }] })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.get<{ id: number }>(sql`
 				INSERT INTO t (v)
@@ -67,7 +67,7 @@ describe('createDb', () => {
 		it('throws NoRowsError when no rows', async () => {
 			const pool = createMockPool({ rows: [] })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			await expect(
 				db.get(sql`
@@ -88,7 +88,7 @@ describe('createDb', () => {
 
 			const pool = createMockPool({ rows })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.many<{ id: number; name: string }>(sql`
 				SELECT *
@@ -101,7 +101,7 @@ describe('createDb', () => {
 		it('returns empty array when no rows', async () => {
 			const pool = createMockPool({ rows: [] })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.many(sql`
 				SELECT *
@@ -116,7 +116,7 @@ describe('createDb', () => {
 		it('returns row count', async () => {
 			const pool = createMockPool({ rows: [], rowCount: 3 })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.exec(sql`
 				DELETE FROM users
@@ -129,7 +129,7 @@ describe('createDb', () => {
 		it('returns 0 when rowCount is null', async () => {
 			const pool = createMockPool({ rows: [], rowCount: undefined })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.exec(sql`
 				DELETE FROM users
@@ -144,7 +144,7 @@ describe('createDb', () => {
 		it('returns the first column of the first row', async () => {
 			const pool = createMockPool({ rows: [{ count: 42 }] })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.val<number>(sql`
 				SELECT COUNT(*)::int
@@ -157,7 +157,7 @@ describe('createDb', () => {
 		it('throws NoRowsError when no rows', async () => {
 			const pool = createMockPool({ rows: [] })
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			await expect(
 				db.val(sql`
@@ -176,7 +176,7 @@ describe('createDb', () => {
 
 			;(pool.connect as Mock).mockResolvedValue(client)
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			const result = await db.tx(async (tx) => {
 				return tx.get<{ id: number }>(sql`
@@ -203,7 +203,7 @@ describe('createDb', () => {
 
 			;(pool.connect as Mock).mockResolvedValue(client)
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			await expect(
 				db.tx(async () => {
@@ -231,7 +231,7 @@ describe('createDb', () => {
 
 			;(pool.connect as Mock).mockResolvedValue(client)
 
-			const db = createDb(pool)
+			const db = createDatabaseClient(pool)
 
 			await expect(
 				db.tx(async (tx) => {

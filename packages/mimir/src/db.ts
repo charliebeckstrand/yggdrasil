@@ -67,7 +67,7 @@ function createQueryable(executor: { query: Pool['query'] | PoolClient['query'] 
 	}
 }
 
-export function createDb(pool: Pool): Db {
+export function createDatabaseClient(pool: Pool): Db {
 	const queryable = createQueryable(pool)
 
 	return {
