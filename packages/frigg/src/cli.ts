@@ -2,6 +2,7 @@ import { resolve } from 'node:path'
 import { initEnvironments } from './init.js'
 
 const args = process.argv.slice(2)
+
 const rotateFlag = args.find((a) => a.startsWith('--rotate'))
 const servicesFlag = args.find((a) => a.startsWith('--services='))
 
