@@ -1,6 +1,6 @@
 import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
-import { errorHandler, notFoundHandler, securityHeaders } from 'grid'
+import { errorHandler, notFoundHandler, requestLogger, securityHeaders } from 'grid'
 import { cors } from 'hono/cors'
 
 import { openApiConfig } from './lib/openapi.js'
@@ -19,6 +19,7 @@ export function createApp() {
 
 	app.use('*', cors())
 	app.use('*', securityHeaders())
+	app.use('*', requestLogger())
 
 	// --- Routes ---
 
@@ -39,7 +40,6 @@ export function createApp() {
 	// --- Error handling ---
 
 	app.onError(errorHandler)
-
 	app.notFound(notFoundHandler)
 
 	return app

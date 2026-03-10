@@ -1,27 +1,27 @@
 {
-  "name": "yggdrasil",
-  "private": true,
-  "packageManager": "pnpm@10.29.3",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "argon2"
-    ]
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.4.6",
-    "husky": "^9.1.7",
-    "turbo": "^2.8.14"
-  },
-  "scripts": {
-    "prepare": "husky || true",
-    "build": "turbo run build",
-    "dev": "bash scripts/dev.sh",
-    "dev:bare": "turbo run dev --concurrency=15",
-    "test": "turbo run test",
-    "lint": "biome check packages/ services/",
-    "lint:fix": "biome check --write packages/ services/",
-    "format": "biome format --write packages/ services/",
-    "env:init": "node packages/frigg/dist/cli.js",
-    "env:rotate": "node packages/frigg/dist/cli.js --rotate"
-  }
+	"name": "yggdrasil",
+	"private": true,
+	"packageManager": "pnpm@10.29.3",
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"argon2"
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.6",
+		"husky": "^9.1.7",
+		"turbo": "^2.8.14"
+	},
+	"scripts": {
+		"prepare": "husky || true",
+		"build": "turbo run build",
+		"dev": "bash scripts/dev.sh",
+		"dev:bare": "turbo run dev --concurrency=15",
+		"test": "turbo run test",
+		"lint": "biome check packages/ services/",
+		"lint:fix": "biome check --write packages/ services/",
+		"format": "biome format --write packages/ services/",
+		"env:init": "node packages/frigg/dist/cli.js",
+		"env:rotate": "node packages/frigg/dist/cli.js --rotate"
+	}
 }
