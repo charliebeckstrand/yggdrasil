@@ -1,6 +1,6 @@
 # mimir
 
-PostgreSQL connection pool with SSL support for DigitalOcean managed databases. 
+PostgreSQL connection pool.
 
 ## Usage
 
