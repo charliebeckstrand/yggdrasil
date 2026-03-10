@@ -53,6 +53,7 @@ describe('resolveEnvironments', () => {
 
 		expect(result.heimdall.NODE_ENV).toBe('production')
 		expect(result.heimdall.PORT).toBe('3001')
+
 		expect(result.bifrost.NODE_ENV).toBe('production')
 		expect(result.bifrost.PORT).toBe('3000')
 	})
@@ -135,6 +136,7 @@ describe('writeEnvFiles', () => {
 		writeEnvFiles(environments, servicesDir)
 
 		expect(existsSync(join(servicesDir, 'heimdall', '.env'))).toBe(true)
+
 		expect(existsSync(join(servicesDir, 'bifrost', '.env'))).toBe(true)
 	})
 
@@ -144,6 +146,7 @@ describe('writeEnvFiles', () => {
 		writeEnvFiles(environments, servicesDir, ['bifrost'])
 
 		expect(existsSync(join(servicesDir, 'bifrost', '.env'))).toBe(true)
+
 		expect(existsSync(join(servicesDir, 'heimdall', '.env'))).toBe(false)
 	})
 
@@ -169,6 +172,7 @@ describe('generateSecrets', () => {
 
 		expect(result['heimdall:SECRET_KEY']).toBeDefined()
 		expect(result['heimdall:SECRET_KEY']).toHaveLength(64) // 32 bytes hex
+
 		expect(result['heimdall:HEIMDALL_API_KEY']).toBeDefined()
 
 		expect(result['bifrost:SESSION_SECRET']).toBeDefined()
@@ -176,9 +180,11 @@ describe('generateSecrets', () => {
 
 	it('preserves existing secrets', () => {
 		const existing = { 'heimdall:SECRET_KEY': 'existing-secret' }
+
 		const result = generateSecrets(manifests, existing)
 
 		expect(result['heimdall:SECRET_KEY']).toBe('existing-secret')
+
 		expect(result['heimdall:HEIMDALL_API_KEY']).toBeDefined()
 	})
 
@@ -247,6 +253,7 @@ const validateManifests: ManifestData = {
 describe('validateService', () => {
 	it('reports empty values as errors', () => {
 		const data = { PORT: '3001', SECRET_KEY: '', DATABASE_URL: 'pg://localhost/db' }
+
 		const allServices: EnvironmentData = { heimdall: data }
 
 		const issues = validateService('heimdall', data, allServices, validateManifests)
@@ -256,6 +263,7 @@ describe('validateService', () => {
 
 	it('reports invalid PORT', () => {
 		const data = { PORT: 'abc' }
+
 		const allServices: EnvironmentData = { test: data }
 
 		const issues = validateService('test', data, allServices, {})
@@ -268,6 +276,7 @@ describe('validateService', () => {
 
 	it('reports invalid URLs', () => {
 		const data = { PORT: '3000', HEIMDALL_URL: 'not-a-url' }
+
 		const allServices: EnvironmentData = { bifrost: data }
 
 		const issues = validateService('bifrost', data, allServices, validateManifests)
@@ -280,6 +289,7 @@ describe('validateService', () => {
 
 	it('reports missing manifest vars', () => {
 		const data = { PORT: '3001', NODE_ENV: 'development' }
+
 		const allServices: EnvironmentData = { heimdall: data }
 
 		const issues = validateService('heimdall', data, allServices, validateManifests)
@@ -292,6 +302,7 @@ describe('validateService', () => {
 
 	it('warns when no manifest found', () => {
 		const data = { PORT: '3000' }
+
 		const allServices: EnvironmentData = { unknown: data }
 
 		const issues = validateService('unknown', data, allServices, {})
@@ -309,6 +320,7 @@ describe('validateService', () => {
 			SECRET_KEY: 'abc123',
 			DATABASE_URL: 'postgresql://localhost/heimdall',
 		}
+
 		const allServices: EnvironmentData = { heimdall: data }
 
 		const issues = validateService('heimdall', data, allServices, validateManifests)
