@@ -3,6 +3,7 @@ import { createApp } from 'grid'
 import { environment } from './lib/env.js'
 import { health } from './routes/health.js'
 import { publish } from './routes/publish.js'
+import { eventStream } from './routes/stream.js'
 import { subscriptions } from './routes/subscriptions.js'
 
 export function createHuginnApp() {
@@ -20,6 +21,7 @@ export function createHuginnApp() {
 	app.route('/events', health)
 	app.route('/events', publish)
 	app.route('/events', subscriptions)
+	app.route('/events', eventStream)
 
 	// --- Finalize ---
 
