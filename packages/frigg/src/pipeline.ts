@@ -86,6 +86,7 @@ export function generateSecrets(
 			for (const cacheKey of Object.keys(updated)) {
 				if (cacheKey.endsWith(`:${keyName}`)) {
 					delete updated[cacheKey]
+
 					console.log(`  rotating ${cacheKey}`)
 				}
 			}

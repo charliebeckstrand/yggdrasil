@@ -170,6 +170,7 @@ describe('generateSecrets', () => {
 		expect(result['heimdall:SECRET_KEY']).toBeDefined()
 		expect(result['heimdall:SECRET_KEY']).toHaveLength(64) // 32 bytes hex
 		expect(result['heimdall:HEIMDALL_API_KEY']).toBeDefined()
+
 		expect(result['bifrost:SESSION_SECRET']).toBeDefined()
 	})
 
@@ -185,6 +186,7 @@ describe('generateSecrets', () => {
 		const result = generateSecrets(manifests, {})
 
 		expect(result['heimdall:DATABASE_URL']).toBeUndefined()
+
 		expect(result['bifrost:HEIMDALL_URL']).toBeUndefined()
 	})
 
@@ -199,6 +201,7 @@ describe('generateSecrets', () => {
 
 		expect(result['heimdall:SECRET_KEY']).not.toBe('old-1')
 		expect(result['heimdall:HEIMDALL_API_KEY']).not.toBe('old-2')
+
 		expect(result['bifrost:SESSION_SECRET']).not.toBe('old-3')
 	})
 
@@ -213,6 +216,7 @@ describe('generateSecrets', () => {
 
 		expect(result['heimdall:SECRET_KEY']).not.toBe('old-1')
 		expect(result['heimdall:HEIMDALL_API_KEY']).toBe('old-2')
+
 		expect(result['bifrost:SESSION_SECRET']).toBe('old-3')
 	})
 })
