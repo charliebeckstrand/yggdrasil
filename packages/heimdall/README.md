@@ -2,8 +2,6 @@
 
 JWT authentication guard.
 
-Service-layer auth primitives for Bifrost and other services, with optional Vidar integration.
-
 ## Usage
 
 ```typescript
