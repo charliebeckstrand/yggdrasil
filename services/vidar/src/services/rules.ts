@@ -59,6 +59,22 @@ const PREDEFINED_RULES: Rule[] = [
 	},
 ]
 
+function formatDuration(minutes: number): string {
+	if (minutes >= 1440) {
+		const days = Math.floor(minutes / 1440)
+
+		return `${days}d`
+	}
+
+	if (minutes >= 60) {
+		const hours = Math.floor(minutes / 60)
+
+		return `${hours}h`
+	}
+
+	return `${minutes}m`
+}
+
 export function getRules(): Rule[] {
 	return PREDEFINED_RULES
 }
@@ -83,11 +99,13 @@ export async function evaluateRules(ip: string, eventType: string): Promise<void
 				severity: rule.ban_duration_minutes >= 1440 ? 'high' : 'medium',
 				ip,
 				details: { rule_id: rule.id, rule_name: rule.name },
-				action_taken: `Banned for ${rule.ban_duration_minutes} minutes`,
+				action_taken: `Banned for ${formatDuration(rule.ban_duration_minutes)}`,
 			})
 
+			const ipPart = ip && ip !== 'unknown' ? ` for IP ${ip}` : ''
+
 			console.log(
-				`[vidar] Rule "${rule.id}" triggered for IP ${ip} — banned for ${rule.ban_duration_minutes}m`,
+				`[vidar] Rule "${rule.id}" triggered${ipPart} — banned for ${formatDuration(rule.ban_duration_minutes)}`,
 			)
 		}
 	}
