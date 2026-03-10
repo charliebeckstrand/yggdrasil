@@ -6,6 +6,7 @@ import { etag } from 'hono/etag'
 import { logger } from 'hono/logger'
 import { secureHeaders } from 'hono/secure-headers'
 import { timing } from 'hono/timing'
+import { trimTrailingSlash } from 'hono/trailing-slash'
 import { errorHandler, notFoundHandler } from './errors.js'
 import { createOpenApiConfig } from './openapi.js'
 
@@ -19,6 +20,7 @@ interface CreateAppOptions {
 export function createApp(options: CreateAppOptions) {
 	const app = new OpenAPIHono()
 
+	app.use(trimTrailingSlash())
 	app.use('*', cors(options.cors ?? undefined))
 	app.use('*', secureHeaders())
 	app.use('*', logger())
