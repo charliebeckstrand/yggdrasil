@@ -1,4 +1,4 @@
-import { createApp } from 'grid'
+import { createApp, createProxy } from 'grid'
 import { rateLimit } from 'heimdall'
 import { csrf } from 'hono/csrf'
 import { checkBan, reportEvent } from 'vidar/client'
@@ -40,6 +40,14 @@ export function createBifrostApp() {
 	app.route('/auth', authRoutes)
 	app.route('/api', health)
 	app.route('/api/users', usersRoutes)
+
+	// --- Proxy to downstream services ---
+
+	app.all('/events/*', createProxy(env.HUGINN_URL))
+
+	if (env.VIDAR_URL) {
+		app.all('/vidar/*', createProxy(env.VIDAR_URL))
+	}
 
 	// --- Finalize ---
 
