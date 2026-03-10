@@ -1,5 +1,5 @@
 import { createApp } from 'grid'
-import { rateLimit, reportEvent, vidarBanCheck } from 'heimdall'
+import { checkBan, rateLimit, reportEvent } from 'heimdall'
 
 import { environment } from './lib/env.js'
 import { session } from './middleware/session.js'
@@ -21,7 +21,7 @@ export function createBifrostApp() {
 
 	// --- Vidar ban check + rate limiting on auth routes ---
 
-	app.use('/auth/*', vidarBanCheck())
+	app.use('/auth/*', checkBan())
 
 	app.use(
 		'/auth/*',

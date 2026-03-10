@@ -3,7 +3,7 @@ vi.stubEnv('SECRET_KEY', 'test-secret-key-that-is-at-least-32-chars')
 
 vi.mock('heimdall', () => ({
 	configure: vi.fn(),
-	vidarBanCheck: vi.fn().mockReturnValue(async (_c: unknown, next: () => Promise<void>) => {
+	checkBan: vi.fn().mockReturnValue(async (_c: unknown, next: () => Promise<void>) => {
 		await next()
 	}),
 	rateLimit: vi.fn().mockReturnValue(async (_c: unknown, next: () => Promise<void>) => {

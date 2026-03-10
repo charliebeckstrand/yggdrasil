@@ -1,21 +1,14 @@
 import { randomUUID } from 'node:crypto'
+import type { JwtVariables } from 'hono/jwt'
 import { sign, verify } from 'hono/jwt'
 import { getConfig } from './config.js'
 
 export type TokenType = 'access' | 'refresh'
 
-export interface Claims {
-	sub: string
-	type: TokenType
-	iss: string
-	exp: number
-	iat: number
-	jti: string
-}
+type JWTPayload = JwtVariables['jwtPayload']
 
-const ACCESS_TOKEN_SECONDS = 30 * 60
-
-const REFRESH_TOKEN_SECONDS = 7 * 86400
+const ACCESS_TOKEN_SECONDS = 30 * 60 // 30 minutes
+const REFRESH_TOKEN_SECONDS = 7 * 24 * 60 * 60 // 7 days
 
 export async function signToken(sub: string, type: TokenType): Promise<string> {
 	const config = getConfig()
@@ -24,7 +17,7 @@ export async function signToken(sub: string, type: TokenType): Promise<string> {
 
 	const expiresIn = type === 'access' ? ACCESS_TOKEN_SECONDS : REFRESH_TOKEN_SECONDS
 
-	const payload: Claims = {
+	const payload: JWTPayload = {
 		sub,
 		type,
 		iss: 'heimdall',
@@ -36,7 +29,7 @@ export async function signToken(sub: string, type: TokenType): Promise<string> {
 	return sign(payload, config.secretKey, 'HS256')
 }
 
-export async function verifyToken(token: string): Promise<Claims> {
+export async function verifyToken(token: string): Promise<JWTPayload> {
 	const config = getConfig()
 
 	const payload = await verify(token, config.secretKey, 'HS256')
@@ -45,5 +38,5 @@ export async function verifyToken(token: string): Promise<Claims> {
 		throw new Error('Invalid token issuer')
 	}
 
-	return payload as unknown as Claims
+	return payload
 }

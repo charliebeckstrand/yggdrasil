@@ -69,7 +69,7 @@ export function reportEvent(
 	})
 }
 
-export function vidarBanCheck(): MiddlewareHandler {
+export function checkBan(): MiddlewareHandler {
 	return async (c, next) => {
 		const config = getConfig()
 
