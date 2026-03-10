@@ -40,7 +40,7 @@ export const CreateSubscriptionSchema = z
 			.openapi({ description: 'Event topic to subscribe to', example: 'user.registered' }),
 		callback_url: z.url().openapi({
 			description: 'URL to receive event callbacks',
-			example: 'http://bifrost:8000/api/webhooks/user-registered',
+			example: 'http://localhost:3000/api/webhooks/user-registered',
 		}),
 		service: z
 			.string()

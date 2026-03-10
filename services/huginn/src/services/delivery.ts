@@ -1,5 +1,5 @@
 import { sql } from 'mimir'
-import { getDb } from '../lib/db.js'
+import { db } from '../lib/db.js'
 
 type PublishInput = {
 	topic: string
@@ -25,12 +25,12 @@ const MAX_RETRIES = 3
 const BASE_DELAY_MS = 1000
 
 export async function publishEvent(input: PublishInput): Promise<Event> {
-	const db = getDb()
-
-	const event = await db.get<Event>(
-		sql`INSERT INTO huginn.events (topic, payload, source)
-		 VALUES (${input.topic}, ${sql.json(input.payload)}, ${input.source})
-		 RETURNING id, topic, payload, source, created_at::text as created_at`,
+	const event = await db().get<Event>(
+		sql`
+			INSERT INTO huginn.events (topic, payload, source)
+			VALUES (${input.topic}, ${sql.json(input.payload)}, ${input.source})
+			RETURNING id, topic, payload, source, created_at::text as created_at
+		`,
 	)
 
 	deliverEvent(event).catch((err) => {
@@ -41,12 +41,12 @@ export async function publishEvent(input: PublishInput): Promise<Event> {
 }
 
 async function deliverEvent(event: Event): Promise<void> {
-	const db = getDb()
-
-	const subs = await db.many<Subscription>(
-		sql`SELECT id, callback_url, service
-		 FROM huginn.subscriptions
-		 WHERE topic = ${event.topic} AND is_active = TRUE`,
+	const subs = await db().many<Subscription>(
+		sql`
+			SELECT id, callback_url, service
+			FROM huginn.subscriptions
+			WHERE topic = ${event.topic} AND is_active = TRUE
+		`,
 	)
 
 	if (subs.length === 0) return
@@ -65,12 +65,12 @@ async function deliverEvent(event: Event): Promise<void> {
 }
 
 async function deliverToSubscriber(event: Event, sub: Subscription): Promise<void> {
-	const db = getDb()
-
-	const { id: deliveryId } = await db.get<{ id: string }>(
-		sql`INSERT INTO huginn.deliveries (event_id, subscription_id, status)
-		 VALUES (${event.id}, ${sub.id}, 'pending')
-		 RETURNING id`,
+	const { id: deliveryId } = await db().get<{ id: string }>(
+		sql`
+			INSERT INTO huginn.deliveries (event_id, subscription_id, status)
+			VALUES (${event.id}, ${sub.id}, 'pending')
+			RETURNING id
+		`,
 	)
 
 	let lastError: Error | null = null
@@ -94,10 +94,12 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 			responseStatus = response.status
 
 			if (response.ok) {
-				await db.exec(
-					sql`UPDATE huginn.deliveries
-					 SET status = 'delivered', attempts = ${attempt}, last_attempt_at = now(), response_status = ${responseStatus}
-					 WHERE id = ${deliveryId}`,
+				await db().exec(
+					sql`
+						UPDATE huginn.deliveries
+						SET status = 'delivered', attempts = ${attempt}, last_attempt_at = now(), response_status = ${responseStatus}
+						WHERE id = ${deliveryId}
+					`,
 				)
 
 				return
@@ -115,9 +117,11 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 		}
 	}
 
-	await db.exec(
-		sql`UPDATE huginn.deliveries
-		 SET status = 'failed', attempts = ${MAX_RETRIES}, last_attempt_at = now(), response_status = ${responseStatus}, error_message = ${lastError?.message ?? 'Unknown error'}
-		 WHERE id = ${deliveryId}`,
+	await db().exec(
+		sql`
+			UPDATE huginn.deliveries
+			SET status = 'failed', attempts = ${MAX_RETRIES}, last_attempt_at = now(), response_status = ${responseStatus}, error_message = ${lastError?.message ?? 'Unknown error'}
+			WHERE id = ${deliveryId}
+		`,
 	)
 }

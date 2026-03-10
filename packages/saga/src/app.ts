@@ -3,7 +3,6 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { createOpenApiConfig, errorHandler, notFoundHandler, requestLogger } from 'grid'
 import { cors } from 'hono/cors'
 import type { Pool } from 'pg'
-
 import { createLogsRouter } from './routes/logs.js'
 
 export function createLogsApp(pool: Pool) {

@@ -16,8 +16,27 @@ function reNumber(text: string, offset: number): string {
 	return text.replace(/\$(\d+)/g, (_, n) => `$${Number(n) + offset}`)
 }
 
+function normalizeWhitespace(text: string): string {
+	const lines = text.split('\n')
+
+	while (lines[0]?.trim() === '') {
+		lines.shift()
+	}
+
+	while (lines.at(-1)?.trim() === '') {
+		lines.pop()
+	}
+
+	if (lines.length === 0) {
+		return ''
+	}
+
+	return lines.map((line) => line.trim()).join(' ')
+}
+
 function sql(strings: TemplateStringsArray, ...params: unknown[]): SqlFragment {
 	const textParts: string[] = []
+
 	const values: unknown[] = []
 
 	for (let i = 0; i < strings.length; i++) {
@@ -38,7 +57,7 @@ function sql(strings: TemplateStringsArray, ...params: unknown[]): SqlFragment {
 		}
 	}
 
-	return { [SQL_FRAGMENT]: true, text: textParts.join(''), values }
+	return { [SQL_FRAGMENT]: true, text: normalizeWhitespace(textParts.join('')), values }
 }
 
 sql.raw = function raw(value: string): SqlFragment {
@@ -51,6 +70,7 @@ sql.join = function join(fragments: SqlFragment[], separator = ', '): SqlFragmen
 	}
 
 	const textParts: string[] = []
+
 	const values: unknown[] = []
 
 	for (let i = 0; i < fragments.length; i++) {
@@ -86,6 +106,7 @@ sql.values = function values(rows: unknown[][]): SqlFragment {
 	}
 
 	const textParts: string[] = []
+
 	const allValues: unknown[] = []
 
 	for (const row of rows) {

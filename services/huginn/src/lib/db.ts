@@ -12,6 +12,6 @@ const { getPool, closePool } = createLazyPool(
 	{ max: 10 },
 )
 
-const getDb = () => createDb(getPool())
+const db = () => createDb(getPool())
 
-export { closePool, getDb, getPool }
+export { closePool, db, getPool }

@@ -18,12 +18,6 @@ const openApiConfig = createOpenApiConfig({
 	description: 'JWT authentication',
 })
 
-/**
- * Creates a standalone Heimdall auth app.
- *
- * Calls `configure()` with the provided config, then mounts all auth routes
- * under the root. Intended to be mounted at `/auth` by the consuming service.
- */
 export function createAuthApp(
 	config: Partial<HeimdallConfig> & Pick<HeimdallConfig, 'getPool' | 'secretKey'>,
 ) {

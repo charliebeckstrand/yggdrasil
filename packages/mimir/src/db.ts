@@ -81,6 +81,7 @@ export function createDb(pool: Pool): Db {
 				await client.query('BEGIN')
 
 				const tx = createQueryable(client)
+
 				const result = await fn(tx)
 
 				await client.query('COMMIT')

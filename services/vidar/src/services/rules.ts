@@ -1,5 +1,5 @@
 import { sql } from 'mimir'
-import { getDb } from '../lib/db.js'
+import { db } from '../lib/db.js'
 import { createBan } from './bans.js'
 import { createThreat } from './threats.js'
 
@@ -107,10 +107,8 @@ export async function evaluateRules(ip: string, eventType: string): Promise<void
 }
 
 async function checkRule(ip: string, rule: Rule): Promise<boolean> {
-	const db = getDb()
-
 	if (rule.distinct_accounts) {
-		const row = await db.get<{ event_count: string; account_count: string }>(
+		const row = await db().get<{ event_count: string; account_count: string }>(
 			sql`SELECT
 				COUNT(*)::text AS event_count,
 				COUNT(DISTINCT details->>'email')::text AS account_count
@@ -127,11 +125,14 @@ async function checkRule(ip: string, rule: Rule): Promise<boolean> {
 		return eventCount >= rule.threshold && accountCount >= rule.distinct_accounts
 	}
 
-	const count = await db.val<string>(
-		sql`SELECT COUNT(*)::text FROM vdr_security_events
+	const count = await db().val<string>(
+		sql`
+			SELECT COUNT(*)::text
+			FROM vdr_security_events
 		 WHERE ip = ${ip}
 		   AND event_type = ${rule.event_type}
-		   AND created_at > now() - make_interval(mins => ${rule.window_minutes}::int)`,
+		   AND created_at > now() - make_interval(mins => ${rule.window_minutes}::int)
+		`,
 	)
 
 	return Number.parseInt(count, 10) >= rule.threshold

@@ -1,5 +1,5 @@
-import { createDb, sql } from 'mimir'
-import { getConfig } from '../config.js'
+import { sql } from 'mimir'
+import { creatDb } from '../db.js'
 
 export interface UserRow {
 	id: string
@@ -16,42 +16,52 @@ export interface CredentialsRow {
 	is_active: boolean
 }
 
-function getDb() {
-	return createDb(getConfig().getPool())
-}
-
 export async function createUser(
 	id: string,
 	email: string,
 	hashedPassword: string,
 ): Promise<UserRow> {
-	const db = getDb()
+	const db = creatDb()
 
 	return db.get<UserRow>(
-		sql`INSERT INTO users (id, email, hashed_password)
-		 VALUES (${id}, ${email}, ${hashedPassword})
-		 RETURNING id, email, is_active, is_verified, created_at, updated_at`,
+		sql`
+			INSERT INTO users (id, email, hashed_password)
+			VALUES (${id}, ${email}, ${hashedPassword})
+			RETURNING id, email, is_active, is_verified, created_at, updated_at
+		`,
 	)
 }
 
 export async function findCredentialsByEmail(email: string): Promise<CredentialsRow | null> {
-	const db = getDb()
+	const db = creatDb()
 
 	return db.query<CredentialsRow>(
-		sql`SELECT id, hashed_password, is_active FROM users WHERE email = ${email}`,
+		sql`
+			SELECT id, hashed_password, is_active
+			FROM users
+			WHERE email = ${email}
+		`,
 	)
 }
 
 export async function findUserById(id: string): Promise<UserRow | null> {
-	const db = getDb()
+	const db = creatDb()
 
 	return db.query<UserRow>(
-		sql`SELECT id, email, is_active, is_verified, created_at, updated_at FROM users WHERE id = ${id}`,
+		sql`
+			SELECT id, email, is_active, is_verified, created_at, updated_at
+			FROM users
+			WHERE id = ${id}
+		`,
 	)
 }
 
 export async function deactivateUser(id: string): Promise<void> {
-	const db = getDb()
+	const db = creatDb()
 
-	await db.exec(sql`UPDATE users SET is_active = false WHERE id = ${id}`)
+	await db.exec(sql`
+		UPDATE users
+		SET is_active = false
+		WHERE id = ${id}
+	`)
 }

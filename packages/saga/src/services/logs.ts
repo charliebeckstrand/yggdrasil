@@ -40,9 +40,11 @@ export async function createLog(pool: Pool, input: LogInput): Promise<LogEntry> 
 	const db = createDb(pool)
 
 	return db.get<LogEntry>(
-		sql`INSERT INTO saga.logs (type, level, service, message, metadata)
-		 VALUES (${input.type}, ${input.level}, ${input.service}, ${input.message}, ${sql.json(input.metadata)})
-		 RETURNING id, type, level, service, message, metadata, created_at::text as created_at`,
+		sql`
+			INSERT INTO saga.logs (type, level, service, message, metadata)
+			VALUES (${input.type}, ${input.level}, ${input.service}, ${input.message}, ${sql.json(input.metadata)})
+			RETURNING id, type, level, service, message, metadata, created_at::text as created_at
+		`,
 	)
 }
 
@@ -58,9 +60,11 @@ export async function createBatch(pool: Pool, inputs: LogInput[]): Promise<LogEn
 	])
 
 	return db.many<LogEntry>(
-		sql`INSERT INTO saga.logs (type, level, service, message, metadata)
-		 VALUES ${sql.values(rows)}
-		 RETURNING id, type, level, service, message, metadata, created_at::text as created_at`,
+		sql`
+			INSERT INTO saga.logs (type, level, service, message, metadata)
+			VALUES ${sql.values(rows)}
+			RETURNING id, type, level, service, message, metadata, created_at::text as created_at
+		`,
 	)
 }
 
@@ -91,13 +95,18 @@ export async function queryLogs(pool: Pool, input: QueryInput): Promise<LogList>
 
 	const where = sql.and(conditions)
 
-	const total = await db.val<string>(sql`SELECT COUNT(*) FROM saga.logs ${where}`)
+	const total = await db.val<string>(sql`
+		SELECT COUNT(*)
+		FROM saga.logs ${where}
+	`)
 
 	const data = await db.many<LogEntry>(
-		sql`SELECT id, type, level, service, message, metadata, created_at::text as created_at
-		 FROM saga.logs ${where}
-		 ORDER BY created_at DESC
-		 LIMIT ${input.limit} OFFSET ${input.offset}`,
+		sql`
+			SELECT id, type, level, service, message, metadata, created_at::text as created_at
+			FROM saga.logs ${where}
+			ORDER BY created_at DESC
+			LIMIT ${input.limit} OFFSET ${input.offset}
+		`,
 	)
 
 	return { data, total: Number.parseInt(total, 10) }
