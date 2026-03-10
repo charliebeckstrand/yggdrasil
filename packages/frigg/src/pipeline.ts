@@ -145,8 +145,6 @@ export function generateSecrets(
  * Load secrets cache from a JSON file.
  */
 export function loadSecretsCache(path: string): Record<string, string> {
-	if (!existsSync(path)) return {}
-
 	try {
 		return JSON.parse(readFileSync(path, 'utf-8'))
 	} catch {
