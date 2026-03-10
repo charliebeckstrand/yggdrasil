@@ -11,7 +11,7 @@ const analyzeRoute = createRoute({
 	summary: 'Trigger AI threat analysis',
 	description:
 		'Run AI-powered analysis on recent security events. Requires AI_ENABLED=true and a configured AI provider.',
-	security: [{ ApiKey: [] }],
+	security: [{ Bearer: [] }],
 	request: {
 		body: {
 			content: { 'application/json': { schema: AnalyzeRequestSchema } },

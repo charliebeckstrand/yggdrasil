@@ -10,7 +10,7 @@ const checkIpRoute = createRoute({
 	summary: 'Check if an IP is banned',
 	description:
 		'Returns ban status for a given IP address. Used by other services before processing requests.',
-	security: [{ ApiKey: [] }],
+	security: [{ Bearer: [] }],
 	request: {
 		query: z.object({
 			ip: z

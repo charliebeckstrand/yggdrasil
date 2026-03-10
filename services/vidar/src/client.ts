@@ -17,7 +17,7 @@ export function configure(config: VidarClientConfig): void {
 
 	if (config.vidarUrl) {
 		_client = hc<VidarApp>(config.vidarUrl, {
-			headers: config.vidarApiKey ? { 'X-API-Key': config.vidarApiKey } : undefined,
+			headers: config.vidarApiKey ? { Authorization: `Bearer ${config.vidarApiKey}` } : undefined,
 		})
 	} else {
 		_client = null

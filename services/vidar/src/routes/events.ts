@@ -10,7 +10,7 @@ const ingestRoute = createRoute({
 	summary: 'Ingest a security event',
 	description:
 		'Report a security event for monitoring. Events are stored and evaluated against predefined rules.',
-	security: [{ ApiKey: [] }],
+	security: [{ Bearer: [] }],
 	request: {
 		body: {
 			content: { 'application/json': { schema: IngestEventSchema } },

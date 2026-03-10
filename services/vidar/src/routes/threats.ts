@@ -9,7 +9,7 @@ const listThreatsRoute = createRoute({
 	tags: ['Threats'],
 	summary: 'List detected threats',
 	description: 'Returns detected threat incidents, optionally filtered by resolution status or IP.',
-	security: [{ ApiKey: [] }],
+	security: [{ Bearer: [] }],
 	request: {
 		query: z.object({
 			resolved: z

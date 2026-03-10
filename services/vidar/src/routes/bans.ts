@@ -15,7 +15,7 @@ const listBansRoute = createRoute({
 	tags: ['Bans'],
 	summary: 'List active bans',
 	description: 'Returns all currently active IP bans (excludes expired bans).',
-	security: [{ ApiKey: [] }],
+	security: [{ Bearer: [] }],
 	responses: {
 		200: {
 			content: { 'application/json': { schema: BanListSchema } },
@@ -34,7 +34,7 @@ const createBanRoute = createRoute({
 	tags: ['Bans'],
 	summary: 'Manually ban an IP',
 	description: 'Create a manual IP ban. Optionally specify a duration; omit for a permanent ban.',
-	security: [{ ApiKey: [] }],
+	security: [{ Bearer: [] }],
 	request: {
 		body: {
 			content: { 'application/json': { schema: CreateBanSchema } },
@@ -59,7 +59,7 @@ const removeBanRoute = createRoute({
 	tags: ['Bans'],
 	summary: 'Unban an IP',
 	description: 'Remove the ban for a specific IP address.',
-	security: [{ ApiKey: [] }],
+	security: [{ Bearer: [] }],
 	request: {
 		params: z.object({
 			ip: z.string().min(1).openapi({ description: 'IP address to unban' }),

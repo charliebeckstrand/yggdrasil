@@ -1,4 +1,4 @@
-export { createApiKeyAuth, timingSafeCompare } from './api-key.js'
+export { createBearerAuth, timingSafeCompare } from './api-key.js'
 export { createApp } from './app.js'
 export { errorHandler, notFoundHandler } from './errors.js'
 export { createHealthRoute, HealthResponseSchema } from './health.js'

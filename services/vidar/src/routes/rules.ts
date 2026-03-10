@@ -9,7 +9,7 @@ const listRulesRoute = createRoute({
 	tags: ['Rules'],
 	summary: 'List predefined rules',
 	description: 'Returns all predefined security rules and their current configuration.',
-	security: [{ ApiKey: [] }],
+	security: [{ Bearer: [] }],
 	responses: {
 		200: {
 			content: { 'application/json': { schema: RuleListSchema } },
