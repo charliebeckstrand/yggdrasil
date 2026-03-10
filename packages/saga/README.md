@@ -1,8 +1,6 @@
 # saga
 
-PostgreSQL logging and search for Hono services.
-
-Store and query structured log entries via service-layer functions and schemas.
+PostgreSQL logging and search.
 
 ## Usage
 
