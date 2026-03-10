@@ -22,6 +22,7 @@ const SWEEP_INTERVAL_MS = 300_000 // 5 minutes
 export function rateLimit(options?: RateLimitOptions): MiddlewareHandler {
 	const rate = options?.rate ?? 5
 	const burst = options?.burst ?? 10
+
 	const onLimit = options?.onLimit
 
 	const buckets = new Map<string, BucketEntry>()

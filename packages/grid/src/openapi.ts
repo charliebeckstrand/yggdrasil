@@ -2,6 +2,7 @@ import { getManifestPort } from 'frigg'
 
 function resolvePort(): number {
 	if (process.env.PORT) return Number(process.env.PORT)
+
 	return getManifestPort()
 }
 

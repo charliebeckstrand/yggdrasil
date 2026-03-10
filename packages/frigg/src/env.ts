@@ -28,9 +28,11 @@ function getBaseSchema() {
 type BaseEnv = z.infer<ReturnType<typeof getBaseSchema>>
 
 export function createEnvLoader(): () => BaseEnv
+
 export function createEnvLoader<T extends z.ZodRawShape>(
 	extra: T,
 ): () => BaseEnv & z.infer<z.ZodObject<T>>
+
 export function createEnvLoader<T extends z.ZodRawShape>(extra?: T) {
 	const baseSchema = getBaseSchema()
 
