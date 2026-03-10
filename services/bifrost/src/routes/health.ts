@@ -49,7 +49,9 @@ export const health = new OpenAPIHono().openapi(healthRoute, async (c) => {
 	const services: Record<string, ServiceStatus> = {}
 
 	const dbStart = Date.now()
+
 	const dbHealthy = await checkHealth()
+
 	const dbLatency = Date.now() - dbStart
 
 	services.database = { status: dbHealthy ? 'up' : 'down', latency: dbLatency }

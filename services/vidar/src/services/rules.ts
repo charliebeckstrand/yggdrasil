@@ -60,12 +60,6 @@ const PREDEFINED_RULES: Rule[] = [
 ]
 
 function formatDuration(minutes: number): string {
-	if (minutes >= 1440) {
-		const days = Math.floor(minutes / 1440)
-
-		return `${days}d`
-	}
-
 	if (minutes >= 60) {
 		const hours = Math.floor(minutes / 60)
 
@@ -90,7 +84,7 @@ export async function evaluateRules(ip: string, eventType: string): Promise<void
 		const triggered = await checkRule(pool, ip, rule)
 
 		if (triggered) {
-			await createBan(ip, `Triggered rule: ${rule.name}`, {
+			await createBan(ip, rule.name, {
 				rule_id: rule.id,
 				created_by: 'vidar',
 				duration_minutes: rule.ban_duration_minutes,

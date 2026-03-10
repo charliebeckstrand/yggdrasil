@@ -55,6 +55,7 @@ analyze.openapi(analyzeRoute, async (c) => {
 	const { ip } = c.req.valid('json')
 
 	const analyzer = getAnalyzer()
+
 	const result = await analyzer.analyze({ ip })
 
 	return c.json(result, 200)

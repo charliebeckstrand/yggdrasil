@@ -33,11 +33,13 @@ export function createApp() {
 	// --- OpenAPI ---
 
 	app.doc('/vidar/openapi.json', openApiConfig)
+
 	app.get('/vidar/docs', swaggerUI({ url: '/vidar/openapi.json' }))
 
 	// --- Error handling ---
 
 	app.onError(errorHandler)
+
 	app.notFound(notFoundHandler)
 
 	return app

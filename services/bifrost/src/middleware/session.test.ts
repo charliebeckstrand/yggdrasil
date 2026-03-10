@@ -27,6 +27,7 @@ describe('Session encoding/decoding', () => {
 
 		// Tamper with the encoded value
 		const tampered = `${encoded.slice(0, -4)}XXXX`
+
 		const decoded = await _decodeSession(tampered, SECRET)
 
 		expect(decoded).toBeNull()

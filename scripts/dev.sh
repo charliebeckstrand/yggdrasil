@@ -15,6 +15,7 @@ DOCKER_RUNNING=false
 cleanup() {
 	if [ "$DOCKER_RUNNING" = true ]; then
 		echo ""
+		
 		echo -e "${CYAN}Stopping dev containers...${RESET}"
 
 		docker compose -f "$COMPOSE_FILE" down 2>/dev/null
@@ -34,10 +35,12 @@ if command -v docker &>/dev/null && docker info &>/dev/null; then
 
 	echo -e "${GREEN}PostgreSQL is ready${RESET} ${DIM}(localhost:5432)${RESET}"
 	echo -e "${GREEN}Redis is ready${RESET}      ${DIM}(localhost:6379)${RESET}"
+
 	echo ""
 else
 	echo -e "${YELLOW}Docker not available — skipping dev containers${RESET}"
 	echo -e "${DIM}Install Docker to enable Redis and other dev services${RESET}"
+
 	echo ""
 fi
 

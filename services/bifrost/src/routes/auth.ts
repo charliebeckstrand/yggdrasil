@@ -180,6 +180,7 @@ export const authRoutes = new OpenAPIHono<SessionEnv>()
 				}
 				return c.json({ error: 'Unauthorized', message: err.message, statusCode: 401 }, 401)
 			}
+
 			throw err
 		}
 	})

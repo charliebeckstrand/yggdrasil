@@ -48,8 +48,11 @@ describe('Health route', () => {
 		const body = (await res.json()) as HealthResponse
 
 		expect(body.status).toBe('healthy')
+
 		expect(body.version).toBe('0.1.0')
+
 		expect(body.uptime).toBeTypeOf('number')
+
 		expect(body.services).toBeDefined()
 	})
 })
@@ -63,7 +66,9 @@ describe('OpenAPI', () => {
 		const spec = (await res.json()) as OpenAPISpec
 
 		expect(spec.openapi).toBe('3.0.0')
+
 		expect(spec.info.title).toBe('Bifrost')
+
 		expect(spec.paths['/api/health']).toBeDefined()
 	})
 
@@ -87,6 +92,7 @@ describe('Error handling', () => {
 		const body = (await res.json()) as ErrorResponse
 
 		expect(body.error).toBe('Not Found')
+
 		expect(body.statusCode).toBe(404)
 	})
 })
