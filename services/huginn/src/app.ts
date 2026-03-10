@@ -3,17 +3,20 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { errorHandler, notFoundHandler, requestLogger, securityHeaders } from 'grid'
 import { cors } from 'hono/cors'
 
+import { loadEnv } from './lib/env.js'
 import { openApiConfig } from './lib/openapi.js'
 import { health } from './routes/health.js'
 import { publish } from './routes/publish.js'
 import { subscriptions } from './routes/subscriptions.js'
 
 export function createApp() {
+	const env = loadEnv()
+
 	const app = new OpenAPIHono()
 
 	// --- Global middleware ---
 
-	app.use('*', cors())
+	app.use('*', cors({ origin: env.CORS_ORIGIN, credentials: true }))
 	app.use('*', securityHeaders())
 	app.use('*', requestLogger())
 
