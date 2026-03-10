@@ -1,5 +1,5 @@
 import { sql } from 'mimir'
-import { getPool } from '../lib/db.js'
+import { getDb } from '../lib/db.js'
 
 type PublishInput = {
 	topic: string
@@ -25,15 +25,13 @@ const MAX_RETRIES = 3
 const BASE_DELAY_MS = 1000
 
 export async function publishEvent(input: PublishInput): Promise<Event> {
-	const pool = getPool()
+	const db = getDb()
 
-	const { rows } = await pool.query<Event>(
+	const event = await db.first<Event>(
 		sql`INSERT INTO huginn.events (topic, payload, source)
-		 VALUES (${input.topic}, ${JSON.stringify(input.payload)}, ${input.source})
+		 VALUES (${input.topic}, ${sql.json(input.payload)}, ${input.source})
 		 RETURNING id, topic, payload, source, created_at::text as created_at`,
 	)
-
-	const event = rows[0]
 
 	deliverEvent(event).catch((err) => {
 		console.error(`Failed to deliver event ${event.id}:`, err)
@@ -43,9 +41,9 @@ export async function publishEvent(input: PublishInput): Promise<Event> {
 }
 
 async function deliverEvent(event: Event): Promise<void> {
-	const pool = getPool()
+	const db = getDb()
 
-	const { rows: subs } = await pool.query<Subscription>(
+	const subs = await db.many<Subscription>(
 		sql`SELECT id, callback_url, service
 		 FROM huginn.subscriptions
 		 WHERE topic = ${event.topic} AND is_active = TRUE`,
@@ -67,15 +65,13 @@ async function deliverEvent(event: Event): Promise<void> {
 }
 
 async function deliverToSubscriber(event: Event, sub: Subscription): Promise<void> {
-	const pool = getPool()
+	const db = getDb()
 
-	const { rows } = await pool.query<{ id: string }>(
+	const { id: deliveryId } = await db.first<{ id: string }>(
 		sql`INSERT INTO huginn.deliveries (event_id, subscription_id, status)
 		 VALUES (${event.id}, ${sub.id}, 'pending')
 		 RETURNING id`,
 	)
-
-	const deliveryId = rows[0].id
 
 	let lastError: Error | null = null
 	let responseStatus: number | null = null
@@ -98,7 +94,7 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 			responseStatus = response.status
 
 			if (response.ok) {
-				await pool.query(
+				await db.exec(
 					sql`UPDATE huginn.deliveries
 					 SET status = 'delivered', attempts = ${attempt}, last_attempt_at = now(), response_status = ${responseStatus}
 					 WHERE id = ${deliveryId}`,
@@ -119,7 +115,7 @@ async function deliverToSubscriber(event: Event, sub: Subscription): Promise<voi
 		}
 	}
 
-	await pool.query(
+	await db.exec(
 		sql`UPDATE huginn.deliveries
 		 SET status = 'failed', attempts = ${MAX_RETRIES}, last_attempt_at = now(), response_status = ${responseStatus}, error_message = ${lastError?.message ?? 'Unknown error'}
 		 WHERE id = ${deliveryId}`,

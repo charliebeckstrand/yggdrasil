@@ -161,6 +161,77 @@ describe('sql.values', () => {
 	})
 })
 
+describe('sql.json', () => {
+	it('stringifies an object and produces a parameterized value', () => {
+		const data = { key: 'value', num: 42 }
+		const result = sql`INSERT INTO t (data) VALUES (${sql.json(data)})`
+
+		expect(result.text).toBe('INSERT INTO t (data) VALUES ($1)')
+		expect(result.values).toEqual([JSON.stringify(data)])
+	})
+
+	it('stringifies an array', () => {
+		const result = sql`INSERT INTO t (tags) VALUES (${sql.json([1, 2, 3])})`
+
+		expect(result.text).toBe('INSERT INTO t (tags) VALUES ($1)')
+		expect(result.values).toEqual(['[1,2,3]'])
+	})
+
+	it('stringifies null', () => {
+		const result = sql`INSERT INTO t (data) VALUES (${sql.json(null)})`
+
+		expect(result.values).toEqual(['null'])
+	})
+
+	it('re-numbers when combined with other parameters', () => {
+		const data = { foo: 'bar' }
+		const result = sql`INSERT INTO t (name, data) VALUES (${'alice'}, ${sql.json(data)})`
+
+		expect(result.text).toBe('INSERT INTO t (name, data) VALUES ($1, $2)')
+		expect(result.values).toEqual(['alice', JSON.stringify(data)])
+	})
+})
+
+describe('sql.and', () => {
+	it('produces WHERE clause from conditions', () => {
+		const conditions = [sql`ip = ${'1.2.3.4'}`, sql`resolved = ${true}`]
+		const result = sql`SELECT * FROM threats ${sql.and(conditions)} LIMIT ${10}`
+
+		expect(result.text).toBe('SELECT * FROM threats WHERE ip = $1 AND resolved = $2 LIMIT $3')
+		expect(result.values).toEqual(['1.2.3.4', true, 10])
+	})
+
+	it('returns empty string for no conditions', () => {
+		const result = sql`SELECT * FROM threats ${sql.and([])} ORDER BY id`
+
+		expect(result.text).toBe('SELECT * FROM threats  ORDER BY id')
+		expect(result.values).toEqual([])
+	})
+
+	it('handles single condition', () => {
+		const result = sql.and([sql`active = ${true}`])
+
+		expect(result.text).toBe('WHERE active = $1')
+		expect(result.values).toEqual([true])
+	})
+
+	it('works with range operators', () => {
+		const conditions = [sql`created_at >= ${'2024-01-01'}`, sql`created_at <= ${'2024-12-31'}`]
+		const result = sql.and(conditions)
+
+		expect(result.text).toBe('WHERE created_at >= $1 AND created_at <= $2')
+		expect(result.values).toEqual(['2024-01-01', '2024-12-31'])
+	})
+
+	it('works with JSON operators', () => {
+		const conditions = [sql`details->>'email' = ${'test@test.com'}`]
+		const result = sql.and(conditions)
+
+		expect(result.text).toBe("WHERE details->>'email' = $1")
+		expect(result.values).toEqual(['test@test.com'])
+	})
+})
+
 describe('dynamic WHERE pattern', () => {
 	it('builds conditional WHERE clause', () => {
 		const conditions: ReturnType<typeof sql>[] = []

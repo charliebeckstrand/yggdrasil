@@ -1,5 +1,5 @@
 import { sql } from 'mimir'
-import { getPool } from '../lib/db.js'
+import { getDb } from '../lib/db.js'
 
 type CreateInput = {
 	topic: string
@@ -23,11 +23,11 @@ type SubscriptionList = {
 }
 
 export async function listSubscriptions(topic?: string): Promise<SubscriptionList> {
-	const pool = getPool()
+	const db = getDb()
 
 	const topicFilter = topic ? sql`AND topic = ${topic}` : sql.raw('')
 
-	const { rows } = await pool.query<Subscription>(
+	const rows = await db.many<Subscription>(
 		sql`SELECT id, topic, callback_url, service, is_active,
 		 created_at::text as created_at, updated_at::text as updated_at
 		 FROM huginn.subscriptions WHERE is_active = TRUE ${topicFilter}
@@ -38,24 +38,22 @@ export async function listSubscriptions(topic?: string): Promise<SubscriptionLis
 }
 
 export async function createSubscription(input: CreateInput): Promise<Subscription> {
-	const pool = getPool()
+	const db = getDb()
 
-	const { rows } = await pool.query<Subscription>(
+	return db.first<Subscription>(
 		sql`INSERT INTO huginn.subscriptions (topic, callback_url, service)
 		 VALUES (${input.topic}, ${input.callback_url}, ${input.service})
 		 RETURNING id, topic, callback_url, service, is_active,
 		 created_at::text as created_at, updated_at::text as updated_at`,
 	)
-
-	return rows[0]
 }
 
 export async function deleteSubscription(id: string): Promise<boolean> {
-	const pool = getPool()
+	const db = getDb()
 
-	const { rowCount } = await pool.query(
+	const count = await db.exec(
 		sql`UPDATE huginn.subscriptions SET is_active = FALSE, updated_at = now() WHERE id = ${id} AND is_active = TRUE`,
 	)
 
-	return (rowCount ?? 0) > 0
+	return count > 0
 }

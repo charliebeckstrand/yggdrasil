@@ -1,5 +1,5 @@
 import { sql } from 'mimir'
-import { getPool } from '../lib/db.js'
+import { getDb } from '../lib/db.js'
 import { createBan } from './bans.js'
 import { createThreat } from './threats.js'
 
@@ -75,14 +75,12 @@ export function getRules(): Rule[] {
 }
 
 export async function evaluateRules(ip: string, eventType: string): Promise<void> {
-	const pool = getPool()
-
 	const knownIp = ip && ip !== 'unknown' ? ip : null
 
 	const matchingRules = PREDEFINED_RULES.filter((r) => r.enabled && r.event_type === eventType)
 
 	for (const rule of matchingRules) {
-		const triggered = await checkRule(pool, ip, rule)
+		const triggered = await checkRule(ip, rule)
 
 		if (triggered) {
 			await createBan(ip, rule.name, {
@@ -108,13 +106,11 @@ export async function evaluateRules(ip: string, eventType: string): Promise<void
 	}
 }
 
-async function checkRule(
-	pool: ReturnType<typeof getPool>,
-	ip: string,
-	rule: Rule,
-): Promise<boolean> {
+async function checkRule(ip: string, rule: Rule): Promise<boolean> {
+	const db = getDb()
+
 	if (rule.distinct_accounts) {
-		const { rows } = await pool.query<{ event_count: string; account_count: string }>(
+		const row = await db.first<{ event_count: string; account_count: string }>(
 			sql`SELECT
 				COUNT(*)::text AS event_count,
 				COUNT(DISTINCT details->>'email')::text AS account_count
@@ -124,19 +120,19 @@ async function checkRule(
 			   AND created_at > now() - make_interval(mins => ${rule.window_minutes}::int)`,
 		)
 
-		const eventCount = Number.parseInt(rows[0].event_count, 10)
+		const eventCount = Number.parseInt(row.event_count, 10)
 
-		const accountCount = Number.parseInt(rows[0].account_count, 10)
+		const accountCount = Number.parseInt(row.account_count, 10)
 
 		return eventCount >= rule.threshold && accountCount >= rule.distinct_accounts
 	}
 
-	const { rows } = await pool.query<{ count: string }>(
-		sql`SELECT COUNT(*)::text AS count FROM vdr_security_events
+	const count = await db.val<string>(
+		sql`SELECT COUNT(*)::text FROM vdr_security_events
 		 WHERE ip = ${ip}
 		   AND event_type = ${rule.event_type}
 		   AND created_at > now() - make_interval(mins => ${rule.window_minutes}::int)`,
 	)
 
-	return Number.parseInt(rows[0].count, 10) >= rule.threshold
+	return Number.parseInt(count, 10) >= rule.threshold
 }

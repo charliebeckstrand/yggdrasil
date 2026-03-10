@@ -66,6 +66,20 @@ sql.join = function join(fragments: SqlFragment[], separator = ', '): SqlFragmen
 	return { [SQL_FRAGMENT]: true, text: textParts.join(''), values }
 }
 
+sql.json = function json(value: unknown): SqlFragment {
+	return { [SQL_FRAGMENT]: true, text: '$1', values: [JSON.stringify(value)] }
+}
+
+sql.and = function and(conditions: SqlFragment[]): SqlFragment {
+	if (conditions.length === 0) {
+		return { [SQL_FRAGMENT]: true, text: '', values: [] }
+	}
+
+	const joined = sql.join(conditions, ' AND ')
+
+	return { [SQL_FRAGMENT]: true, text: `WHERE ${joined.text}`, values: joined.values }
+}
+
 sql.values = function values(rows: unknown[][]): SqlFragment {
 	if (rows.length === 0) {
 		throw new Error('sql.values() requires at least one row')
