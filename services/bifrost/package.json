@@ -28,6 +28,7 @@
 		"@hono/zod-openapi": "^1.2.2",
 		"grid": "workspace:*",
 		"heimdall": "workspace:*",
+		"hermes": "workspace:*",
 		"hono": "^4.12.5",
 		"norns": "workspace:*",
 		"saga": "workspace:*",

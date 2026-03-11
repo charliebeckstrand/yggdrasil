@@ -161,6 +161,9 @@ importers:
       heimdall:
         specifier: workspace:*
         version: link:../../packages/heimdall
+      hermes:
+        specifier: workspace:*
+        version: link:../hermes
       hono:
         specifier: ^4.12.5
         version: 4.12.5
