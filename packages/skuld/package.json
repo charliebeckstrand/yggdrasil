@@ -1,5 +1,5 @@
 {
-	"name": "fenrir",
+	"name": "skuld",
 	"version": "0.1.0",
 	"description": "Shared Zod schemas — reusable primitives, composites, and enums for validation and OpenAPI",
 	"type": "module",
