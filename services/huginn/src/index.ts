@@ -1,7 +1,6 @@
 // TODO: Add huginn service to .do/app.yaml and secrets to .github/workflows/deploy.yml when ready to deploy
 
 import { serve } from '@hono/node-server'
-import { registerWithForseti } from 'forseti/client'
 import { setupLifecycle } from 'norns'
 import { createHuginnApp } from './app.js'
 import { closePool } from './lib/db.js'
@@ -19,13 +18,6 @@ const server = serve(
 		console.log(`Huginn running on http://localhost:${info.port}`)
 		console.log(`API docs available at http://localhost:${info.port}/events/docs`)
 		console.log(`OpenAPI spec at http://localhost:${info.port}/events/openapi.json`)
-
-		registerWithForseti({
-			forsetiUrl: env.FORSETI_URL,
-			service: 'huginn',
-			url: `http://localhost:${info.port}`,
-			spec: `http://localhost:${info.port}/events/openapi.json`,
-		})
 	},
 )
 

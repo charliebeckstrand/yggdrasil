@@ -118,9 +118,9 @@ describe('registry', () => {
 			const result = lookupOperation('vidar.check-ip')
 
 			expect(result).not.toBeNull()
-			expect(result!.provider.service).toBe('vidar')
-			expect(result!.operation.operationId).toBe('check-ip')
-			expect(result!.operation.method).toBe('GET')
+			expect(result?.provider.service).toBe('vidar')
+			expect(result?.operation.operationId).toBe('check-ip')
+			expect(result?.operation.method).toBe('GET')
 		})
 
 		it('should return null for unknown operations', () => {
