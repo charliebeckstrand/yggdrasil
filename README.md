@@ -6,8 +6,8 @@ Microservices built with TypeScript snd Hono
 
 | Service | Role | Port |
 | --- | --- | --- |
-| **[Bifrost](services/bifrost)** | API Gateway | `3000` |
-| **[Hermes](services/hermes)** | WebSockets | `3001` |
+| **[Bifrost](services/bifrost)** | API | `3000` |
+| **[Hermes](services/hermes)** | RPC | `3001` |
 | **[Huginn](services/huginn)** | Event Bus | `3002` |
 | **[Vidar](services/vidar)** | Monitoring | `3003` |
 
