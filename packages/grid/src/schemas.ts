@@ -14,8 +14,6 @@ export const MessageSchema = z
 	})
 	.openapi('Message')
 
-// --- Security Events ---
-
 export const IngestEventSchema = z
 	.object({
 		ip: z.string().min(1).openapi({ description: 'Source IP address', example: '192.168.1.100' }),
@@ -44,8 +42,6 @@ export const SecurityEventSchema = z
 		created_at: z.iso.datetime(),
 	})
 	.openapi('SecurityEvent')
-
-// --- Bans ---
 
 export const CheckIpResponseSchema = z
 	.object({

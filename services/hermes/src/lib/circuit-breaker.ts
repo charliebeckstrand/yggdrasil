@@ -44,6 +44,7 @@ export function createCircuitBreaker(
 
 	function onFailure(): void {
 		failures++
+
 		lastFailure = Date.now()
 
 		if (state === 'half-open') {
@@ -64,6 +65,7 @@ export function createCircuitBreaker(
 			if (state === 'open') {
 				if (shouldAttemptReset()) {
 					state = 'half-open'
+
 					halfOpenAttempts = 0
 
 					console.info(`[hermes] Circuit breaker "${name}" entering half-open state`)

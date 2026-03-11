@@ -14,6 +14,7 @@ describe('PaginationSchema', () => {
 		const result = PaginationSchema.safeParse({ limit: 25, offset: 10 })
 
 		expect(result.success).toBe(true)
+
 		expect(result.data).toEqual({ limit: 25, offset: 10 })
 	})
 
@@ -76,6 +77,7 @@ describe('MessageSchema', () => {
 
 describe('createListSchema', () => {
 	const ItemSchema = z.object({ id: z.string(), name: z.string() })
+
 	const ItemListSchema = createListSchema(ItemSchema, 'ItemList')
 
 	it('accepts valid list responses', () => {

@@ -16,8 +16,6 @@ export function createVidarApp() {
 		description: '',
 	})
 
-	// --- Routes ---
-
 	const routes = app
 		.route('/vidar', health)
 		.route('/vidar', events)
@@ -27,8 +25,6 @@ export function createVidarApp() {
 		.route('/vidar', rules)
 		.route('/vidar', analyze)
 		.route('/vidar', securityStream)
-
-	// --- Finalize ---
 
 	setup()
 

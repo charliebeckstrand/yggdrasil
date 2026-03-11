@@ -13,12 +13,15 @@ function getUpstreamService(path: string): string | null {
 export function rpcLogger(): MiddlewareHandler {
 	return async (c, next) => {
 		const start = Date.now()
+
 		const service = getUpstreamService(c.req.path)
 
 		await next()
 
 		const duration = Date.now() - start
+
 		const breaker = service === 'huginn' ? huginnBreaker : service === 'vidar' ? vidarBreaker : null
+
 		const breakerState = breaker?.getStatus().state ?? 'n/a'
 
 		console.info(

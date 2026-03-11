@@ -17,16 +17,10 @@ export function createHermesApp() {
 		cors: { origin: env.CORS_ORIGIN, credentials: true },
 	})
 
-	// --- Middleware ---
-
 	app.use('/rpc/*', timing())
 	app.use('/rpc/*', rpcLogger())
 
-	// --- Routes ---
-
 	const routes = app.route('/rpc', health).route('/rpc', events).route('/rpc', security)
-
-	// --- Finalize ---
 
 	setup()
 

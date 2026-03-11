@@ -11,8 +11,6 @@ export {
 	SecurityEventSchema,
 } from 'grid/schemas'
 
-// --- Threats ---
-
 export const ThreatSchema = z
 	.object({
 		id: z.uuid(),
@@ -33,8 +31,6 @@ export const ThreatListSchema = z
 	})
 	.openapi('ThreatList')
 
-// --- Rules ---
-
 export const RuleSchema = z
 	.object({
 		id: z.string(),
@@ -53,8 +49,6 @@ export const RuleListSchema = z
 		data: z.array(RuleSchema),
 	})
 	.openapi('RuleList')
-
-// --- Analyze ---
 
 export const AnalyzeRequestSchema = z
 	.object({

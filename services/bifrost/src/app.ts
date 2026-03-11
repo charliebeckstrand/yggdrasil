@@ -21,18 +21,12 @@ export function createBifrostApp() {
 	app.use('*', session())
 	app.use('*', csrf({ origin: env.CORS_ORIGIN }))
 
-	// --- Ban check + rate limiting on auth routes via Hermes RPC ---
-
 	app.use('/auth/*', createHermesGuard({ rate: 2, burst: 5, route: '/auth' }))
-
-	// --- Routes ---
 
 	const routes = app
 		.route('/auth', authRoutes)
 		.route('/api', health)
 		.route('/api/users', usersRoutes)
-
-	// --- Finalize ---
 
 	setup()
 

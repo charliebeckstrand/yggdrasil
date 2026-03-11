@@ -16,15 +16,11 @@ export function createHuginnApp() {
 		cors: { origin: env.CORS_ORIGIN, credentials: true },
 	})
 
-	// --- Routes ---
-
 	const routes = app
 		.route('/events', health)
 		.route('/events', publish)
 		.route('/events', subscriptions)
 		.route('/events', eventStream)
-
-	// --- Finalize ---
 
 	setup()
 

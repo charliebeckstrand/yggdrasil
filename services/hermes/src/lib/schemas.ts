@@ -11,8 +11,6 @@ export {
 	SecurityEventSchema,
 } from 'grid/schemas'
 
-// --- Events (Huginn proxy) ---
-
 export const PublishEventSchema = z
 	.object({
 		topic: z
@@ -79,8 +77,6 @@ export const SubscriptionListSchema = z
 		total: z.number(),
 	})
 	.openapi('SubscriptionList')
-
-// --- Health ---
 
 export const ServiceStatusSchema = z
 	.object({

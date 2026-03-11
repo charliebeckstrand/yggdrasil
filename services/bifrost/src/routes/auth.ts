@@ -10,8 +10,6 @@ import {
 	setSessionCookie,
 } from '../middleware/session.js'
 
-// --- Schemas ---
-
 const LoginRequestSchema = z
 	.object({
 		email: z.email(),
@@ -49,8 +47,6 @@ const RegisterResponseSchema = z
 	.openapi('RegisterResponse')
 
 const MessageSchema = z.object({ message: z.string() }).openapi('AuthMessage')
-
-// --- Routes ---
 
 const loginRoute = createRoute({
 	method: 'post',
@@ -138,8 +134,6 @@ const registerRoute = createRoute({
 		},
 	},
 })
-
-// --- Handlers ---
 
 export const authRoutes = new OpenAPIHono<SessionEnv>()
 	.openapi(loginRoute, async (c) => {

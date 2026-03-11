@@ -15,6 +15,8 @@ EOSQL
 
 # --- bifrost database tables (runs against the default bifrost db) ---
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-'EOSQL'
+    CREATE SCHEMA IF NOT EXISTS users;
+
     CREATE TABLE IF NOT EXISTS users (
         id              UUID        PRIMARY KEY,
         email           VARCHAR(255) NOT NULL,
@@ -44,6 +46,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-'
     END $$;
 
     -- saga schema (logs are written from bifrost's db connection)
+    
     CREATE SCHEMA IF NOT EXISTS saga;
 
     CREATE TABLE IF NOT EXISTS saga.logs (

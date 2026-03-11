@@ -21,6 +21,7 @@ export function createProxy(targetUrl: string, options: ProxyOptions = {}): Midd
 
 	return async (c) => {
 		const url = new URL(c.req.url)
+
 		const upstream = `${base}${url.pathname}${url.search}`
 
 		const headers = new Headers()

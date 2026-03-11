@@ -1,7 +1,5 @@
 import { z } from '@hono/zod-openapi'
 
-// --- Pagination ---
-
 export const PaginationSchema = z.object({
 	limit: z.coerce
 		.number()
@@ -15,8 +13,6 @@ export const PaginationSchema = z.object({
 		.default(0)
 		.openapi({ description: 'Number of items to skip', example: 0 }),
 })
-
-// --- API Responses ---
 
 export const ErrorSchema = z
 	.object({
@@ -32,14 +28,6 @@ export const MessageSchema = z
 	})
 	.openapi('Message')
 
-/**
- * Creates a typed list response schema with `data` array and `total` count.
- *
- * @example
- * ```ts
- * const UserListSchema = createListSchema(UserSchema, 'UserList')
- * ```
- */
 export function createListSchema<T extends z.ZodType>(itemSchema: T, name: string) {
 	return z
 		.object({
@@ -49,14 +37,10 @@ export function createListSchema<T extends z.ZodType>(itemSchema: T, name: strin
 		.openapi(name)
 }
 
-// --- Date range filtering ---
-
 export const DateRangeSchema = z.object({
 	from: z.iso.datetime().optional().openapi({ description: 'Start of date range (ISO 8601)' }),
 	to: z.iso.datetime().optional().openapi({ description: 'End of date range (ISO 8601)' }),
 })
-
-// --- Sort ---
 
 export function createSortSchema<T extends readonly [string, ...string[]]>(
 	fields: T,

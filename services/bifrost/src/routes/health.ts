@@ -1,8 +1,6 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { getPool } from '../lib/db.js'
 
-// --- Schema ---
-
 const ServiceStatusSchema = z.object({
 	status: z.enum(['up', 'down', 'unknown']),
 	latency: z.number().optional(),
@@ -16,8 +14,6 @@ const HealthResponseSchema = z
 		services: z.record(z.string(), ServiceStatusSchema),
 	})
 	.openapi('HealthResponse')
-
-// --- Route ---
 
 const healthRoute = createRoute({
 	method: 'get',
@@ -36,8 +32,6 @@ const healthRoute = createRoute({
 		},
 	},
 })
-
-// --- Handler ---
 
 const startTime = Date.now()
 

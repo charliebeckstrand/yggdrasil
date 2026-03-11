@@ -21,6 +21,7 @@ export function createApp(options: CreateAppOptions) {
 	const app = new OpenAPIHono()
 
 	app.use(trimTrailingSlash())
+
 	app.use('*', cors(options.cors ?? undefined))
 	app.use('*', secureHeaders())
 	app.use('*', logger())
