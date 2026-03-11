@@ -2,7 +2,7 @@ import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import { environment } from '../lib/env.js'
 import { AnalyzeRequestSchema, AnalyzeResponseSchema, ErrorSchema } from '../lib/schemas.js'
 import { apiKeyAuth } from '../middleware/api-key.js'
-import { getAnalyzer } from '../services/analyzer.js'
+import { getAnalyzer } from '../handlers/analyzer.js'
 
 const analyzeRoute = createRoute({
 	method: 'post',

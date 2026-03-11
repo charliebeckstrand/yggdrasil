@@ -7,7 +7,7 @@ import {
 	MessageSchema,
 } from '../lib/schemas.js'
 import { apiKeyAuth } from '../middleware/api-key.js'
-import { createBan, listActiveBans, removeBan } from '../services/bans.js'
+import { createBan, listActiveBans, removeBan } from '../handlers/bans.js'
 
 const listBansRoute = createRoute({
 	method: 'get',
