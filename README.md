@@ -1,6 +1,6 @@
 # Yggdrasil
 
-TypeScript Microservices (Hono + Turborepo)
+TypeScript Microservices built with Hono
 
 ## Services
 
