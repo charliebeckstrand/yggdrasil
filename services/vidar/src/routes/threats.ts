@@ -4,6 +4,7 @@ import { apiKeyAuth } from '../middleware/api-key.js'
 import { listThreats } from '../services/threats.js'
 
 const listThreatsRoute = createRoute({
+	operationId: 'list-threats',
 	method: 'get',
 	path: '/threats',
 	tags: ['Threats'],

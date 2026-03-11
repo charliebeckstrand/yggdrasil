@@ -7,7 +7,7 @@ TypeScript Microservices (Hono + Turborepo)
 | Service | Role | Port |
 | --- | --- | --- |
 | **[Bifrost](services/bifrost)** | API Gateway | `3000` |
-| **[Hermes](services/hermes)** | WebSockets | `3001` |
+| **[Forseti](services/forseti)** | Intent Orchestrator | `3001` |
 | **[Huginn](services/huginn)** | Event Bus | `3002` |
 | **[Vidar](services/vidar)** | Monitoring | `3003` |
 
@@ -24,11 +24,19 @@ TypeScript Microservices (Hono + Turborepo)
 
 ## Architecture
 
-Bifrost acts as the API gateway, proxying requests to downstream services:
+Forseti is the intent-based service orchestrator. Services register with Forseti on startup by
+providing their OpenAPI spec URL. Forseti discovers all available operations automatically and
+routes intent resolution requests to the right service endpoints.
 
-- `/events/*` -> Huginn (event bus)
-- `/vidar/*` -> Vidar (security monitoring)
+- Services declare intents: `forseti.resolve('vidar.check-ip', { ip })` or `forseti.declare('vidar.ingest-event', { ... })`
+- No service knows about any other service — they only know Forseti
+- Forseti logs every resolution with timing and outcome
+
+Bifrost acts as the API gateway:
+
 - `/auth/*`, `/api/*` -> handled directly by Bifrost
+- Ban checks and security events route through Forseti to Vidar
+- `/events/*` -> Huginn (event bus), `/vidar/*` -> Vidar (proxied)
 
 All services share a common middleware stack via `createApp()`:
 
@@ -41,11 +49,11 @@ All services share a common middleware stack via `createApp()`:
 
 - **Browser clients**: Cookie-based sessions with CSRF protection (Bifrost)
 - **Service-to-service**: Bearer token auth (`Authorization: Bearer <key>`)
-- **WebSocket**: API key via query parameter (Hermes)
+- **WebSocket**: API key via query parameter (Forseti)
 
 ### Real-time
 
-- **WebSocket**: Full-duplex messaging via Hermes
+- **WebSocket**: Full-duplex messaging via Forseti
 - **SSE**: Event streaming via Huginn (`GET /events/stream`) and Vidar (`GET /vidar/stream`)
 
 ## Prerequisites

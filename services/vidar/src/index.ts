@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server'
+import { registerWithForseti } from 'forseti/client'
 import { setupLifecycle } from 'norns'
 import { createVidarApp } from './app.js'
 import { closePool } from './lib/db.js'
@@ -24,6 +25,13 @@ const server = serve(
 	(info) => {
 		console.log(`Vidar running on http://localhost:${info.port}`)
 		console.log(`API docs available at http://localhost:${info.port}/vidar/docs`)
+
+		registerWithForseti({
+			forsetiUrl: env.FORSETI_URL,
+			service: 'vidar',
+			url: `http://localhost:${info.port}`,
+			spec: `http://localhost:${info.port}/vidar/openapi.json`,
+		})
 	},
 )
 

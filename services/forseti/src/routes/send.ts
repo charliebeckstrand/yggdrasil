@@ -7,7 +7,7 @@ const sendRoute = createRoute({
 	path: '/send',
 	tags: ['Messaging'],
 	summary: 'Send message to a channel',
-	description: 'Sends a message to all subscribers of a specific channel',
+	description: 'Sends a message to all subscribers of a specific WebSocket channel',
 	request: {
 		body: {
 			content: { 'application/json': { schema: SendMessageSchema } },

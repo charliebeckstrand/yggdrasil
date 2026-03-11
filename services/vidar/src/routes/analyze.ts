@@ -5,6 +5,7 @@ import { apiKeyAuth } from '../middleware/api-key.js'
 import { getAnalyzer } from '../services/analyzer.js'
 
 const analyzeRoute = createRoute({
+	operationId: 'analyze',
 	method: 'post',
 	path: '/analyze',
 	tags: ['AI Analysis'],

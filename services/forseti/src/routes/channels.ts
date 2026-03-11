@@ -5,9 +5,9 @@ import { ChannelListSchema } from '../lib/schemas.js'
 const listChannelsRoute = createRoute({
 	method: 'get',
 	path: '/channels',
-	tags: ['Channels'],
+	tags: ['Messaging'],
 	summary: 'List active channels',
-	description: 'Returns all active channels with their subscriber counts',
+	description: 'Returns all active WebSocket channels with their subscriber counts',
 	responses: {
 		200: {
 			content: { 'application/json': { schema: ChannelListSchema } },

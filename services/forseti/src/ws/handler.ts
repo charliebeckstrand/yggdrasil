@@ -10,10 +10,10 @@ export function createWsHandler(upgradeWebSocket: UpgradeWebSocket) {
 		onOpen(_event, ws) {
 			const env = environment()
 
-			if (env.HERMES_API_KEY) {
+			if (env.FORSETI_API_KEY) {
 				const apiKey = c.req.query('api_key')
 
-				if (!apiKey || !timingSafeCompare(apiKey, env.HERMES_API_KEY)) {
+				if (!apiKey || !timingSafeCompare(apiKey, env.FORSETI_API_KEY)) {
 					ws.send(JSON.stringify({ error: 'Unauthorized' }))
 
 					ws.close(1008, 'Unauthorized')

@@ -208,6 +208,9 @@ importers:
       '@hono/zod-openapi':
         specifier: ^1.2.2
         version: 1.2.2(hono@4.12.5)(zod@4.3.6)
+      forseti:
+        specifier: workspace:*
+        version: link:../forseti
       frigg:
         specifier: workspace:*
         version: link:../../packages/frigg
@@ -226,9 +229,6 @@ importers:
       norns:
         specifier: workspace:*
         version: link:../../packages/norns
-      vidar:
-        specifier: workspace:*
-        version: link:../vidar
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -255,7 +255,7 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.3.5)(tsx@4.21.0)(yaml@2.8.2)
 
-  services/hermes:
+  services/forseti:
     dependencies:
       '@hono/node-server':
         specifier: ^1.19.11
@@ -315,6 +315,9 @@ importers:
       '@hono/zod-openapi':
         specifier: ^1.2.2
         version: 1.2.2(hono@4.12.5)(zod@4.3.6)
+      forseti:
+        specifier: workspace:*
+        version: link:../forseti
       frigg:
         specifier: workspace:*
         version: link:../../packages/frigg
@@ -364,6 +367,9 @@ importers:
       '@hono/zod-openapi':
         specifier: ^1.2.2
         version: 1.2.2(hono@4.12.5)(zod@4.3.6)
+      forseti:
+        specifier: workspace:*
+        version: link:../forseti
       frigg:
         specifier: workspace:*
         version: link:../../packages/frigg

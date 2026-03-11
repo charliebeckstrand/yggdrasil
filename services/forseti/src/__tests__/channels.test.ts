@@ -86,13 +86,13 @@ describe('channels', () => {
 	describe('send', () => {
 		it('should send a message to channel subscribers', () => {
 			subscribe('test', ws1)
-			const sent = send('test', { hello: 'world' }, 'heimdall')
+			const sent = send('test', { hello: 'world' }, 'bifrost')
 			expect(sent).toBe(1)
 			expect(ws1._messages).toHaveLength(1)
 			const parsed = JSON.parse(ws1._messages[0])
 			expect(parsed.channel).toBe('test')
 			expect(parsed.data).toEqual({ hello: 'world' })
-			expect(parsed.source).toBe('heimdall')
+			expect(parsed.source).toBe('bifrost')
 		})
 
 		it('should return 0 for empty channels', () => {

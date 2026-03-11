@@ -10,6 +10,7 @@ import { apiKeyAuth } from '../middleware/api-key.js'
 import { createBan, listActiveBans, removeBan } from '../services/bans.js'
 
 const listBansRoute = createRoute({
+	operationId: 'list-bans',
 	method: 'get',
 	path: '/bans',
 	tags: ['Bans'],
@@ -29,6 +30,7 @@ const listBansRoute = createRoute({
 })
 
 const createBanRoute = createRoute({
+	operationId: 'create-ban',
 	method: 'post',
 	path: '/bans',
 	tags: ['Bans'],
@@ -54,6 +56,7 @@ const createBanRoute = createRoute({
 })
 
 const removeBanRoute = createRoute({
+	operationId: 'remove-ban',
 	method: 'delete',
 	path: '/bans/{ip}',
 	tags: ['Bans'],

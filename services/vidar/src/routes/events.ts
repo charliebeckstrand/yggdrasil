@@ -4,6 +4,7 @@ import { apiKeyAuth } from '../middleware/api-key.js'
 import { ingestEvent } from '../services/events.js'
 
 const ingestRoute = createRoute({
+	operationId: 'ingest-event',
 	method: 'post',
 	path: '/events',
 	tags: ['Events'],

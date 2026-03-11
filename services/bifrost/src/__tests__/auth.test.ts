@@ -32,12 +32,17 @@ vi.mock('heimdall', () => ({
 	refreshTokenPair: vi.fn(),
 }))
 
-vi.mock('vidar/client', () => ({
-	configure: vi.fn(),
+vi.mock('forseti/client', () => ({
+	ForsetiClient: vi.fn(),
+	registerWithForseti: vi.fn(),
+}))
+
+vi.mock('../lib/forseti.js', () => ({
+	configureForseti: vi.fn(),
 	checkBan: vi.fn().mockReturnValue(async (_c: unknown, next: () => Promise<void>) => {
 		await next()
 	}),
-	reportEvent: vi.fn(),
+	reportSecurityEvent: vi.fn(),
 }))
 
 import { createBifrostApp } from '../app.js'

@@ -5,6 +5,7 @@ import { apiKeyAuth } from '../middleware/auth.js'
 import { publishEvent } from '../services/delivery.js'
 
 const publishRoute = createRoute({
+	operationId: 'publish-event',
 	method: 'post',
 	path: '/publish',
 	tags: ['Events'],

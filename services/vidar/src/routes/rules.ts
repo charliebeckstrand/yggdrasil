@@ -4,6 +4,7 @@ import { apiKeyAuth } from '../middleware/api-key.js'
 import { getRules } from '../services/rules.js'
 
 const listRulesRoute = createRoute({
+	operationId: 'list-rules',
 	method: 'get',
 	path: '/rules',
 	tags: ['Rules'],

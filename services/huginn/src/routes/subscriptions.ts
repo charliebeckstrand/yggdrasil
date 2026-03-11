@@ -15,6 +15,7 @@ import {
 } from '../services/subscriptions.js'
 
 const listRoute = createRoute({
+	operationId: 'list-subscriptions',
 	method: 'get',
 	path: '/subscriptions',
 	tags: ['Subscriptions'],
@@ -39,6 +40,7 @@ const listRoute = createRoute({
 })
 
 const createRoute_ = createRoute({
+	operationId: 'create-subscription',
 	method: 'post',
 	path: '/subscriptions',
 	tags: ['Subscriptions'],
@@ -64,6 +66,7 @@ const createRoute_ = createRoute({
 })
 
 const deleteRoute = createRoute({
+	operationId: 'delete-subscription',
 	method: 'delete',
 	path: '/subscriptions/{id}',
 	tags: ['Subscriptions'],

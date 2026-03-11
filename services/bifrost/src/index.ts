@@ -1,24 +1,23 @@
 import { serve } from '@hono/node-server'
+import { registerWithForseti } from 'forseti/client'
 import { configure } from 'heimdall'
 import { setupLifecycle } from 'norns'
-import { configure as configureVidar, reportEvent } from 'vidar/client'
 import { createBifrostApp } from './app.js'
 import { closePool } from './lib/db.js'
 import { environment } from './lib/env.js'
+import { configureForseti, reportSecurityEvent } from './lib/forseti.js'
 import { createUserRepository } from './lib/user-repository.js'
 
 const env = environment()
 
-configureVidar({
-	vidarUrl: env.VIDAR_URL,
-	vidarApiKey: env.VIDAR_API_KEY,
-})
+configureForseti(env.FORSETI_URL)
 
 configure({
 	userRepository: createUserRepository(),
 	secretKey: env.SECRET_KEY,
 	apiKey: env.HEIMDALL_API_KEY,
-	onSecurityEvent: (event) => reportEvent(event.type, event.ip, event.details ?? {}, 'heimdall'),
+	onSecurityEvent: (event) =>
+		reportSecurityEvent(event.type, event.ip, event.details ?? {}, 'heimdall'),
 })
 
 const app = createBifrostApp()
@@ -31,6 +30,13 @@ const server = serve(
 	(info) => {
 		console.log(`Bifrost running on http://localhost:${info.port}`)
 		console.log(`API docs available at http://localhost:${info.port}/api/docs`)
+
+		registerWithForseti({
+			forsetiUrl: env.FORSETI_URL,
+			service: 'bifrost',
+			url: `http://localhost:${info.port}`,
+			spec: `http://localhost:${info.port}/api/openapi.json`,
+		})
 	},
 )
 

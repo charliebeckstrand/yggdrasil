@@ -4,6 +4,7 @@ import { apiKeyAuth } from '../middleware/api-key.js'
 import { isIpBanned } from '../services/bans.js'
 
 const checkIpRoute = createRoute({
+	operationId: 'check-ip',
 	method: 'get',
 	path: '/check-ip',
 	tags: ['Bans'],
