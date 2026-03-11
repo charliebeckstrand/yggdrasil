@@ -92,34 +92,6 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.3.5)(tsx@4.21.0)(yaml@2.8.2)
 
-  packages/mimir:
-    dependencies:
-      pg:
-        specifier: ^8.16.0
-        version: 8.20.0
-    devDependencies:
-      '@biomejs/biome':
-        specifier: ^2.4.6
-        version: 2.4.6
-      '@types/node':
-        specifier: ^25.3.3
-        version: 25.3.5
-      '@types/pg':
-        specifier: ^8.11.0
-        version: 8.18.0
-      tsup:
-        specifier: ^8.5.1
-        version: 8.5.1(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
-      tsx:
-        specifier: ^4.21.0
-        version: 4.21.0
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-      vitest:
-        specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.5)(tsx@4.21.0)(yaml@2.8.2)
-
   packages/norns:
     devDependencies:
       '@biomejs/biome':
@@ -143,9 +115,9 @@ importers:
 
   packages/saga:
     dependencies:
-      mimir:
-        specifier: workspace:*
-        version: link:../mimir
+      pg:
+        specifier: ^8.16.0
+        version: 8.20.0
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -156,6 +128,9 @@ importers:
       '@types/node':
         specifier: ^25.3.3
         version: 25.3.5
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.18.0
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
@@ -192,12 +167,15 @@ importers:
       hono:
         specifier: ^4.12.5
         version: 4.12.5
-      mimir:
-        specifier: workspace:*
-        version: link:../../packages/mimir
       norns:
         specifier: workspace:*
         version: link:../../packages/norns
+      saga:
+        specifier: workspace:*
+        version: link:../../packages/saga
+      vidar:
+        specifier: workspace:*
+        version: link:../vidar
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -290,12 +268,12 @@ importers:
       hono:
         specifier: ^4.12.5
         version: 4.12.5
-      mimir:
-        specifier: workspace:*
-        version: link:../../packages/mimir
       norns:
         specifier: workspace:*
         version: link:../../packages/norns
+      saga:
+        specifier: workspace:*
+        version: link:../../packages/saga
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -336,12 +314,12 @@ importers:
       hono:
         specifier: ^4.12.5
         version: 4.12.5
-      mimir:
-        specifier: workspace:*
-        version: link:../../packages/mimir
       norns:
         specifier: workspace:*
         version: link:../../packages/norns
+      saga:
+        specifier: workspace:*
+        version: link:../../packages/saga
       zod:
         specifier: ^4.3.6
         version: 4.3.6

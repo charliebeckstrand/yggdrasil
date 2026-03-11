@@ -48,7 +48,7 @@ describe('sql tagged template', () => {
 
 	it('inlines nested sql fragments and re-numbers parameters', () => {
 		const where = sql`
-			WHERE id = ${1} 
+			WHERE id = ${1}
 			AND name = ${'Alice'}
 		`
 		const result = sql`

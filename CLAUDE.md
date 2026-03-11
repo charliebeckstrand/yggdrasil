@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Yggdrasil is a TypeScript microservices monorepo with Norse mythology naming. It contains 4 services and 5 shared packages, built on Hono, PostgreSQL, and Node.js 22.
+Yggdrasil is a TypeScript microservices monorepo with Norse mythology naming. It contains 4 services and 4 shared packages, built on Hono, PostgreSQL, and Node.js 22.
 
 ## Architecture
 
@@ -21,18 +21,17 @@ Yggdrasil is a TypeScript microservices monorepo with Norse mythology naming. It
 | ------------ | ------------------------------------------------------- |
 | **grid**     | Hono middleware, error handling, env validation, OpenAPI config |
 | **heimdall** | JWT auth, user registration, token management           |
-| **mimir**    | PostgreSQL connection pool (lazy-loaded)                |
 | **norns**    | Graceful shutdown, signal handling                      |
-| **saga**     | Structured logging, PostgreSQL log ingestion            |
+| **saga**     | Database toolkit — connection pool, SQL builder, structured logging, migrations |
 
 ### Dependency Graph
 
 Services depend on packages via `workspace:*` protocol:
 
-- **bifrost** → grid, heimdall, mimir, norns
+- **bifrost** → grid, heimdall, norns, saga
 - **hermes** → grid, norns
-- **huginn** → grid, mimir, norns
-- **vidar** → grid, mimir, norns
+- **huginn** → grid, norns, saga
+- **vidar** → grid, norns, saga
 
 ## Commands
 
@@ -103,7 +102,7 @@ app.use('*', logRequest())
 - **Factory functions** for initialization: `createApp()`, `createPool()`, `createEnvironment()`
 - **Middleware-driven architecture** — all services compose Hono middleware chains
 - **Schema-driven APIs** — Zod schemas paired with `@hono/zod-openapi` for every endpoint
-- **Lazy initialization** — e.g., Mimir pool connects on first use
+- **Lazy initialization** — e.g., Saga pool connects on first use
 - **Config injection** — config objects passed to package setup functions
 
 ### File Structure
