@@ -1,4 +1,4 @@
-# Norns
+# norns
 
 **Norns** manages server lifecycle for all services in the monorepo. It exports a single `setupLifecycle` function that handles two concerns:
 
