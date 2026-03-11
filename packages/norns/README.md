@@ -5,7 +5,16 @@
 - **Graceful shutdown** — Listens for `SIGINT` and `SIGTERM`, cleanly closes the HTTP server, runs an optional cleanup callback (e.g., closing database pools), and exits.
 - **Port conflict recovery** — Catches `EADDRINUSE` errors on startup, kills the blocking process (`lsof` on macOS, `fuser -k` on Linux), and retries once.
 
-All four services call `setupLifecycle` in their entry points, passing their server instance, name, port, and an optional `onShutdown` callback.
+## Arguments
+
+`setupLifecycle` accepts a single options object with the following properties:
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `server` | `Server` | Yes | Node.js `net.Server` instance to manage |
+| `name` | `string` | Yes | Service name used in log messages |
+| `port` | `number` | Yes | Port the service listens on |
+| `onShutdown` | `() => Promise<void>` | No | Cleanup callback invoked before exit |
 
 ## Usage
 
