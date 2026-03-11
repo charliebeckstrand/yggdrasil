@@ -18,7 +18,7 @@ Microservices built with TypeScript snd Hono
 | **[Heimdall](packages/heimdall)** | Authentication |
 | **[Norns](packages/norns)** | Hono server lifecycle |
 | **[Grid](packages/grid)** | Shared factories |
-| **[Saga](packages/saga)** | PostgreSQL management |
+| **[Saga](packages/saga)** | Database management |
 
 ## Prerequisites
 
