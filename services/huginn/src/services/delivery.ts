@@ -1,4 +1,4 @@
-import { sql } from 'mimir'
+import { sql } from 'saga'
 import { db } from '../lib/db.js'
 import { emitEvent } from '../lib/emitter.js'
 

@@ -1,4 +1,4 @@
-import { type SqlFragment, sql } from 'mimir'
+import { type SqlFragment, sql } from 'saga'
 import { db } from '../lib/db.js'
 
 export interface ThreatRow {

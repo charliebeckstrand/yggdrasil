@@ -1,7 +1,7 @@
 {
 	"name": "saga",
 	"version": "0.1.0",
-	"description": "Structured log ingestion and querying",
+	"description": "Database toolkit — connection pool, SQL builder, structured logging, and migrations",
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./src/index.ts",
@@ -22,12 +22,13 @@
 	},
 	"packageManager": "pnpm@10.29.3",
 	"dependencies": {
-		"mimir": "workspace:*",
+		"pg": "^8.16.0",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.6",
 		"@types/node": "^25.3.3",
+		"@types/pg": "^8.11.0",
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",

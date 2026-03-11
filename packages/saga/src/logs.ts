@@ -1,4 +1,6 @@
-import { type Db, type SqlFragment, sql } from 'mimir'
+import type { Db } from './db.js'
+import type { SqlFragment } from './sql.js'
+import { sql } from './sql.js'
 
 type LogInput = {
 	type: string
