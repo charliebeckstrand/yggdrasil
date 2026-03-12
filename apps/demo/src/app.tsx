@@ -11,7 +11,9 @@ export function createDemoApp() {
 
 	const app = new Hono()
 
-	app.use('/styles.css', serveStatic({ root: './dist' }))
+	if (process.env.NODE_ENV === 'production') {
+		app.use('/styles.css', serveStatic({ root: './dist' }))
+	}
 
 	app.use('*', auth(env.SESSION_SECRET))
 
