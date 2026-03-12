@@ -1,23 +1,26 @@
-import devServer from '@hono/vite-dev-server'
+import { resolve } from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
+import vue from '@vitejs/plugin-vue'
 import { defineConfig, loadEnv } from 'vite'
 
 export default defineConfig(({ mode }) => {
-	/*
-	 * Loads all environment variables into process.env via Vite's `loadEnv(mode, '.', '')`,
-	 * making them available throughout the Vite config before the server starts.
-	 */
-	Object.assign(process.env, loadEnv(mode, '.', ''))
+	const env = loadEnv(mode, '.', '')
 
 	return {
-		plugins: [
-			tailwindcss(),
-			devServer({
-				entry: 'src/app.tsx',
-			}),
-		],
+		plugins: [vue(), tailwindcss()],
+		resolve: {
+			alias: {
+				'@': resolve(__dirname, 'src'),
+			},
+		},
 		server: {
 			port: 3000,
+			proxy: {
+				'/auth': {
+					target: env.BIFROST_URL || 'http://localhost:4000',
+					changeOrigin: true,
+				},
+			},
 		},
 	}
 })
