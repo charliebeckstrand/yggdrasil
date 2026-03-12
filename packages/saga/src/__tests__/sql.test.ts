@@ -423,3 +423,130 @@ describe('dynamic WHERE pattern', () => {
 		expect(select.values).toEqual(['active', 10])
 	})
 })
+
+describe('sql.or', () => {
+	it('wraps conditions in parentheses with OR', () => {
+		const conditions = [sql`status = ${'active'}`, sql`status = ${'pending'}`]
+
+		const result = sql.or(conditions)
+
+		expect(result.text).toBe('(status = $1 OR status = $2)')
+
+		expect(result.values).toEqual(['active', 'pending'])
+	})
+
+	it('returns empty fragment for empty array', () => {
+		const result = sql.or([])
+
+		expect(result.text).toBe('')
+
+		expect(result.values).toEqual([])
+	})
+
+	it('handles single condition', () => {
+		const result = sql.or([sql`active = ${true}`])
+
+		expect(result.text).toBe('(active = $1)')
+
+		expect(result.values).toEqual([true])
+	})
+
+	it('works nested inside sql.and', () => {
+		const or = sql.or([sql`role = ${'admin'}`, sql`role = ${'moderator'}`])
+
+		const result = sql`
+			SELECT *
+			FROM users
+			WHERE active = ${true} AND ${or}
+		`
+
+		expect(result.text).toBe('SELECT * FROM users WHERE active = $1 AND (role = $2 OR role = $3)')
+
+		expect(result.values).toEqual([true, 'admin', 'moderator'])
+	})
+})
+
+describe('sql.set', () => {
+	it('builds SET clause from object', () => {
+		const result = sql.set({ name: 'Alice', email: 'alice@test.com' })
+
+		expect(result.text).toBe('SET name = $1, email = $2')
+
+		expect(result.values).toEqual(['Alice', 'alice@test.com'])
+	})
+
+	it('handles single column', () => {
+		const result = sql.set({ active: false })
+
+		expect(result.text).toBe('SET active = $1')
+
+		expect(result.values).toEqual([false])
+	})
+
+	it('throws on empty object', () => {
+		expect(() => sql.set({})).toThrow('sql.set() requires at least one column')
+	})
+
+	it('handles null values', () => {
+		const result = sql.set({ deleted_at: null })
+
+		expect(result.text).toBe('SET deleted_at = $1')
+
+		expect(result.values).toEqual([null])
+	})
+
+	it('works nested inside a sql template', () => {
+		const result = sql`
+			UPDATE users
+			${sql.set({ name: 'Bob', active: true })}
+			WHERE id = ${42}
+		`
+
+		expect(result.text).toBe('UPDATE users SET name = $1, active = $2 WHERE id = $3')
+
+		expect(result.values).toEqual(['Bob', true, 42])
+	})
+})
+
+describe('sql.insert', () => {
+	it('builds INSERT statement from table and object', () => {
+		const result = sql.insert('users', { name: 'Alice', email: 'alice@test.com' })
+
+		expect(result.text).toBe('INSERT INTO users (name, email) VALUES ($1, $2)')
+
+		expect(result.values).toEqual(['Alice', 'alice@test.com'])
+	})
+
+	it('handles single column', () => {
+		const result = sql.insert('logs', { message: 'hello' })
+
+		expect(result.text).toBe('INSERT INTO logs (message) VALUES ($1)')
+
+		expect(result.values).toEqual(['hello'])
+	})
+
+	it('throws on empty object', () => {
+		expect(() => sql.insert('t', {})).toThrow('sql.insert() requires at least one column')
+	})
+
+	it('works nested inside a sql template with RETURNING', () => {
+		const result = sql`
+			${sql.insert('users', { name: 'Alice', email: 'alice@test.com' })}
+			RETURNING id, created_at
+		`
+
+		expect(result.text).toBe(
+			'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id, created_at',
+		)
+
+		expect(result.values).toEqual(['Alice', 'alice@test.com'])
+	})
+
+	it('handles null and numeric values', () => {
+		const result = sql.insert('events', { ip: '1.2.3.4', rule_id: null, score: 5 })
+
+		expect(result.text).toBe('INSERT INTO events (ip, rule_id, score) VALUES ($1, $2, $3)')
+
+		expect(result.values).toEqual(['1.2.3.4', null, 5])
+	})
+})

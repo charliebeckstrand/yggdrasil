@@ -124,4 +124,44 @@ sql.values = function values(rows: unknown[][]): SqlFragment {
 	return { [SQL_FRAGMENT]: true, text: textParts.join(', '), values: allValues }
 }
 
+sql.or = function or(conditions: SqlFragment[]): SqlFragment {
+	if (conditions.length === 0) {
+		return { [SQL_FRAGMENT]: true, text: '', values: [] }
+	}
+
+	const joined = sql.join(conditions, ' OR ')
+
+	return { [SQL_FRAGMENT]: true, text: `(${joined.text})`, values: joined.values }
+}
+
+sql.set = function set(obj: Record<string, unknown>): SqlFragment {
+	const entries = Object.entries(obj)
+
+	if (entries.length === 0) {
+		throw new Error('sql.set() requires at least one column')
+	}
+
+	const fragments = entries.map(([key, value]) => sql`${sql.raw(key)} = ${value}`)
+
+	return sql`SET ${sql.join(fragments)}`
+}
+
+sql.insert = function insert(table: string, data: Record<string, unknown>): SqlFragment {
+	const keys = Object.keys(data)
+
+	if (keys.length === 0) {
+		throw new Error('sql.insert() requires at least one column')
+	}
+
+	const columns = keys.join(', ')
+
+	const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ')
+
+	return {
+		[SQL_FRAGMENT]: true,
+		text: `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`,
+		values: Object.values(data),
+	}
+}
+
 export { sql }
