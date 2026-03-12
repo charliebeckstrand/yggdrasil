@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 
 import { AggregateHealthSchema } from '../lib/schemas.js'
-import { getHuginnClient, getVidarClient, huginnBreaker, vidarBreaker } from '../lib/upstream.js'
+import { getVidarClient, vidarBreaker } from '../lib/upstream.js'
 
 const startTime = Date.now()
 
@@ -44,31 +44,26 @@ async function checkService(fn: () => Promise<Response>): Promise<ServiceHealth>
 }
 
 export const health = new OpenAPIHono().openapi(healthRoute, async (c) => {
-	const [huginn, vidar] = await Promise.all([
-		checkService(() =>
-			getHuginnClient().events.health.$get({}, { init: { signal: AbortSignal.timeout(5_000) } }),
-		),
-		checkService(() =>
-			getVidarClient().vidar.health.$get({}, { init: { signal: AbortSignal.timeout(5_000) } }),
-		),
-	])
+	const vidar = await checkService(() =>
+		getVidarClient().vidar.health.$get({}, { init: { signal: AbortSignal.timeout(5_000) } }),
+	)
 
-	const huginnStatus = huginnBreaker.getStatus()
 	const vidarStatus = vidarBreaker.getStatus()
 
-	const anyUnreachable = huginn.status === 'unreachable' || vidar.status === 'unreachable'
-	const anyDegraded = huginn.status === 'degraded' || vidar.status === 'degraded'
-
-	const overallStatus = anyUnreachable ? 'unhealthy' : anyDegraded ? 'degraded' : 'healthy'
+	const overallStatus =
+		vidar.status === 'unreachable'
+			? 'unhealthy'
+			: vidar.status === 'degraded'
+				? 'degraded'
+				: 'healthy'
 
 	return c.json(
 		{
 			status: overallStatus as 'healthy' | 'degraded' | 'unhealthy',
 			version: '0.1.0',
 			uptime: (Date.now() - startTime) / 1000,
-			services: { huginn, vidar },
+			services: { vidar },
 			circuitBreakers: {
-				huginn: { state: huginnStatus.state, failures: huginnStatus.failures },
 				vidar: { state: vidarStatus.state, failures: vidarStatus.failures },
 			},
 		},

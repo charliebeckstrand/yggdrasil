@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Yggdrasil is a TypeScript microservices monorepo with Norse mythology naming. It contains 4 services and 4 shared packages, built on Hono, PostgreSQL, and Node.js 22.
+Yggdrasil is a TypeScript microservices monorepo with Norse mythology naming. It contains 3 services and 4 shared packages, built on Hono, PostgreSQL, and Node.js 22.
 
 ## Architecture
 
@@ -12,8 +12,7 @@ Yggdrasil is a TypeScript microservices monorepo with Norse mythology naming. It
 | ----------- | ---- | ---------------------------------------------- |
 | **bifrost** | 3000 | API Gateway / BFF — routes `/api/*`, `/auth/*` |
 | **hermes**  | 3001 | WebSocket messaging service                    |
-| **huginn**  | 3002 | Event bus                                      |
-| **vidar**   | 3003 | Security monitoring, IP ban enforcement        |
+| **vidar**   | 3002 | Security monitoring, IP ban enforcement        |
 
 ### Packages (shared libraries)
 
@@ -30,7 +29,6 @@ Services depend on packages via `workspace:*` protocol:
 
 - **bifrost** → grid, heimdall, norns, saga
 - **hermes** → grid, norns
-- **huginn** → grid, norns, saga
 - **vidar** → grid, norns, saga
 
 ## Commands
