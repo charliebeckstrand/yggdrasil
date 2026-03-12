@@ -9,7 +9,6 @@ export {
 	MessageSchema,
 	PaginationSchema,
 } from './composites.js'
-
 // Enums — shared status and category enumerations
 export {
 	CircuitBreakerStateSchema,
@@ -19,6 +18,14 @@ export {
 	NodeEnvSchema,
 	ServiceReachabilitySchema,
 } from './enums.js'
+// Event bus — publish/subscribe domain schemas
+export {
+	CreateSubscriptionSchema,
+	EventSchema,
+	PublishEventSchema,
+	SubscriptionListSchema,
+	SubscriptionSchema,
+} from './event-bus.js'
 export {
 	CallbackUrlSchema,
 	DetailsSchema,
@@ -38,3 +45,13 @@ export {
 	TopicSchema,
 	UrlSchema,
 } from './primitives.js'
+
+// Security — threat detection and IP ban domain schemas
+export {
+	BanListSchema,
+	BanSchema,
+	CheckIpResponseSchema,
+	CreateBanSchema,
+	IngestEventSchema,
+	SecurityEventSchema,
+} from './security.js'

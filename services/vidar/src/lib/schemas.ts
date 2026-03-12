@@ -10,7 +10,7 @@ export {
 	IngestEventSchema,
 	MessageSchema,
 	SecurityEventSchema,
-} from 'grid/schemas'
+} from 'skuld'
 
 export const ThreatSchema = z
 	.object({

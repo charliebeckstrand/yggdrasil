@@ -1,6 +1,6 @@
 import { z } from '@hono/zod-openapi'
+import { createListSchema } from './composites.js'
 import {
-	createListSchema,
 	DetailsSchema,
 	EventTypeSchema,
 	IdSchema,
@@ -8,9 +8,7 @@ import {
 	OptionalTimestampSchema,
 	ServiceNameSchema,
 	TimestampSchema,
-} from 'skuld'
-
-export { ErrorSchema, MessageSchema } from 'skuld'
+} from './primitives.js'
 
 export const IngestEventSchema = z
 	.object({

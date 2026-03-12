@@ -1,15 +1,4 @@
-import {
-	CallbackUrlSchema,
-	CircuitBreakerStateSchema,
-	createListSchema,
-	HealthStatusSchema,
-	IdSchema,
-	PayloadSchema,
-	ServiceNameSchema,
-	ServiceReachabilitySchema,
-	TimestampSchema,
-	TopicSchema,
-} from 'skuld'
+import { CircuitBreakerStateSchema, HealthStatusSchema, ServiceReachabilitySchema } from 'skuld'
 import { z } from 'zod'
 
 export {
@@ -17,51 +6,16 @@ export {
 	BanSchema,
 	CheckIpResponseSchema,
 	CreateBanSchema,
+	CreateSubscriptionSchema,
 	ErrorSchema,
+	EventSchema,
 	IngestEventSchema,
 	MessageSchema,
+	PublishEventSchema,
 	SecurityEventSchema,
-} from 'grid/schemas'
-
-export const PublishEventSchema = z
-	.object({
-		topic: TopicSchema,
-		payload: PayloadSchema,
-		source: ServiceNameSchema,
-	})
-	.openapi('PublishEvent')
-
-export const EventSchema = z
-	.object({
-		id: IdSchema,
-		topic: z.string(),
-		payload: z.record(z.string(), z.unknown()),
-		source: z.string(),
-		created_at: TimestampSchema,
-	})
-	.openapi('Event')
-
-export const CreateSubscriptionSchema = z
-	.object({
-		topic: TopicSchema,
-		callback_url: CallbackUrlSchema,
-		service: ServiceNameSchema,
-	})
-	.openapi('CreateSubscription')
-
-export const SubscriptionSchema = z
-	.object({
-		id: IdSchema,
-		topic: z.string(),
-		callback_url: z.string(),
-		service: z.string(),
-		is_active: z.boolean(),
-		created_at: TimestampSchema,
-		updated_at: TimestampSchema,
-	})
-	.openapi('Subscription')
-
-export const SubscriptionListSchema = createListSchema(SubscriptionSchema, 'SubscriptionList')
+	SubscriptionListSchema,
+	SubscriptionSchema,
+} from 'skuld'
 
 export const ServiceStatusSchema = z
 	.object({
