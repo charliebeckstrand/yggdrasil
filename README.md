@@ -1,6 +1,6 @@
 # Yggdrasil
 
-Microservices built with TypeScript snd Hono
+Microservices built with TypeScript and Hono
 
 ## Services
 
