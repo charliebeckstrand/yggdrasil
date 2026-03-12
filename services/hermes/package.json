@@ -32,7 +32,6 @@
 		"grid": "workspace:*",
 		"hono": "^4.12.5",
 		"huginn": "workspace:*",
-		"norns": "workspace:*",
 		"skuld": "workspace:*",
 		"vidar": "workspace:*",
 		"zod": "^4.3.6"
