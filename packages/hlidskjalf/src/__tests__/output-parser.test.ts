@@ -22,10 +22,28 @@ describe('parseLine', () => {
 		expect(result.url).toBeUndefined()
 	})
 
+	it('detects build success with variation selector (⚡️)', () => {
+		const result = parseLine('ESM ⚡️ Build success in 14ms')
+
+		expect(result.status).toBe('watching')
+	})
+
 	it('detects build start', () => {
 		const result = parseLine('Build start')
 
 		expect(result.status).toBe('building')
+	})
+
+	it('ignores DTS Build start', () => {
+		const result = parseLine('DTS Build start')
+
+		expect(result.status).toBeUndefined()
+	})
+
+	it('ignores DTS Build success', () => {
+		const result = parseLine('DTS ⚡️ Build success in 953ms')
+
+		expect(result.status).toBeUndefined()
 	})
 
 	it('detects watching', () => {
