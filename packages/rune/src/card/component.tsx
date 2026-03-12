@@ -1,17 +1,17 @@
-import type { Child } from 'hono/jsx'
+import type { ReactNode } from 'react'
 
 import { cardVariants } from './variants.js'
 
 export type CardProps = {
 	padding?: 'none' | 'small' | 'medium' | 'large'
 	shadow?: 'none' | 'small' | 'medium'
-	class?: string
-	children?: Child
+	className?: string
+	children?: ReactNode
 }
 
-export function Card({ padding, shadow, class: className, children, ...rest }: CardProps) {
+export function Card({ padding, shadow, className, children, ...rest }: CardProps) {
 	return (
-		<div class={cardVariants({ padding, shadow, className })} {...rest}>
+		<div className={cardVariants({ padding, shadow, className })} {...rest}>
 			{children}
 		</div>
 	)

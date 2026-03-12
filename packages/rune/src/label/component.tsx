@@ -1,17 +1,17 @@
-import type { Child } from 'hono/jsx'
+import type { ReactNode } from 'react'
 
 import { labelVariants } from './variants.js'
 
 export type LabelProps = {
 	htmlFor?: string
 	size?: 'small' | 'medium'
-	class?: string
-	children?: Child
+	className?: string
+	children?: ReactNode
 }
 
-export function Label({ htmlFor, size, class: className, children, ...rest }: LabelProps) {
+export function Label({ htmlFor, size, className, children, ...rest }: LabelProps) {
 	return (
-		<label for={htmlFor} class={labelVariants({ size, className })} {...rest}>
+		<label htmlFor={htmlFor} className={labelVariants({ size, className })} {...rest}>
 			{children}
 		</label>
 	)

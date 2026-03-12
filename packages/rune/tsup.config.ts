@@ -10,5 +10,5 @@ export default defineConfig({
 	sourcemap: true,
 	splitting: false,
 	jsx: 'automatic',
-	jsxImportSource: 'hono/jsx',
+	jsxImportSource: 'react',
 })

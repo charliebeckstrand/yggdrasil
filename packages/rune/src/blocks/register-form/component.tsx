@@ -7,26 +7,26 @@ import { Label } from '../../label/index.js'
 export type RegisterFormProps = {
 	action?: string
 	method?: 'get' | 'post' | 'dialog'
-	class?: string
+	className?: string
 }
 
-export function RegisterForm({ action, method, class: className }: RegisterFormProps) {
+export function RegisterForm({ action, method, className }: RegisterFormProps) {
 	return (
-		<Card padding="medium" shadow="small" class={className}>
+		<Card padding="medium" shadow="small" className={className}>
 			<Form action={action} method={method ?? 'post'}>
-				<div class="flex flex-col gap-1.5">
+				<div className="flex flex-col gap-1.5">
 					<Label htmlFor="name">Name</Label>
 
 					<Input inputType="text" name="name" id="name" placeholder="Jane Doe" required />
 				</div>
 
-				<div class="flex flex-col gap-1.5">
+				<div className="flex flex-col gap-1.5">
 					<Label htmlFor="email">Email</Label>
 
 					<Input inputType="email" name="email" id="email" placeholder="you@example.com" required />
 				</div>
 
-				<div class="flex flex-col gap-1.5">
+				<div className="flex flex-col gap-1.5">
 					<Label htmlFor="password">Password</Label>
 
 					<Input
@@ -38,7 +38,7 @@ export function RegisterForm({ action, method, class: className }: RegisterFormP
 					/>
 				</div>
 
-				<div class="flex flex-col gap-1.5">
+				<div className="flex flex-col gap-1.5">
 					<Label htmlFor="confirmPassword">Confirm password</Label>
 
 					<Input

@@ -7,20 +7,20 @@ import { Label } from '../../label/index.js'
 export type LoginFormProps = {
 	action?: string
 	method?: 'get' | 'post' | 'dialog'
-	class?: string
+	className?: string
 }
 
-export function LoginForm({ action, method, class: className }: LoginFormProps) {
+export function LoginForm({ action, method, className }: LoginFormProps) {
 	return (
-		<Card class={className}>
+		<Card className={className}>
 			<Form action={action} method={method ?? 'post'}>
-				<div class="flex flex-col gap-2">
+				<div className="flex flex-col gap-2">
 					<Label htmlFor="email">Email</Label>
 
 					<Input inputType="email" name="email" id="email" placeholder="you@example.com" required />
 				</div>
 
-				<div class="flex flex-col gap-2">
+				<div className="flex flex-col gap-2">
 					<Label htmlFor="password">Password</Label>
 
 					<Input
