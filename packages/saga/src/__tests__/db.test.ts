@@ -1,5 +1,5 @@
 import type { Mock } from 'vitest'
-import { createDatabaseClient, NoRowsError } from '../db.js'
+import { createDatabaseClient } from '../db.js'
 import { sql } from '../sql.js'
 
 function createMockPool(queryResult: { rows: unknown[]; rowCount?: number }) {
@@ -64,7 +64,7 @@ describe('createDatabaseClient', () => {
 			expect(result).toEqual({ id: 1 })
 		})
 
-		it('throws NoRowsError when no rows', async () => {
+		it('throws NoRowsError with query text when no rows', async () => {
 			const pool = createMockPool({ rows: [] })
 
 			const db = createDatabaseClient(pool)
@@ -75,7 +75,7 @@ describe('createDatabaseClient', () => {
 					FROM t
 					WHERE id = ${999}
 				`),
-			).rejects.toThrow(NoRowsError)
+			).rejects.toThrow('Expected at least one row, but got none: SELECT * FROM t WHERE id = $1')
 		})
 	})
 
@@ -154,7 +154,7 @@ describe('createDatabaseClient', () => {
 			expect(result).toBe(42)
 		})
 
-		it('throws NoRowsError when no rows', async () => {
+		it('throws NoRowsError with query text when no rows', async () => {
 			const pool = createMockPool({ rows: [] })
 
 			const db = createDatabaseClient(pool)
@@ -164,7 +164,7 @@ describe('createDatabaseClient', () => {
 					SELECT COUNT(*)
 					FROM users
 				`),
-			).rejects.toThrow(NoRowsError)
+			).rejects.toThrow('Expected at least one row, but got none: SELECT COUNT(*) FROM users')
 		})
 	})
 
@@ -243,6 +243,30 @@ describe('createDatabaseClient', () => {
 			).rejects.toThrow()
 
 			expect(client.release).toHaveBeenCalled()
+		})
+	})
+
+	describe('ping', () => {
+		it('returns true when database is reachable', async () => {
+			const pool = createMockPool({ rows: [{ '?column?': 1 }] })
+
+			const db = createDatabaseClient(pool)
+
+			const result = await db.ping()
+
+			expect(result).toBe(true)
+		})
+
+		it('returns false when database is unreachable', async () => {
+			const pool = createMockPool({ rows: [] })
+
+			;(pool.query as Mock).mockRejectedValue(new Error('connection refused'))
+
+			const db = createDatabaseClient(pool)
+
+			const result = await db.ping()
+
+			expect(result).toBe(false)
 		})
 	})
 })

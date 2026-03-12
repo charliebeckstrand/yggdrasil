@@ -108,7 +108,7 @@ export async function evaluateRules(ip: string, eventType: string): Promise<void
 
 async function checkRule(ip: string, rule: Rule): Promise<boolean> {
 	if (rule.distinct_accounts) {
-		const row = await db().get<{ event_count: string; account_count: string }>(
+		const row = await db.get<{ event_count: string; account_count: string }>(
 			sql`SELECT
 				COUNT(*)::text AS event_count,
 				COUNT(DISTINCT details->>'email')::text AS account_count
@@ -125,7 +125,7 @@ async function checkRule(ip: string, rule: Rule): Promise<boolean> {
 		return eventCount >= rule.threshold && accountCount >= rule.distinct_accounts
 	}
 
-	const count = await db().val<string>(
+	const count = await db.val<string>(
 		sql`
 			SELECT COUNT(*)::text
 			FROM vdr_security_events

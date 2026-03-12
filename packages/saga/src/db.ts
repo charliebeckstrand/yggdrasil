@@ -1,11 +1,12 @@
 import type { Pool, PoolClient, QueryResultRow } from 'pg'
-import { createLazyPool } from './lazy-pool.js'
-import type { PoolOptions } from './pool.js'
+import { createPool, type PoolOptions } from './pool.js'
 import type { SqlFragment } from './sql.js'
 
 export class NoRowsError extends Error {
-	constructor(message = 'Expected at least one row, but got none') {
-		super(message)
+	constructor(query?: string) {
+		const base = 'Expected at least one row, but got none'
+
+		super(query ? `${base}: ${query}` : base)
 
 		this.name = 'NoRowsError'
 	}
@@ -21,6 +22,7 @@ export interface Queryable {
 
 export interface Db extends Queryable {
 	tx<T>(fn: (tx: Queryable) => Promise<T>): Promise<T>
+	ping(): Promise<boolean>
 	pool: Pool
 }
 
@@ -36,7 +38,7 @@ function createQueryable(executor: { query: Pool['query'] | PoolClient['query'] 
 			const { rows } = await executor.query<T>(fragment as never)
 
 			if (rows.length === 0) {
-				throw new NoRowsError()
+				throw new NoRowsError(fragment.text)
 			}
 
 			return rows[0]
@@ -58,7 +60,7 @@ function createQueryable(executor: { query: Pool['query'] | PoolClient['query'] 
 			const { rows } = await executor.query<Record<string, T>>(fragment as never)
 
 			if (rows.length === 0) {
-				throw new NoRowsError()
+				throw new NoRowsError(fragment.text)
 			}
 
 			const firstRow = rows[0]
@@ -75,6 +77,16 @@ export function createDatabaseClient(pool: Pool): Db {
 	return {
 		...queryable,
 		pool,
+
+		async ping(): Promise<boolean> {
+			try {
+				await pool.query('SELECT 1')
+
+				return true
+			} catch {
+				return false
+			}
+		},
 
 		async tx<T>(fn: (tx: Queryable) => Promise<T>): Promise<T> {
 			const client = await pool.connect()
@@ -101,15 +113,38 @@ export function createDatabaseClient(pool: Pool): Db {
 }
 
 export function createDatabase(getDatabaseUrl: () => string, options?: PoolOptions) {
-	const { getPool, closePool } = createLazyPool(getDatabaseUrl, options)
+	let pool: Pool | null = null
+	let client: Db | null = null
 
-	let _db: Db | null = null
+	const init = (): Db => {
+		if (!client) {
+			pool = createPool(getDatabaseUrl(), options)
+			client = createDatabaseClient(pool)
+		}
 
-	const db = (): Db => {
-		if (!_db) _db = createDatabaseClient(getPool())
-
-		return _db
+		return client
 	}
 
-	return { closePool, db, getPool }
+	const db = new Proxy({} as Db, {
+		get(_, prop) {
+			return init()[prop as keyof Db]
+		},
+	})
+
+	return {
+		db,
+
+		getPool() {
+			return init().pool
+		},
+
+		async closePool() {
+			if (pool) {
+				await pool.end()
+
+				pool = null
+				client = null
+			}
+		},
+	}
 }

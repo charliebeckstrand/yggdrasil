@@ -14,7 +14,7 @@ export interface BanRow {
 export async function isIpBanned(
 	ip: string,
 ): Promise<{ banned: boolean; reason?: string; expires_at?: string }> {
-	const row = await db().query<BanRow>(
+	const row = await db.query<BanRow>(
 		sql`
 			SELECT reason, expires_at 
 			FROM vdr_bans
@@ -44,7 +44,7 @@ export async function createBan(
 		? sql`now() + make_interval(mins => ${options.duration_minutes}::int)`
 		: sql`NULL`
 
-	return db().get<BanRow>(
+	return db.get<BanRow>(
 		sql`
 		INSERT INTO vdr_bans (ip, reason, rule_id, created_by, expires_at)
 		VALUES (
@@ -66,7 +66,7 @@ export async function createBan(
 }
 
 export async function removeBan(ip: string): Promise<boolean> {
-	const count = await db().exec(sql`
+	const count = await db.exec(sql`
 		DELETE FROM vdr_bans
 		WHERE ip = ${ip}
 	`)
@@ -75,7 +75,7 @@ export async function removeBan(ip: string): Promise<boolean> {
 }
 
 export async function listActiveBans(): Promise<{ data: BanRow[]; total: number }> {
-	const rows = await db().many<BanRow>(
+	const rows = await db.many<BanRow>(
 		sql`
 			SELECT * FROM vdr_bans
 		 	WHERE expires_at IS NULL OR expires_at > now()
@@ -87,7 +87,7 @@ export async function listActiveBans(): Promise<{ data: BanRow[]; total: number 
 }
 
 export async function cleanExpiredBans(): Promise<number> {
-	return db().exec(sql`
+	return db.exec(sql`
 		DELETE FROM vdr_bans
 		WHERE expires_at IS NOT NULL AND expires_at <= now()
 	`)
