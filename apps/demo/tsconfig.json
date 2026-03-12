@@ -2,11 +2,10 @@
 	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
 		"baseUrl": ".",
-		"jsx": "react-jsx",
-		"jsxImportSource": "hono/jsx",
+		"jsx": "preserve",
 		"paths": {
 			"@/*": ["./src/*"]
 		}
 	},
-	"include": ["src"]
+	"include": ["src", "src/env.d.ts"]
 }
