@@ -6,13 +6,15 @@ export type LayoutProps = {
 }
 
 export function Layout({ title, children }: LayoutProps) {
+	const cssHref = process.env.NODE_ENV === 'production' ? '/styles.css' : '/src/styles.css'
+
 	return (
 		<html lang="en">
 			<head>
 				<meta charset="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<title>{title ?? 'Demo'}</title>
-				<link rel="stylesheet" href="/styles.css" />
+				<link rel="stylesheet" href={cssHref} />
 			</head>
 
 			<body class="min-h-screen bg-gray-50 flex items-center justify-center">{children}</body>
