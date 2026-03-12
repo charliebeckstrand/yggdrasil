@@ -71,17 +71,18 @@ function parseArgs(argv: string[]): DashboardOptions {
 }
 
 async function createDashboard(options: DashboardOptions): Promise<void> {
-	// Show loading screen immediately
-	renderLoading()
-
 	let dockerCleanup: (() => Promise<void>) | undefined
 
 	// Start Docker if requested
 	if (options.docker) {
+		renderLoading('Starting Docker containers...')
+
 		dockerCleanup = await startDocker(options.root)
 	}
 
 	// Discover workspaces
+	renderLoading('Discovering workspaces...')
+
 	let entries = discoverWorkspaces(options.root)
 
 	// Apply filter if provided
