@@ -8,27 +8,17 @@ export type LayoutProps = {
 
 const livereloadScript = raw(`<script>
 (function(){
-	function connect() {
-		var es = new EventSource('/__livereload')
+	var v = null
 
-		es.onmessage = function() {
-			var link = document.querySelector('link[href^="/styles.css"]')
+	setInterval(function(){
+		fetch('/__livereload').then(function(r){ return r.json() }).then(function(d){
+			if (v !== null && d.version !== v) location.reload()
 
-			if (link) {
-				link.href = '/styles.css?' + Date.now()
-			}
-
-			setTimeout(function(){ location.reload() }, 100)
-		}
-
-		es.onerror = function() {
-			es.close()
-
-			setTimeout(connect, 1000)
-		}
-	}
-
-	connect()
+			v = d.version
+		}).catch(function(){
+			v = null
+		})
+	}, 500)
 })()
 </script>`)
 

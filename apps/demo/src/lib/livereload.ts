@@ -1,45 +1,24 @@
 import { watch } from 'node:fs'
 import { join } from 'node:path'
 import type { Hono } from 'hono'
-import { streamSSE } from 'hono/streaming'
 
 export function setupLivereload(app: Hono): void {
-	const clients = new Set<() => void>()
+	let version = 0
+	let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-	app.get('/__livereload', (c) => {
-		return streamSSE(c, async (stream) => {
-			const notify = () => stream.writeSSE({ data: 'reload' })
+	const bump = () => {
+		if (debounceTimer) clearTimeout(debounceTimer)
 
-			clients.add(notify)
-
-			stream.onAbort(() => {
-				clients.delete(notify)
-			})
-
-			// Keep connection alive
-			while (true) {
-				await stream.sleep(30000)
-			}
-		})
-	})
-
-	const notify = () => {
-		for (const client of clients) {
-			client()
-		}
+		debounceTimer = setTimeout(() => {
+			version++
+		}, 50)
 	}
 
-	// Watch src/ for ts, tsx, css changes
-	const srcDir = join(process.cwd(), 'src')
+	app.get('/__livereload', (c) => c.json({ version }))
+
 	const distDir = join(process.cwd(), 'dist')
 
-	for (const dir of [srcDir, distDir]) {
-		watch(dir, { recursive: true }, (_event, filename) => {
-			if (!filename) return
-
-			if (/\.(ts|tsx|css)$/.test(filename)) {
-				notify()
-			}
-		})
-	}
+	watch(distDir, { recursive: true }, (_event, filename) => {
+		if (filename?.endsWith('.css')) bump()
+	})
 }
