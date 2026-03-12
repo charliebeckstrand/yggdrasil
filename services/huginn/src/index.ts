@@ -3,7 +3,7 @@
 export type { HuginnApp } from './app.js'
 
 import { serve } from '@hono/node-server'
-import { setupLifecycle } from 'norns'
+import { setupLifecycle } from 'grid/server-lifecycle'
 import { createHuginnApp } from './app.js'
 import { closePool } from './lib/db.js'
 import { environment } from './lib/env.js'

@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server'
+import { setupLifecycle } from 'grid/server-lifecycle'
 import { configure } from 'heimdall'
-import { setupLifecycle } from 'norns'
 
 import { createBifrostApp } from './app.js'
 import { closePool } from './lib/db.js'

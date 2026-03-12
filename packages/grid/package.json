@@ -17,6 +17,10 @@
 		"./environment": {
 			"types": "./src/entry-environment.ts",
 			"default": "./dist/environment.js"
+		},
+		"./server-lifecycle": {
+			"types": "./src/entry-server-lifecycle.ts",
+			"default": "./dist/server-lifecycle.js"
 		}
 	},
 	"scripts": {

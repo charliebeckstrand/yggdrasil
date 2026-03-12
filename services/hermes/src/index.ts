@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server'
-import { setupLifecycle } from 'norns'
+import { setupLifecycle } from 'grid/server-lifecycle'
 
 import { createHermesApp } from './app.js'
 import { environment } from './lib/env.js'
