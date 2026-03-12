@@ -3,9 +3,9 @@ import { cva } from 'class-variance-authority'
 export const buttonVariants = cva(
 	[
 		'inline-flex items-center justify-center',
+		'outline-none',
 		'font-medium whitespace-nowrap',
 		'transition-colors duration-150 ease-in-out',
-		'outline-none',
 		'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black',
 		'disabled:pointer-events-none disabled:opacity-50',
 	],
