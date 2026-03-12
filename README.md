@@ -19,7 +19,8 @@ Microservices built with TypeScript snd Hono
 | **[Saga](packages/saga)** | Database management |
 | **[Skuld](packages/skuld)** | Schemas |
 | **[Norns](packages/norns)** | Server lifecycle |
-| **[Grid](packages/grid)** | Shared factories and middleware |
+| **[Grid](packages/grid)** | Factories and middleware |
+| **[Rune](packages/rune)** | UI |
 
 ## Prerequisites
 
