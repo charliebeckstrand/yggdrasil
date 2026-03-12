@@ -1,1 +1,1 @@
-export { default } from 'vali/config'
+export { default } from './src/config.js'
