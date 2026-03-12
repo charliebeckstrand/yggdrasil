@@ -1,7 +1,7 @@
 {
 	"name": "rune",
 	"version": "0.1.0",
-	"description": "Geist-inspired UI component library — server-rendered components with Hono JSX and Tailwind CSS",
+	"description": "Geist-inspired UI component library — Vue components with Tailwind CSS",
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./src/index.ts",
@@ -24,7 +24,7 @@
 	"packageManager": "pnpm@10.29.3",
 	"dependencies": {
 		"class-variance-authority": "^0.7.1",
-		"hono": "^4.12.5"
+		"vue": "^3.5.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.6",
