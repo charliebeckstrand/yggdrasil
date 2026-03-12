@@ -2,8 +2,17 @@ import { getIpAddress } from 'grid/middleware'
 import type { MiddlewareHandler } from 'hono'
 import { hc } from 'hono/client'
 import { HTTPException } from 'hono/http-exception'
+
 import type { VidarApp } from './app.js'
+import { type CircuitBreaker, createCircuitBreaker } from './circuit-breaker.js'
 import { createTokenBucket } from './rate-limit.js'
+
+export type {
+	CircuitBreaker,
+	CircuitBreakerOptions,
+	CircuitBreakerStatus,
+} from './circuit-breaker.js'
+export { createCircuitBreaker } from './circuit-breaker.js'
 
 export interface VidarClientConfig {
 	vidarUrl?: string
@@ -18,6 +27,7 @@ export interface BanCheckResult {
 
 let _config: VidarClientConfig = {}
 let _client: ReturnType<typeof hc<VidarApp>> | null = null
+let _breaker: CircuitBreaker | null = null
 
 export function configure(config: VidarClientConfig): void {
 	_config = { ...config }
@@ -27,26 +37,46 @@ export function configure(config: VidarClientConfig): void {
 				headers: config.vidarApiKey ? { Authorization: `Bearer ${config.vidarApiKey}` } : undefined,
 			})
 		: null
+
+	_breaker = config.vidarUrl ? createCircuitBreaker('vidar') : null
+}
+
+/**
+ * Get the circuit breaker status for monitoring/health checks.
+ * Returns null if Vidar is not configured.
+ */
+export function getCircuitBreakerStatus() {
+	return _breaker?.getStatus() ?? null
 }
 
 /**
  * Check if an IP is banned by Vidar.
  * Returns null if Vidar is not configured or unreachable.
+ * Uses circuit breaker to prevent cascading failures.
  */
 export async function checkIpBan(ip: string): Promise<BanCheckResult | null> {
-	if (!_client) return null
+	const client = _client
+	const breaker = _breaker
+
+	if (!client || !breaker) return null
 
 	try {
-		const res = await _client.vidar['check-ip'].$get(
-			{ query: { ip } },
-			{ init: { signal: AbortSignal.timeout(3000) } },
-		)
+		return await breaker.execute(async () => {
+			const res = await client.vidar['check-ip'].$get(
+				{ query: { ip } },
+				{ init: { signal: AbortSignal.timeout(3000) } },
+			)
 
-		if (!res.ok) return null
+			if (!res.ok && res.status >= 500) {
+				throw new Error(`Vidar returned ${res.status}`)
+			}
 
-		return (await res.json()) as BanCheckResult
+			if (!res.ok) return null
+
+			return (await res.json()) as BanCheckResult
+		})
 	} catch {
-		// Vidar is unreachable — fail open so auth still works
+		// Vidar is unreachable or circuit is open — fail open so auth still works
 		return null
 	}
 }
@@ -68,6 +98,7 @@ export function checkBan(): MiddlewareHandler {
 /**
  * Report a security event to Vidar.
  * Fire-and-forget — does not throw on failure.
+ * Uses circuit breaker to avoid hammering an unresponsive Vidar.
  */
 export function reportEvent(
 	eventType: string,
@@ -75,13 +106,24 @@ export function reportEvent(
 	details: Record<string, unknown> = {},
 	service = 'unknown',
 ): void {
-	if (!_client) return
+	const client = _client
+	const breaker = _breaker
 
-	_client.vidar.events
-		.$post(
-			{ json: { ip, event_type: eventType, details, service } },
-			{ init: { signal: AbortSignal.timeout(5000) } },
-		)
+	if (!client || !breaker) return
+
+	breaker
+		.execute(async () => {
+			const res = await client.vidar.events.$post(
+				{ json: { ip, event_type: eventType, details, service } },
+				{ init: { signal: AbortSignal.timeout(5000) } },
+			)
+
+			if (!res.ok && res.status >= 500) {
+				throw new Error(`Vidar returned ${res.status}`)
+			}
+
+			return res
+		})
 		.catch(() => {
 			// Silently ignore — Vidar being down should not affect callers
 		})

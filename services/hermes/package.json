@@ -1,7 +1,7 @@
 {
 	"name": "hermes",
 	"version": "0.1.0",
-	"description": "Typed RPC gateway for inter-service communication with circuit breaking and observability",
+	"description": "Real-time messaging service with pub/sub and SSE streaming",
 	"type": "module",
 	"exports": {
 		".": {
@@ -31,8 +31,6 @@
 		"@hono/zod-openapi": "^1.2.2",
 		"grid": "workspace:*",
 		"hono": "^4.12.5",
-		"skuld": "workspace:*",
-		"vidar": "workspace:*",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {

@@ -1,25 +1,29 @@
 import { createApp } from 'grid'
 
 import { environment } from './lib/env.js'
-import { rpcLogger } from './middleware/rpc-logger.js'
 import { timing } from './middleware/timing.js'
 import { health } from './routes/health.js'
-import { security } from './routes/security.js'
+import { publish } from './routes/publish.js'
+import { subscribe } from './routes/subscribe.js'
+import { topics } from './routes/topics.js'
 
 export function createHermesApp() {
 	const env = environment()
 
 	const { app, setup } = createApp({
-		basePath: '/rpc',
+		basePath: '/msg',
 		title: 'Hermes',
-		description: 'Typed RPC gateway for inter-service communication',
+		description: 'Real-time messaging service with pub/sub and SSE streaming',
 		cors: { origin: env.CORS_ORIGIN, credentials: true },
 	})
 
-	app.use('/rpc/*', timing())
-	app.use('/rpc/*', rpcLogger())
+	app.use('/msg/*', timing())
 
-	const routes = app.route('/rpc', health).route('/rpc', security)
+	const routes = app
+		.route('/msg', health)
+		.route('/msg', publish)
+		.route('/msg', subscribe)
+		.route('/msg', topics)
 
 	setup()
 

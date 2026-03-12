@@ -56,7 +56,7 @@ export function createCircuitBreaker(
 		} else if (failures >= failureThreshold) {
 			state = 'open'
 
-			console.warn(`[hermes] Circuit breaker "${name}" opened after ${failures} failures`)
+			console.warn(`[vidar] Circuit breaker "${name}" opened after ${failures} failures`)
 		}
 	}
 
@@ -68,7 +68,7 @@ export function createCircuitBreaker(
 
 					halfOpenAttempts = 0
 
-					console.info(`[hermes] Circuit breaker "${name}" entering half-open state`)
+					console.info(`[vidar] Circuit breaker "${name}" entering half-open state`)
 				} else {
 					throw new Error(`Circuit breaker "${name}" is open — ${name} is unavailable`)
 				}

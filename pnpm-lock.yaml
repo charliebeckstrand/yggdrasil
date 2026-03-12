@@ -223,9 +223,6 @@ importers:
       heimdall:
         specifier: workspace:*
         version: link:../../packages/heimdall
-      hermes:
-        specifier: workspace:*
-        version: link:../hermes
       hono:
         specifier: ^4.12.5
         version: 4.12.5
@@ -281,12 +278,6 @@ importers:
       hono:
         specifier: ^4.12.5
         version: 4.12.5
-      skuld:
-        specifier: workspace:*
-        version: link:../../packages/skuld
-      vidar:
-        specifier: workspace:*
-        version: link:../vidar
       zod:
         specifier: ^4.3.6
         version: 4.3.6
