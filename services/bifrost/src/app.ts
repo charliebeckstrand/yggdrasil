@@ -1,8 +1,8 @@
 import { createApp } from 'grid'
 import { csrf } from 'hono/csrf'
+import { createVidar } from 'vidar/client'
 
 import { environment } from './lib/env.js'
-import { createHermesGuard } from './middleware/hermes.js'
 import { session } from './middleware/session.js'
 import { authRoutes } from './routes/auth.js'
 import { health } from './routes/health.js'
@@ -21,7 +21,7 @@ export function createBifrostApp() {
 	app.use('*', session())
 	app.use('*', csrf({ origin: env.CORS_ORIGIN }))
 
-	app.use('/auth/*', createHermesGuard({ rate: 2, burst: 5, route: '/auth' }))
+	app.use('/auth/*', createVidar({ rate: 2, burst: 5, route: '/auth', service: 'bifrost' }))
 
 	const routes = app
 		.route('/auth', authRoutes)

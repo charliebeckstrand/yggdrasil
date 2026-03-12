@@ -1,4 +1,4 @@
-import { createCircuitBreaker } from '@/lib/circuit-breaker'
+import { createCircuitBreaker } from '@/circuit-breaker'
 
 describe('circuit breaker', () => {
 	it('starts in closed state', () => {

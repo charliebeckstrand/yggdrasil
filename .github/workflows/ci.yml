@@ -14,10 +14,10 @@ jobs:
         outputs:
             rune: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.rune == 'true' }}
             skuld: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' }}
-            bifrost: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.bifrost == 'true' || steps.filter.outputs.heimdall == 'true' || steps.filter.outputs.saga == 'true' }}
+            bifrost: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.bifrost == 'true' || steps.filter.outputs.heimdall == 'true' || steps.filter.outputs.saga == 'true' || steps.filter.outputs.vidar == 'true' }}
             heimdall: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.heimdall == 'true' }}
             saga: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.saga == 'true' }}
-            hermes: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.hermes == 'true' }}
+            hermes: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.hermes == 'true' }}
             vidar: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.vidar == 'true' || steps.filter.outputs.saga == 'true' }}
         steps:
             - uses: actions/checkout@v6
@@ -106,7 +106,7 @@ jobs:
             - run: pnpm turbo run build --filter=bifrost...
 
     hermes:
-        name: Hermes (RPC)
+        name: Hermes (Messaging)
         needs: changes
         if: needs.changes.outputs.hermes == 'true'
         runs-on: ubuntu-latest
