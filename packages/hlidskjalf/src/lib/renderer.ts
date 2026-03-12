@@ -66,6 +66,7 @@ export function createRenderer(): Renderer {
 	const write = (s: string) => process.stdout.write(s)
 
 	let inputCallback: InputCallback | null = null
+
 	let stdinSetup = false
 
 	function setupInput() {
@@ -74,6 +75,7 @@ export function createRenderer(): Renderer {
 		stdinSetup = true
 
 		process.stdin.setRawMode(true)
+
 		process.stdin.resume()
 		process.stdin.setEncoding('utf-8')
 
@@ -112,15 +114,20 @@ export function createRenderer(): Renderer {
 
 	function renderFrame(state: RendererState): void {
 		const { processes, selectedIndex } = state
+
 		const cols = process.stdout.columns || 80
 		const rows = process.stdout.rows || 24
+
 		const lines: string[] = []
 
 		// Header
 		const allReady = processes.every((p) => p.status === 'ready' || p.status === 'watching')
+
 		const icon = allReady ? `${FG.yellow}⚡${RESET}` : `${FG.gray}◦${RESET}`
+
 		const title = `${icon} ${BOLD}Yggdrasil${RESET}`
 		const hints = `${DIM}↑/↓ select  q quit${RESET}`
+
 		const titlePad = Math.max(0, cols - 25 - 19)
 
 		lines.push(` ${title}${' '.repeat(titlePad)}${hints}`)
@@ -136,11 +143,16 @@ export function createRenderer(): Renderer {
 		// Table rows
 		for (let i = 0; i < processes.length; i++) {
 			const proc = processes[i]
+
 			const isSelected = i === selectedIndex
+
 			const status = statusDisplay[proc.status]
+
 			const arrow = isSelected ? `${FG.cyan}▸${RESET}` : ' '
+
 			const nameColor = isSelected ? `${FG.cyan}${BOLD}` : ''
 			const nameReset = isSelected ? RESET : ''
+
 			const typeLabel = proc.entry.type === 'service' ? 'svc' : 'pkg'
 
 			lines.push(
@@ -155,14 +167,18 @@ export function createRenderer(): Renderer {
 
 		// Log panel
 		const selected = processes[selectedIndex]
+
 		const logHeaderHeight = 2
+
 		const tableHeight = lines.length
+
 		const logHeight = Math.max(3, rows - tableHeight - logHeaderHeight - 1)
 
 		if (selected) {
 			lines.push(` ${BOLD}Logs: ${selected.entry.name}${RESET}`)
 
 			const logs = selected.logs
+
 			const visibleLogs = logs.slice(-logHeight)
 
 			for (const line of visibleLogs) {
@@ -198,6 +214,7 @@ export function createRenderer(): Renderer {
 
 			if (process.stdin.isTTY) {
 				process.stdin.setRawMode(false)
+
 				process.stdin.pause()
 			}
 		},

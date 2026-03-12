@@ -58,6 +58,7 @@ export function discoverWorkspaces(root: string): WorkspaceEntry[] {
 		for (const name of readdirSync(base)) {
 			const entryPath = join(base, name)
 			const pkgPath = join(entryPath, 'package.json')
+
 			const pkg = readJson<PackageJson>(pkgPath)
 
 			if (!pkg?.name) continue
@@ -66,6 +67,7 @@ export function discoverWorkspaces(root: string): WorkspaceEntry[] {
 			if (pkg.name === 'hlidskjalf') continue
 
 			const type = classifyEntry(entryPath, pkg)
+
 			const manifest = readJson<Manifest>(join(entryPath, 'manifest.json'))
 
 			entries.push({
@@ -124,6 +126,7 @@ export function filterWorkspaces(entries: WorkspaceEntry[], patterns: string[]):
 
 	for (const pattern of patterns) {
 		const withDeps = pattern.endsWith('...')
+
 		const name = withDeps ? pattern.slice(0, -3) : pattern
 
 		if (entryMap.has(name)) {

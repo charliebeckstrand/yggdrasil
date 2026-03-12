@@ -46,7 +46,9 @@ async function startDocker(root: string): Promise<() => Promise<void>> {
 
 function parseArgs(argv: string[]): DashboardOptions {
 	const root = process.cwd()
+
 	const docker = !argv.includes('--no-docker')
+
 	const filter: string[] = []
 	let order: SortOrder = 'alphabetical'
 
@@ -88,6 +90,8 @@ async function createDashboard(options: DashboardOptions): Promise<void> {
 	// Apply filter if provided
 	if (options.filter) {
 		entries = filterWorkspaces(entries, options.filter)
+
+		entries = sortByDependencyOrder(entries)
 	}
 
 	if (entries.length === 0) {
@@ -104,8 +108,11 @@ async function createDashboard(options: DashboardOptions): Promise<void> {
 
 	// Create process manager and renderer
 	const manager = createProcessManager(options.root)
+
 	const renderer = createRenderer()
+
 	let selectedIndex = 0
+
 	let shuttingDown = false
 
 	// Render on every process update

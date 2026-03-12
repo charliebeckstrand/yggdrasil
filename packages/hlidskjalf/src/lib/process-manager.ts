@@ -13,8 +13,11 @@ export interface ProcessManagerEvents {
 
 export class ProcessManager extends EventEmitter<ProcessManagerEvents> {
 	private processes = new Map<string, ChildProcess>()
+
 	private infos = new Map<string, ProcessInfo>()
+
 	private root: string
+
 	private shuttingDown = false
 
 	constructor(root: string) {
