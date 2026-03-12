@@ -9,6 +9,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.6",
+		"@vitest/coverage-v8": "^4.0.18",
 		"husky": "^9.1.7",
 		"turbo": "^2.8.14"
 	},
@@ -19,6 +20,7 @@
 		"dev:bare": "turbo run build --filter=hlidskjalf && node packages/hlidskjalf/dist/index.js --no-docker",
 		"dev:turbo": "bash scripts/dev.sh",
 		"test": "turbo run test",
+		"test:coverage": "turbo run test:coverage",
 		"lint": "biome check packages/ services/",
 		"lint:fix": "biome check --write packages/ services/",
 		"format": "biome format --write packages/ services/",

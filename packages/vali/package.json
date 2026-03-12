@@ -1,7 +1,7 @@
 {
-	"name": "grid",
+	"name": "vali",
 	"version": "0.1.0",
-	"description": "Shared Hono service utilities — middleware, schemas, error handling, and OpenAPI config",
+	"description": "Shared test utilities — mock factories, custom matchers, and fixtures for Vitest",
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./src/index.ts",
@@ -10,17 +10,25 @@
 			"types": "./src/index.ts",
 			"default": "./dist/index.js"
 		},
-		"./middleware": {
-			"types": "./src/entry-middleware.ts",
-			"default": "./dist/middleware.js"
+		"./matchers": {
+			"types": "./src/matchers/index.ts",
+			"default": "./dist/matchers.js"
 		},
-		"./environment": {
-			"types": "./src/entry-environment.ts",
-			"default": "./dist/environment.js"
+		"./mocks": {
+			"types": "./src/mocks/index.ts",
+			"default": "./dist/mocks.js"
 		},
-		"./server-lifecycle": {
-			"types": "./src/entry-server-lifecycle.ts",
-			"default": "./dist/server-lifecycle.js"
+		"./fixtures": {
+			"types": "./src/fixtures/index.ts",
+			"default": "./dist/fixtures.js"
+		},
+		"./setup": {
+			"types": "./src/setup.ts",
+			"default": "./dist/setup.js"
+		},
+		"./containers": {
+			"types": "./src/containers/index.ts",
+			"default": "./dist/containers.js"
 		}
 	},
 	"scripts": {
@@ -35,19 +43,16 @@
 	},
 	"packageManager": "pnpm@10.29.3",
 	"dependencies": {
-		"@hono/node-server": "^1.19.11",
-		"@hono/swagger-ui": "^0.6.0",
-		"@hono/zod-openapi": "^1.2.2",
-		"hono": "^4.12.5",
-		"skuld": "workspace:*",
-		"zod": "^4.3.6"
+		"@testcontainers/postgresql": "^11.12.0",
+		"hono": "^4.8.3",
+		"testcontainers": "^11.12.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.6",
 		"@types/node": "^25.3.3",
 		"tsup": "^8.5.1",
-		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
-		"vitest": "^4.0.18"
+		"vitest": "^4.0.18",
+		"zod": "^4.3.6"
 	}
 }
