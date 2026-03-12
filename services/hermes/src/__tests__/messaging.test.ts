@@ -85,6 +85,7 @@ describe('messaging routes', () => {
 
 			expect(data.status).toBe('healthy')
 			expect(data.version).toBe('0.1.0')
+
 			expect(data.uptime).toBeTypeOf('number')
 		})
 	})

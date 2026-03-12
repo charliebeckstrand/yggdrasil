@@ -27,6 +27,7 @@ const subscribeRoute = createRoute({
 
 export const subscribe = new OpenAPIHono().openapi(subscribeRoute, async (c) => {
 	const topicParam = c.req.valid('query').topic
+
 	const topics = topicParam ? topicParam.split(',').map((t) => t.trim()) : null
 
 	const emitter = getEmitter()
