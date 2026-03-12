@@ -12,6 +12,7 @@ jobs:
         name: Detect changes
         runs-on: ubuntu-latest
         outputs:
+            rune: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.rune == 'true' }}
             skuld: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' }}
             bifrost: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.bifrost == 'true' || steps.filter.outputs.heimdall == 'true' || steps.filter.outputs.saga == 'true' }}
             norns: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.norns == 'true' }}
@@ -33,6 +34,8 @@ jobs:
                         - '**'
                         - '!packages/**'
                         - '!services/**'
+                      rune:
+                        - 'packages/rune/**'
                       skuld:
                         - 'packages/skuld/**'
                       norns:
@@ -49,6 +52,25 @@ jobs:
                         - 'services/hermes/**'
                       vidar:
                         - 'services/vidar/**'
+
+    rune:
+        name: Rune (UI)
+        needs: changes
+        if: needs.changes.outputs.rune == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 22
+                  cache: pnpm
+                  cache-dependency-path: pnpm-lock.yaml
+
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm turbo run lint test build --filter=rune
 
     skuld:
         name: Skuld (Schemas)
