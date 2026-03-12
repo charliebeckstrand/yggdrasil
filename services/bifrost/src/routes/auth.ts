@@ -1,7 +1,8 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { getIpAddress } from 'grid/middleware'
-import { AuthError, authenticateUser, registerUser } from 'heimdall'
+import { AuthError, authenticateUser } from 'heimdall'
 import { EmailSchema, LoginPasswordSchema, PasswordSchema } from 'skuld'
+import { handleRegisterUser } from '../handlers/register.js'
 import { environment } from '../lib/env.js'
 import { ErrorSchema } from '../lib/schemas.js'
 import {
@@ -202,15 +203,5 @@ export const authRoutes = new OpenAPIHono<SessionEnv>()
 
 		const ip = getIpAddress(c)
 
-		try {
-			const user = await registerUser(email, password, ip)
-
-			return c.json({ id: user.id, email: user.email }, 201)
-		} catch (err) {
-			if (err instanceof AuthError && err.code === 'email_exists') {
-				return c.json({ error: 'Conflict', message: err.message, statusCode: 409 }, 409)
-			}
-
-			throw err
-		}
+		return handleRegisterUser(c, email, password, ip)
 	})
