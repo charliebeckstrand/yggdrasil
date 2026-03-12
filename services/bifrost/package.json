@@ -19,6 +19,7 @@
 		"format": "biome format --config-path=../.. --write .",
 		"test": "vitest run",
 		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
 		"generate:client": "openapi-typescript openapi.json -o src/client/schema.d.ts"
 	},
 	"packageManager": "pnpm@10.29.3",
@@ -41,6 +42,7 @@
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
+		"vali": "workspace:*",
 		"vitest": "^4.0.18"
 	}
 }

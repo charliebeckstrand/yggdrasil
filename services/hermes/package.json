@@ -18,7 +18,8 @@
 		"lint:fix": "biome check --config-path=../.. --write .",
 		"format": "biome format --config-path=../.. --write .",
 		"test": "vitest run",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage"
 	},
 	"packageManager": "pnpm@10.29.3",
 	"dependencies": {
@@ -35,6 +36,7 @@
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
+		"vali": "workspace:*",
 		"vitest": "^4.0.18"
 	}
 }

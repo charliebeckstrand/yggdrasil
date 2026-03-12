@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events'
-import { createMessageId, getEmitter } from '../lib/emitter.js'
+import { createMessageId, getEmitter } from '@/lib/emitter'
 
 describe('getEmitter', () => {
 	it('returns an EventEmitter instance', () => {

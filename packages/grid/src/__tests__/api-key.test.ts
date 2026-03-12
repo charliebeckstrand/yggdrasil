@@ -13,6 +13,10 @@ describe('timingSafeCompare', () => {
 	it('returns false for different lengths', () => {
 		expect(timingSafeCompare('short', 'much-longer-string')).toBe(false)
 	})
+
+	it('returns true for empty strings', () => {
+		expect(timingSafeCompare('', '')).toBe(true)
+	})
 })
 
 describe('createBearerAuth', () => {

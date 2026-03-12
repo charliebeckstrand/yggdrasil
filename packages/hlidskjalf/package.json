@@ -19,13 +19,15 @@
 		"lint:fix": "biome check --write src/",
 		"format": "biome format --write src/",
 		"test": "vitest run",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
 		"@types/node": "^22.15.33",
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
+		"vali": "workspace:*",
 		"vitest": "^3.2.4"
 	}
 }

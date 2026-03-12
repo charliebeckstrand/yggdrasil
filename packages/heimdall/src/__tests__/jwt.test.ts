@@ -28,6 +28,16 @@ describe('signToken', () => {
 
 		expect(access).not.toBe(refresh)
 	})
+
+	it('generates unique jti for each token', async () => {
+		const token1 = await signToken('user-123', 'access')
+		const token2 = await signToken('user-123', 'access')
+
+		const payload1 = await verifyToken(token1)
+		const payload2 = await verifyToken(token2)
+
+		expect(payload1.jti).not.toBe(payload2.jti)
+	})
 })
 
 describe('verifyToken', () => {
@@ -67,12 +77,36 @@ describe('verifyToken', () => {
 	it('throws on tampered token', async () => {
 		const token = await signToken('user-123', 'access')
 
-		const tampered = token.slice(0, -5) + 'XXXXX'
+		const tampered = `${token.slice(0, -5)}XXXXX`
 
 		await expect(verifyToken(tampered)).rejects.toThrow()
 	})
 
 	it('throws on garbage input', async () => {
 		await expect(verifyToken('not.a.jwt')).rejects.toThrow()
+	})
+
+	it('rejects a token signed with a different key', async () => {
+		const { sign } = await import('hono/jwt')
+
+		const badToken = await sign(
+			{ sub: 'user-123', iss: 'heimdall', type: 'access' },
+			'wrong-key-that-is-at-least-32-characters-long',
+			'HS256',
+		)
+
+		await expect(verifyToken(badToken)).rejects.toThrow()
+	})
+
+	it('rejects a token with wrong issuer', async () => {
+		const { sign } = await import('hono/jwt')
+
+		const badToken = await sign(
+			{ sub: 'user-123', iss: 'not-heimdall', type: 'access' },
+			SECRET,
+			'HS256',
+		)
+
+		await expect(verifyToken(badToken)).rejects.toThrow('Invalid token issuer')
 	})
 })

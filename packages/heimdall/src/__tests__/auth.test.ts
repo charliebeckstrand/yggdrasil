@@ -1,7 +1,7 @@
 import { hash } from '@node-rs/argon2'
 import { AuthError, authenticateUser, refreshTokenPair, registerUser } from '../auth.js'
 import { configure } from '../config.js'
-import { signToken } from '../jwt.js'
+import { signToken, verifyToken } from '../jwt.js'
 import type { CredentialsRow, UserRepository, UserRow } from '../types.js'
 
 const SECRET = 'a-test-secret-key-that-is-at-least-32-characters-long'
@@ -57,8 +57,8 @@ describe('authenticateUser', () => {
 		expect(result.token_type).toBe('bearer')
 	})
 
-	it('normalizes email to lowercase', async () => {
-		await authenticateUser('Alice@Example.COM', 'correct-password')
+	it('normalizes email to lowercase and trimmed', async () => {
+		await authenticateUser('  Alice@Example.COM  ', 'correct-password')
 
 		expect(mockRepo.getCredentialsByEmail).toHaveBeenCalledWith('alice@example.com')
 	})
@@ -108,6 +108,19 @@ describe('authenticateUser', () => {
 			expect.objectContaining({ type: 'login_failed', ip: '1.2.3.4' }),
 		)
 	})
+
+	it('signs access and refresh tokens with correct claims', async () => {
+		const result = await authenticateUser('alice@example.com', 'correct-password')
+
+		const accessPayload = await verifyToken(result.access_token)
+		const refreshPayload = await verifyToken(result.refresh_token)
+
+		expect(accessPayload.sub).toBe('user-123')
+		expect(accessPayload.type).toBe('access')
+
+		expect(refreshPayload.sub).toBe('user-123')
+		expect(refreshPayload.type).toBe('refresh')
+	})
 })
 
 describe('registerUser', () => {
@@ -116,6 +129,24 @@ describe('registerUser', () => {
 
 		expect(user.id).toBe(TEST_USER.id)
 		expect(user.email).toBe(TEST_USER.email)
+	})
+
+	it('normalizes email before inserting', async () => {
+		await registerUser('  Bob@EXAMPLE.COM  ', 'password123')
+
+		expect(mockRepo.insertUser).toHaveBeenCalledWith(
+			expect.any(String),
+			'bob@example.com',
+			expect.any(String),
+		)
+	})
+
+	it('hashes the password with Argon2id', async () => {
+		await registerUser('bob@example.com', 'password123')
+
+		const hashed = vi.mocked(mockRepo.insertUser).mock.calls[0][2] as string
+
+		expect(hashed).toContain('$argon2')
 	})
 
 	it('throws email_exists on duplicate', async () => {
@@ -128,6 +159,14 @@ describe('registerUser', () => {
 		} catch (err) {
 			expect((err as AuthError).code).toBe('email_exists')
 		}
+	})
+
+	it('re-throws non-duplicate errors', async () => {
+		vi.mocked(mockRepo.insertUser).mockRejectedValue(new Error('connection refused'))
+
+		await expect(registerUser('bob@example.com', 'password123')).rejects.toThrow(
+			'connection refused',
+		)
 	})
 
 	it('calls onSecurityEvent on registration', async () => {
@@ -164,6 +203,14 @@ describe('refreshTokenPair', () => {
 		vi.mocked(mockRepo.getUserById).mockResolvedValue({ ...TEST_USER, is_active: false })
 
 		const refreshToken = await signToken(TEST_USER.id, 'refresh')
+
+		await expect(refreshTokenPair(refreshToken)).rejects.toThrow(AuthError)
+	})
+
+	it('throws when user not found', async () => {
+		vi.mocked(mockRepo.getUserById).mockResolvedValue(null)
+
+		const refreshToken = await signToken('deleted-user', 'refresh')
 
 		await expect(refreshTokenPair(refreshToken)).rejects.toThrow(AuthError)
 	})

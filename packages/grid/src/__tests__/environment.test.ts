@@ -26,6 +26,16 @@ describe('createEnvironment', () => {
 		expect(env.NODE_ENV).toBe('test')
 	})
 
+	it('defaults NODE_ENV to development', () => {
+		vi.stubEnv('PORT', '3000')
+
+		delete process.env.NODE_ENV
+
+		const env = createEnvironment()
+
+		expect(env().NODE_ENV).toBe('development')
+	})
+
 	it('caches result on subsequent calls', () => {
 		vi.stubEnv('PORT', '4000')
 		vi.stubEnv('NODE_ENV', 'test')
@@ -49,6 +59,20 @@ describe('createEnvironment', () => {
 
 		expect(env.DATABASE_URL).toBe('postgres://localhost/test')
 		expect(env.PORT).toBe(4000)
+	})
+
+	it('treats empty strings as undefined for optional fields', () => {
+		vi.stubEnv('PORT', '3000')
+		vi.stubEnv('NODE_ENV', 'test')
+		vi.stubEnv('OPTIONAL_VAR', '')
+
+		const env = createEnvironment({
+			OPTIONAL_VAR: z.string().optional(),
+		})
+
+		const result = env()
+
+		expect(result.OPTIONAL_VAR).toBeUndefined()
 	})
 
 	it('filters empty string env vars', () => {

@@ -64,4 +64,12 @@ describe('notFoundHandler', () => {
 		expect(body.message).toContain('/does-not-exist')
 		expect(body.statusCode).toBe(404)
 	})
+
+	it('includes correct method in not found message', async () => {
+		const res = await app.request('/missing', { method: 'POST' })
+
+		const body = (await res.json()) as ErrorResponse
+
+		expect(body.message).toContain('POST')
+	})
 })
