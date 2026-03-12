@@ -1,7 +1,7 @@
 export type { VidarApp } from './app.js'
 
 import { serve } from '@hono/node-server'
-import { setupLifecycle } from 'norns'
+import { setupLifecycle } from 'grid/server-lifecycle'
 import { createVidarApp } from './app.js'
 import { cleanExpiredBans } from './handlers/bans.js'
 import { closePool } from './lib/db.js'
