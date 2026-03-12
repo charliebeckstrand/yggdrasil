@@ -12,13 +12,14 @@ jobs:
         name: Detect changes
         runs-on: ubuntu-latest
         outputs:
-            bifrost: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.bifrost == 'true' || steps.filter.outputs.heimdall == 'true' || steps.filter.outputs.saga == 'true' }}
+            skuld: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' }}
+            bifrost: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.bifrost == 'true' || steps.filter.outputs.heimdall == 'true' || steps.filter.outputs.saga == 'true' }}
             norns: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.norns == 'true' }}
-            heimdall: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.heimdall == 'true' }}
-            saga: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.saga == 'true' }}
-            huginn: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.huginn == 'true' || steps.filter.outputs.saga == 'true' }}
-            hermes: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.hermes == 'true' }}
-            vidar: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.vidar == 'true' || steps.filter.outputs.saga == 'true' }}
+            heimdall: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.heimdall == 'true' }}
+            saga: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.saga == 'true' }}
+            huginn: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.huginn == 'true' || steps.filter.outputs.saga == 'true' }}
+            hermes: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.hermes == 'true' }}
+            vidar: ${{ steps.filter.outputs.shared == 'true' || steps.filter.outputs.skuld == 'true' || steps.filter.outputs.vidar == 'true' || steps.filter.outputs.saga == 'true' }}
         steps:
             - uses: actions/checkout@v6
               with:
@@ -32,6 +33,8 @@ jobs:
                         - '**'
                         - '!packages/**'
                         - '!services/**'
+                      skuld:
+                        - 'packages/skuld/**'
                       norns:
                         - 'packages/norns/**'
                       bifrost:
@@ -46,6 +49,25 @@ jobs:
                         - 'services/hermes/**'
                       vidar:
                         - 'services/vidar/**'
+
+    skuld:
+        name: Skuld (Schemas)
+        needs: changes
+        if: needs.changes.outputs.skuld == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 22
+                  cache: pnpm
+                  cache-dependency-path: pnpm-lock.yaml
+
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm turbo run lint test build --filter=skuld
 
     norns:
         name: Norns (Lifecycle)

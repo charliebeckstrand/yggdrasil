@@ -1,14 +1,15 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { ConnectionStatusSchema, HealthStatusSchema } from 'skuld'
 import { getPool } from '../lib/db.js'
 
 const ServiceStatusSchema = z.object({
-	status: z.enum(['up', 'down', 'unknown']),
+	status: ConnectionStatusSchema,
 	latency: z.number().optional(),
 })
 
 const HealthResponseSchema = z
 	.object({
-		status: z.enum(['healthy', 'degraded', 'unhealthy']),
+		status: HealthStatusSchema,
 		version: z.string(),
 		uptime: z.number(),
 		services: z.record(z.string(), ServiceStatusSchema),

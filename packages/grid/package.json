@@ -10,10 +10,6 @@
 			"types": "./src/index.ts",
 			"default": "./dist/index.js"
 		},
-		"./schemas": {
-			"types": "./src/entry-schemas.ts",
-			"default": "./dist/schemas.js"
-		},
 		"./middleware": {
 			"types": "./src/entry-middleware.ts",
 			"default": "./dist/middleware.js"
@@ -37,6 +33,7 @@
 		"@hono/swagger-ui": "^0.6.0",
 		"@hono/zod-openapi": "^1.2.2",
 		"hono": "^4.12.5",
+		"skuld": "workspace:*",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
