@@ -10,25 +10,6 @@ export type RegisterFormProps = {
 	class?: string
 }
 
-const validationScript = `
-	var pw = document.getElementById('password')
-	var cpw = document.getElementById('confirmPassword')
-	var err = document.getElementById('confirmPassword-error')
-
-	function validate() {
-		if (cpw.value && pw.value !== cpw.value) {
-			cpw.setCustomValidity('Passwords do not match')
-			if (err) err.textContent = 'Passwords do not match'
-		} else {
-			cpw.setCustomValidity('')
-			if (err) err.textContent = ''
-		}
-	}
-
-	pw.addEventListener('input', validate)
-	cpw.addEventListener('input', validate)
-`
-
 export function RegisterForm({ action, method, class: className }: RegisterFormProps) {
 	return (
 		<Card padding="medium" shadow="small" class={className}>
@@ -67,16 +48,12 @@ export function RegisterForm({ action, method, class: className }: RegisterFormP
 						placeholder="Confirm password"
 						required
 					/>
-
-					<span id="confirmPassword-error" class="text-xs text-red-500" />
 				</div>
 
 				<Button type="default" size="medium">
 					Create account
 				</Button>
 			</Form>
-
-			<script dangerouslySetInnerHTML={{ __html: validationScript }} />
 		</Card>
 	)
 }
