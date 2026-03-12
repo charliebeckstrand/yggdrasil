@@ -1,4 +1,4 @@
-import type { Child } from 'hono/jsx'
+import type { ReactNode } from 'react'
 
 import type { Size, Type } from '../types/index.js'
 
@@ -8,13 +8,13 @@ export type ButtonProps = {
 	type?: Type
 	size?: Size
 	disabled?: boolean
-	class?: string
-	children?: Child
+	className?: string
+	children?: ReactNode
 }
 
-export function Button({ type, size, disabled, class: className, children, ...rest }: ButtonProps) {
+export function Button({ type, size, disabled, className, children, ...rest }: ButtonProps) {
 	return (
-		<button class={buttonVariants({ type, size, className })} disabled={disabled} {...rest}>
+		<button className={buttonVariants({ type, size, className })} disabled={disabled} {...rest}>
 			{children}
 		</button>
 	)

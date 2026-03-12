@@ -12,14 +12,14 @@ export type InputProps = {
 	value?: string
 	required?: boolean
 	disabled?: boolean
-	class?: string
+	className?: string
 }
 
-export function Input({ type, inputType, size, disabled, class: className, ...rest }: InputProps) {
+export function Input({ type, inputType, size, disabled, className, ...rest }: InputProps) {
 	return (
 		<input
 			type={inputType ?? 'text'}
-			class={inputVariants({ type, size, className })}
+			className={inputVariants({ type, size, className })}
 			disabled={disabled}
 			{...rest}
 		/>
