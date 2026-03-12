@@ -8,8 +8,7 @@ Microservices built with TypeScript snd Hono
 | --- | --- | --- |
 | **[Bifrost](services/bifrost)** | API | `3000` |
 | **[Hermes](services/hermes)** | RPC | `3001` |
-| **[Huginn](services/huginn)** | Event Bus | `3002` |
-| **[Vidar](services/vidar)** | Monitoring | `3003` |
+| **[Vidar](services/vidar)** | Monitoring | `3002` |
 
 ## Packages
 

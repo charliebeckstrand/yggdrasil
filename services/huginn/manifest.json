@@ -1,8 +1,0 @@
-{
-	"name": "huginn",
-	"port": 3002,
-	"vars": {
-		"DATABASE_URL": { "type": "value", "default": "postgres://heimdall:heimdall@localhost:5432/bifrost" },
-		"HUGINN_API_KEY": { "type": "secret" }
-	}
-}

@@ -6,15 +6,10 @@ export {
 	BanSchema,
 	CheckIpResponseSchema,
 	CreateBanSchema,
-	CreateSubscriptionSchema,
 	ErrorSchema,
-	EventSchema,
 	IngestEventSchema,
 	MessageSchema,
-	PublishEventSchema,
 	SecurityEventSchema,
-	SubscriptionListSchema,
-	SubscriptionSchema,
 } from 'skuld'
 
 export const ServiceStatusSchema = z
@@ -37,11 +32,9 @@ export const AggregateHealthSchema = z
 		version: z.string(),
 		uptime: z.number(),
 		services: z.object({
-			huginn: ServiceStatusSchema,
 			vidar: ServiceStatusSchema,
 		}),
 		circuitBreakers: z.object({
-			huginn: CircuitBreakerStatusSchema,
 			vidar: CircuitBreakerStatusSchema,
 		}),
 	})

@@ -3,7 +3,6 @@ import { createApp } from 'grid'
 import { environment } from './lib/env.js'
 import { rpcLogger } from './middleware/rpc-logger.js'
 import { timing } from './middleware/timing.js'
-import { events } from './routes/events.js'
 import { health } from './routes/health.js'
 import { security } from './routes/security.js'
 
@@ -20,7 +19,7 @@ export function createHermesApp() {
 	app.use('/rpc/*', timing())
 	app.use('/rpc/*', rpcLogger())
 
-	const routes = app.route('/rpc', health).route('/rpc', events).route('/rpc', security)
+	const routes = app.route('/rpc', health).route('/rpc', security)
 
 	setup()
 

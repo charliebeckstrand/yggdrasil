@@ -12,8 +12,7 @@ Yggdrasil is a TypeScript microservices monorepo with Norse mythology naming. It
 | ----------- | ---- | ---------------------------------------------- |
 | **bifrost** | 3000 | API Gateway / BFF — routes `/api/*`, `/auth/*` |
 | **hermes**  | 3001 | WebSocket messaging service                    |
-| **huginn**  | 3002 | Event bus                                      |
-| **vidar**   | 3003 | Security monitoring, IP ban enforcement        |
+| **vidar**   | 3002 | Security monitoring, IP ban enforcement        |
 
 ### Packages (shared libraries)
 
@@ -29,7 +28,6 @@ Services depend on packages via `workspace:*` protocol:
 
 - **bifrost** → grid, heimdall, saga
 - **hermes** → grid
-- **huginn** → grid, saga
 - **vidar** → grid, saga
 
 ## Commands
