@@ -1,4 +1,4 @@
-vi.mock('heimdall', () => ({
+vi.mock('../auth/index.js', () => ({
 	refreshTokenPair: vi.fn(),
 }))
 

@@ -1,6 +1,6 @@
 import { hash } from '@node-rs/argon2'
-import { AuthError, authenticateUser, refreshTokenPair, registerUser } from '../auth.js'
 import { configure } from '../config.js'
+import { AuthError, authenticateUser, refreshTokenPair, registerUser } from '../credentials.js'
 import { signToken, verifyToken } from '../jwt.js'
 import type { CredentialsRow, UserRepository, UserRow } from '../types.js'
 

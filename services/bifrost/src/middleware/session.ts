@@ -1,7 +1,7 @@
-import { refreshTokenPair } from 'heimdall'
 import type { Context, MiddlewareHandler } from 'hono'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
+import { refreshTokenPair } from '../auth/index.js'
 import { environment } from '../lib/env.js'
 
 export type SessionData = {

@@ -21,7 +21,7 @@ const { MockAuthError, mockAuthenticateUser, mockRegisterUser } = vi.hoisted(() 
 	}
 })
 
-vi.mock('heimdall', () => ({
+vi.mock('../auth/index.js', () => ({
 	configure: vi.fn(),
 	authenticateUser: (...args: unknown[]) => mockAuthenticateUser(...args),
 	registerUser: (...args: unknown[]) => mockRegisterUser(...args),

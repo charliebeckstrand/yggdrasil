@@ -2,12 +2,6 @@ version: 2
 
 updates:
   - package-ecosystem: npm
-    directory: /packages/heimdall
-    schedule:
-      interval: weekly
-      day: monday
-
-  - package-ecosystem: npm
     directory: /services/bifrost
     schedule:
       interval: weekly

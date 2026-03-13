@@ -1,5 +1,5 @@
-import { AuthError, registerUser } from 'heimdall'
 import type { Context } from 'hono'
+import { AuthError, registerUser } from '../auth/index.js'
 
 export async function handleRegisterUser(c: Context, email: string, password: string, ip: string) {
 	try {

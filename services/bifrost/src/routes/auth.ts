@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { getIpAddress } from 'grid/middleware'
-import { AuthError, authenticateUser } from 'heimdall'
 import { EmailSchema, LoginPasswordSchema, PasswordSchema } from 'skuld'
+import { AuthError, authenticateUser } from '../auth/index.js'
 import { handleRegisterUser } from '../handlers/register.js'
 import { environment } from '../lib/env.js'
 import { ErrorSchema } from '../lib/schemas.js'
