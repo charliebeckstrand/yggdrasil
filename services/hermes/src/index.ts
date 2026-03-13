@@ -13,7 +13,7 @@ const server = serve(
 		port: env.PORT,
 	},
 	(info) => {
-		console.log(`Hermes messaging service running on http://localhost:${info.port}`)
+		console.log(`Hermes running on http://localhost:${info.port}`)
 		console.log(`API docs available at http://localhost:${info.port}/msg/docs`)
 	},
 )
