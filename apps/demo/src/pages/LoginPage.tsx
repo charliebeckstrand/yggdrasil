@@ -5,16 +5,22 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { Button, Card, Form, Input, Label } from 'rune'
 
 import { useAuth } from '@/hooks/useAuth'
+import type { SSRData } from '@/lib/types'
 
-export function LoginPage() {
+interface LoginPageProps {
+	ssrData?: SSRData
+}
+
+export function LoginPage({ ssrData }: LoginPageProps) {
 	const [searchParams] = useSearchParams()
 
-	const { error, submitting, login } = useAuth()
+	const { error: clientError, submitting, login } = useAuth()
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 
-	const registered = searchParams.get('registered') === 'true'
+	const registered = ssrData?.registered || searchParams.get('registered') === 'true'
+	const error = clientError || ssrData?.error
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault()
@@ -35,7 +41,7 @@ export function LoginPage() {
 			{error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
 			<Card>
-				<Form onSubmit={handleSubmit}>
+				<Form action="/login" method="post" onSubmit={handleSubmit}>
 					<div className="flex flex-col gap-2">
 						<Label htmlFor="email">Email</Label>
 

@@ -5,14 +5,21 @@ import { Link } from 'react-router-dom'
 import { Button, Card, Form, Input, Label } from 'rune'
 
 import { useAuth } from '@/hooks/useAuth'
+import type { SSRData } from '@/lib/types'
 
-export function RegisterPage() {
-	const { error, submitting, register } = useAuth()
+interface RegisterPageProps {
+	ssrData?: SSRData
+}
+
+export function RegisterPage({ ssrData }: RegisterPageProps) {
+	const { error: clientError, submitting, register } = useAuth()
 
 	const [name, setName] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [confirmPassword, setConfirmPassword] = useState('')
+
+	const error = clientError || ssrData?.error
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault()
@@ -27,7 +34,7 @@ export function RegisterPage() {
 			{error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
 			<Card padding="medium" shadow="small">
-				<Form onSubmit={handleSubmit}>
+				<Form action="/register" method="post" onSubmit={handleSubmit}>
 					<div className="flex flex-col gap-1.5">
 						<Label htmlFor="name">Name</Label>
 
