@@ -1,5 +1,5 @@
-import type { CredentialsRow, UserRepository, UserRow } from 'heimdall'
 import { sql } from 'saga'
+import type { CredentialsRow, UserRepository, UserRow } from '../auth/types.js'
 import { db } from './db.js'
 
 export function createUserRepository(): UserRepository {

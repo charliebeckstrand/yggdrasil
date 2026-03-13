@@ -1,9 +1,8 @@
 import { serve } from '@hono/node-server'
 import { setupLifecycle } from 'grid/server-lifecycle'
-import { configure } from 'heimdall'
 import { configure as configureVidar, reportEvent } from 'vidar/client'
-
 import { createBifrostApp } from './app.js'
+import { configure } from './auth/index.js'
 import { closePool } from './lib/db.js'
 import { environment } from './lib/env.js'
 import { createUserRepository } from './lib/user-repository.js'
