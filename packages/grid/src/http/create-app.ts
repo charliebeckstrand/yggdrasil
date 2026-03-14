@@ -9,6 +9,7 @@ import { timing } from 'hono/timing'
 import { trimTrailingSlash } from 'hono/trailing-slash'
 import { errorHandler, notFoundHandler } from './error-handler.js'
 import { createOpenApiConfig } from './openapi.js'
+import { validationHook } from './validation-hook.js'
 
 interface CreateAppOptions {
 	basePath: string
@@ -19,7 +20,7 @@ interface CreateAppOptions {
 }
 
 export function createApp(options: CreateAppOptions) {
-	const app = new OpenAPIHono()
+	const app = new OpenAPIHono({ defaultHook: validationHook })
 
 	app.use(trimTrailingSlash())
 

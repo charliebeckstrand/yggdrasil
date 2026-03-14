@@ -22,11 +22,11 @@ export const CallbackUrlSchema = z.url().openapi({
 	example: 'http://localhost:4000/api/webhooks/event',
 })
 
-export const EmailSchema = z.email().openapi({ example: 'user@example.com' })
+export const EmailSchema = z.email('Invalid email address').openapi({ example: 'user@example.com' })
 
 export const PasswordSchema = z
 	.string()
-	.min(8)
+	.min(8, 'Password must be at least 8 characters')
 	.openapi({ description: 'Password (min 8 characters)' })
 
 export const LoginPasswordSchema = z.string().min(1).openapi({ description: 'Login password' })
