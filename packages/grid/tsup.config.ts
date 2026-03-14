@@ -3,9 +3,9 @@ import { defineConfig } from 'tsup'
 export default defineConfig({
 	entry: {
 		index: 'src/index.ts',
-		middleware: 'src/entry-middleware.ts',
-		environment: 'src/entry-environment.ts',
-		'server-lifecycle': 'src/entry-server-lifecycle.ts',
+		middleware: 'src/entry/middleware.ts',
+		environment: 'src/entry/environment.ts',
+		'server-lifecycle': 'src/entry/server-lifecycle.ts',
 	},
 	format: ['esm'],
 	target: 'node22',

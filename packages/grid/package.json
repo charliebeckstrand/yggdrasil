@@ -11,15 +11,15 @@
 			"default": "./dist/index.js"
 		},
 		"./middleware": {
-			"types": "./src/entry-middleware.ts",
+			"types": "./src/entry/middleware.ts",
 			"default": "./dist/middleware.js"
 		},
 		"./environment": {
-			"types": "./src/entry-environment.ts",
+			"types": "./src/entry/environment.ts",
 			"default": "./dist/environment.js"
 		},
 		"./server-lifecycle": {
-			"types": "./src/entry-server-lifecycle.ts",
+			"types": "./src/entry/server-lifecycle.ts",
 			"default": "./dist/server-lifecycle.js"
 		}
 	},

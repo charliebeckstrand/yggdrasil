@@ -1,4 +1,4 @@
-import { createApp } from '../app.js'
+import { createApp } from '../../http/create-app.js'
 
 describe('createApp', () => {
 	it('returns an app and setup function', () => {

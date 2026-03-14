@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
-import { errorHandler, notFoundHandler } from '../error-handler.js'
-import { HttpError } from '../http-error.js'
+import { errorHandler, notFoundHandler } from '../../http/error-handler.js'
+import { HttpError } from '../../http/errors.js'
 
 const app = new Hono()
 
