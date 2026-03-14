@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
-import { errorHandler, notFoundHandler } from '../errors.js'
+import { errorHandler, notFoundHandler } from '../error-handler.js'
+import { HttpError } from '../http-error.js'
 
 const app = new Hono()
 
@@ -10,6 +11,10 @@ app.get('/error-with-status', () => {
 	err.name = 'ForbiddenError'
 
 	throw err
+})
+
+app.get('/http-error', () => {
+	throw new HttpError(422, 'Validation failed', 'ValidationError')
 })
 
 app.get('/unexpected-error', () => {
@@ -36,6 +41,18 @@ describe('errorHandler', () => {
 		expect(body.error).toBe('ForbiddenError')
 		expect(body.message).toBe('Forbidden')
 		expect(body.statusCode).toBe(403)
+	})
+
+	it('returns structured JSON for HttpError instances', async () => {
+		const res = await app.request('/http-error')
+
+		expect(res.status).toBe(422)
+
+		const body = (await res.json()) as ErrorResponse
+
+		expect(body.error).toBe('ValidationError')
+		expect(body.message).toBe('Validation failed')
+		expect(body.statusCode).toBe(422)
 	})
 
 	it('returns 500 with generic message for unexpected errors', async () => {

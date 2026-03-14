@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { getIpAddress } from 'grid/middleware'
 import { EmailSchema, LoginPasswordSchema, PasswordSchema } from 'skuld'
-import { AuthError, authenticateUser } from '../auth/index.js'
+import { authenticateUser } from '../auth/index.js'
 import { handleRegisterUser } from '../handlers/register.js'
 import { environment } from '../lib/env.js'
 import { ErrorSchema } from '../lib/schemas.js'
@@ -149,34 +149,23 @@ export const authRoutes = new OpenAPIHono<SessionEnv>()
 
 		const ip = getIpAddress(c)
 
-		try {
-			const tokens = await authenticateUser(email, password, ip)
+		const tokens = await authenticateUser(email, password, ip)
 
-			const sessionData: SessionData = {
-				accessToken: tokens.access_token,
-				refreshToken: tokens.refresh_token,
-				expiresAt: Math.floor(Date.now() / 1000) + 30 * 60,
-			}
-
-			await setSessionCookie(c, sessionData, env.SESSION_SECRET)
-
-			return c.json(
-				{
-					access_token: tokens.access_token,
-					token_type: 'bearer' as const,
-				},
-				200,
-			)
-		} catch (err) {
-			if (err instanceof AuthError) {
-				if (err.code === 'account_inactive') {
-					return c.json({ error: 'Forbidden', message: err.message, statusCode: 403 }, 403)
-				}
-				return c.json({ error: 'Unauthorized', message: err.message, statusCode: 401 }, 401)
-			}
-
-			throw err
+		const sessionData: SessionData = {
+			accessToken: tokens.access_token,
+			refreshToken: tokens.refresh_token,
+			expiresAt: Math.floor(Date.now() / 1000) + 30 * 60,
 		}
+
+		await setSessionCookie(c, sessionData, env.SESSION_SECRET)
+
+		return c.json(
+			{
+				access_token: tokens.access_token,
+				token_type: 'bearer' as const,
+			},
+			200,
+		)
 	})
 	.openapi(logoutRoute, async (c) => {
 		clearSessionCookie(c)

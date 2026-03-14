@@ -7,7 +7,7 @@ import { logger } from 'hono/logger'
 import { secureHeaders } from 'hono/secure-headers'
 import { timing } from 'hono/timing'
 import { trimTrailingSlash } from 'hono/trailing-slash'
-import { errorHandler, notFoundHandler } from './errors.js'
+import { errorHandler, notFoundHandler } from './error-handler.js'
 import { createOpenApiConfig } from './openapi.js'
 
 interface CreateAppOptions {
