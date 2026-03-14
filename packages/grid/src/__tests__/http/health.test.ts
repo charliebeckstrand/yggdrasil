@@ -1,4 +1,4 @@
-import { createHealthRoute } from '../health.js'
+import { createHealthRoute } from '../../http/health.js'
 
 type HealthResponse = {
 	status: string

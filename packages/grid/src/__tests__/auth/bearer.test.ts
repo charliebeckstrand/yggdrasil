@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { createBearerAuth, timingSafeCompare } from '../api-key.js'
+import { createBearerAuth, timingSafeCompare } from '../../auth/bearer.js'
 
 describe('timingSafeCompare', () => {
 	it('returns true for matching strings', () => {
