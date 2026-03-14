@@ -44,6 +44,19 @@ const CreateUserResponseSchema = z
 	})
 	.openapi('CreateUserResponse')
 
+const listUsersRoute = createRoute({
+	method: 'get',
+	path: '/',
+	tags: ['Users'],
+	summary: 'List all users',
+	responses: {
+		200: {
+			content: { 'application/json': { schema: z.array(UserResponseSchema) } },
+			description: 'List of users',
+		},
+	},
+})
+
 const createUserRoute = createRoute({
 	method: 'post',
 	path: '/',
@@ -142,6 +155,14 @@ const deleteUserRoute = createRoute({
 const usersRoutes = new OpenAPIHono<SessionEnv>({ defaultHook: validationHook })
 
 usersRoutes.use('*', requireSession())
+
+usersRoutes.openapi(listUsersRoute, async (c) => {
+	const { userRepository } = getConfig()
+
+	const users = await userRepository.getUsers()
+
+	return c.json(users, 200)
+})
 
 usersRoutes.openapi(createUserRoute, async (c) => {
 	const { email, password } = c.req.valid('json')

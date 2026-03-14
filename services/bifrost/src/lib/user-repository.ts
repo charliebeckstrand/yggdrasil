@@ -24,6 +24,12 @@ export function createUserRepository(): UserRepository {
 			)
 		},
 
+		async getUsers() {
+			return db.many<UserRow>(
+				sql`SELECT id, email, is_active, is_verified, created_at, updated_at FROM users ORDER BY created_at`,
+			)
+		},
+
 		async getUserById(id) {
 			return db.query<UserRow>(
 				sql`
