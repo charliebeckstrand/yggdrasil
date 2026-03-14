@@ -1,4 +1,5 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { validationHook } from 'grid'
 import { getIpAddress } from 'grid/middleware'
 import { EmailSchema, PasswordSchema } from 'skuld'
 import { handleRegisterUser } from '../handlers/register.js'
@@ -48,7 +49,7 @@ const createUserRoute = createRoute({
 	},
 })
 
-const usersRoutes = new OpenAPIHono<SessionEnv>()
+const usersRoutes = new OpenAPIHono<SessionEnv>({ defaultHook: validationHook })
 
 usersRoutes.use('*', requireSession())
 
