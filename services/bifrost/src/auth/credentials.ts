@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { hash, verify } from '@node-rs/argon2'
+import { HttpError } from 'grid'
 import { getConfig } from './config.js'
 import { signToken, verifyToken } from './jwt.js'
 import type { UserRow } from './types.js'
@@ -10,13 +11,21 @@ export interface TokenPair {
 	token_type: 'bearer'
 }
 
-export class AuthError extends Error {
+const AUTH_STATUS = {
+	invalid_credentials: 401,
+	account_inactive: 403,
+	email_exists: 409,
+	invalid_token: 401,
+} as const
+
+type AuthErrorCode = keyof typeof AUTH_STATUS
+
+export class AuthError extends HttpError {
 	constructor(
-		public code: 'invalid_credentials' | 'account_inactive' | 'email_exists' | 'invalid_token',
+		public readonly code: AuthErrorCode,
 		message: string,
 	) {
-		super(message)
-		this.name = 'AuthError'
+		super(AUTH_STATUS[code], message, 'AuthError')
 	}
 }
 

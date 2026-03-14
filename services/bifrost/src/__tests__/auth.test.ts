@@ -6,11 +6,20 @@ vi.stubEnv('SECRET_KEY', 'test-secret-key-that-is-at-least-32-chars')
 
 // Use vi.hoisted so mock values are available when vi.mock is hoisted
 const { MockAuthError, mockAuthenticateUser, mockRegisterUser } = vi.hoisted(() => {
+	const AUTH_STATUS: Record<string, number> = {
+		invalid_credentials: 401,
+		account_inactive: 403,
+		email_exists: 409,
+		invalid_token: 401,
+	}
+
 	class MockAuthError extends Error {
 		code: string
+		status: number
 		constructor(code: string, message: string) {
 			super(message)
 			this.code = code
+			this.status = AUTH_STATUS[code] ?? 500
 			this.name = 'AuthError'
 		}
 	}
