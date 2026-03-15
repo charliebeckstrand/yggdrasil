@@ -5,7 +5,7 @@ import type { Env } from 'hono'
  * Formats Zod validation errors into a consistent, human-readable response
  * matching the standard ErrorSchema shape.
  */
-export const validationHook: Hook<any, Env, any, any> = (result, c) => {
+export const validationHook: Hook<unknown, Env, string, Response | undefined> = (result, c) => {
 	if (result.success) return
 
 	const messages = result.error.issues.map((issue: { message: string }) => issue.message)
