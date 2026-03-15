@@ -45,7 +45,11 @@ async function readMigrationFiles(migrationsDir: string): Promise<string[]> {
 	return files.filter((f) => f.endsWith('.sql')).sort()
 }
 
-export async function runMigrations(db: Db, migrationsDir: string): Promise<MigrationResult> {
+const sagaMigrationsDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'migrations')
+
+export async function runMigrations(db: Db, migrationsDir?: string): Promise<MigrationResult> {
+	const dir = migrationsDir ?? sagaMigrationsDir
+
 	await db.exec(sql`
 		CREATE SCHEMA IF NOT EXISTS saga
 	`)
@@ -53,7 +57,7 @@ export async function runMigrations(db: Db, migrationsDir: string): Promise<Migr
 	await ensureMigrationsTable(db)
 
 	const applied = await getAppliedMigrations(db)
-	const files = await readMigrationFiles(migrationsDir)
+	const files = await readMigrationFiles(dir)
 
 	const result: MigrationResult = { applied: [], skipped: [] }
 
@@ -64,7 +68,7 @@ export async function runMigrations(db: Db, migrationsDir: string): Promise<Migr
 			continue
 		}
 
-		const content = await readFile(join(migrationsDir, file), 'utf-8')
+		const content = await readFile(join(dir, file), 'utf-8')
 
 		await db.tx(async (tx) => {
 			await tx.exec(sql.raw(content))
@@ -79,12 +83,6 @@ export async function runMigrations(db: Db, migrationsDir: string): Promise<Migr
 	}
 
 	return result
-}
-
-export async function runSagaMigrations(db: Db): Promise<MigrationResult> {
-	const dir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'migrations')
-
-	return runMigrations(db, dir)
 }
 
 export async function getMigrationStatus(db: Db, migrationsDir: string): Promise<MigrationStatus> {
