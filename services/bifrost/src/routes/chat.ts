@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { validationHook } from 'grid'
+import { streamSSE } from 'hono/streaming'
 import { ErrorSchema } from 'skuld'
 import { verifyToken } from '../auth/jwt.js'
 import { createChatRepository } from '../lib/chat-repository.js'
@@ -42,8 +43,6 @@ const ChatDetailResponseSchema = z
 
 const CreateMessageRequestSchema = z
 	.object({
-		role: z.enum(['user', 'agent']),
-		type: z.string().default('text'),
 		content: z.string().min(1),
 	})
 	.openapi('CreateMessageRequest')
@@ -85,7 +84,7 @@ const postMessageRoute = createRoute({
 	method: 'post',
 	path: '/{id}',
 	tags: ['Chat'],
-	summary: 'Post a message to a chat',
+	summary: 'Send a message and stream the agent response',
 	request: {
 		params: ChatIdParamSchema,
 		body: {
@@ -94,9 +93,9 @@ const postMessageRoute = createRoute({
 		},
 	},
 	responses: {
-		201: {
-			content: { 'application/json': { schema: ChatMessageResponseSchema } },
-			description: 'Message created',
+		200: {
+			content: { 'text/event-stream': { schema: z.any() } },
+			description: 'SSE stream of agent response',
 		},
 		400: {
 			content: { 'application/json': { schema: ErrorSchema } },
@@ -163,7 +162,7 @@ chatRoutes.openapi(getChatRoute, async (c) => {
 
 chatRoutes.openapi(postMessageRoute, async (c) => {
 	const { id: chatId } = c.req.valid('param')
-	const { role, type, content } = c.req.valid('json')
+	const { content } = c.req.valid('json')
 	const userId = await getUserId(c)
 
 	const existingChat = await chatRepository.getChatById(chatId, userId)
@@ -172,9 +171,44 @@ chatRoutes.openapi(postMessageRoute, async (c) => {
 		await chatRepository.insertChat(chatId, userId)
 	}
 
-	const chatMessage = await chatRepository.insertMessage(randomUUID(), chatId, role, type, content)
+	const userMessage = await chatRepository.insertMessage(
+		randomUUID(),
+		chatId,
+		'user',
+		'text',
+		content,
+	)
 
-	return c.json(chatMessage, 201)
+	// TODO: Replace with real agent/LLM call
+	const agentReply = `You said: ${content}`
+
+	return streamSSE(c, async (stream) => {
+		await stream.writeSSE({
+			event: 'user_message',
+			data: JSON.stringify(userMessage),
+			id: userMessage.id,
+		})
+
+		await stream.writeSSE({
+			event: 'content',
+			data: agentReply,
+			id: randomUUID(),
+		})
+
+		const agentMessage = await chatRepository.insertMessage(
+			randomUUID(),
+			chatId,
+			'agent',
+			'text',
+			agentReply,
+		)
+
+		await stream.writeSSE({
+			event: 'done',
+			data: JSON.stringify(agentMessage),
+			id: agentMessage.id,
+		})
+	})
 })
 
 chatRoutes.openapi(deleteChatRoute, async (c) => {
