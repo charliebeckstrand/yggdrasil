@@ -1,16 +1,30 @@
 import { randomUUID } from 'node:crypto'
-import { EventType } from '@ag-ui/core'
-import { EventEncoder } from '@ag-ui/encoder'
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { validationHook } from 'grid'
-import { randomTool } from '../chat/tool-data.js'
+import { ErrorSchema } from 'skuld'
+import { verifyToken } from '../auth/jwt.js'
+import { createChatRepository } from '../lib/chat-repository.js'
 import { requireSession, type SessionEnv } from '../middleware/session.js'
+
+const chatRepository = createChatRepository()
 
 const AgentMessageRequestSchema = z
 	.object({
+		chatId: z.string().uuid(),
 		content: z.string().min(1),
 	})
 	.openapi('AgentMessageRequest')
+
+const AgentMessageResponseSchema = z
+	.object({
+		id: z.string(),
+		chat_id: z.string(),
+		role: z.enum(['user', 'agent']),
+		type: z.string(),
+		content: z.string(),
+		created_at: z.string(),
+	})
+	.openapi('AgentMessageResponse')
 
 const agentRoute = createRoute({
 	method: 'post',
@@ -25,82 +39,54 @@ const agentRoute = createRoute({
 	},
 	responses: {
 		200: {
-			description: 'AG-UI event stream',
-			content: {
-				'text/event-stream': {
-					schema: z.any(),
-				},
-			},
+			content: { 'application/json': { schema: AgentMessageResponseSchema } },
+			description: 'Agent response message',
+		},
+		400: {
+			content: { 'application/json': { schema: ErrorSchema } },
+			description: 'Validation error',
 		},
 	},
 })
+
+async function getUserId(c: {
+	get: (key: 'session') => { accessToken: string } | null
+}): Promise<string> {
+	const session = c.get('session')
+
+	if (!session) throw new Error('No session')
+
+	const payload = await verifyToken(session.accessToken)
+
+	return payload.sub as string
+}
 
 const chatAgentRoutes = new OpenAPIHono<SessionEnv>({ defaultHook: validationHook })
 
 chatAgentRoutes.use('*', requireSession())
 
 chatAgentRoutes.openapi(agentRoute, async (c) => {
-	c.req.valid('json')
+	const { chatId, content } = c.req.valid('json')
+	const userId = await getUserId(c)
 
-	const encoder = new EventEncoder()
+	const existingChat = await chatRepository.getChatById(chatId, userId)
 
-	const runId = randomUUID()
-	const messageId = randomUUID()
-	const toolCallId = randomUUID()
+	if (!existingChat) {
+		await chatRepository.insertChat(chatId, userId)
+	}
 
-	const tool = randomTool()
-	const toolCallName = `Create${tool.type}`
+	// TODO: Replace with real agent/LLM call
+	const agentReply = `You said: ${content}`
 
-	const stream = new ReadableStream({
-		start(controller) {
-			const send = (event: Parameters<typeof encoder.encode>[0]) => {
-				controller.enqueue(encoder.encode(event))
-			}
+	const message = await chatRepository.insertMessage(
+		randomUUID(),
+		chatId,
+		'agent',
+		'text',
+		agentReply,
+	)
 
-			send({ type: EventType.RUN_STARTED, runId })
-
-			send({
-				type: EventType.TEXT_MESSAGE_START,
-				messageId,
-				role: 'assistant',
-			})
-
-			send({
-				type: EventType.TEXT_MESSAGE_CONTENT,
-				messageId,
-				delta: `Here is a ${tool.type}`,
-			})
-
-			send({ type: EventType.TEXT_MESSAGE_END, messageId })
-
-			send({
-				type: EventType.TOOL_CALL_START,
-				toolCallId,
-				toolCallName,
-				parentMessageId: messageId,
-			})
-
-			send({
-				type: EventType.TOOL_CALL_ARGS,
-				toolCallId,
-				delta: JSON.stringify(tool.data),
-			})
-
-			send({ type: EventType.TOOL_CALL_END, toolCallId })
-
-			send({ type: EventType.RUN_FINISHED, runId })
-
-			controller.close()
-		},
-	})
-
-	return new Response(stream, {
-		headers: {
-			'Content-Type': 'text/event-stream',
-			'Cache-Control': 'no-cache',
-			Connection: 'keep-alive',
-		},
-	})
+	return c.json(message, 200)
 })
 
 export { chatAgentRoutes }

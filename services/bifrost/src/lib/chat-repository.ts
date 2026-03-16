@@ -1,12 +1,6 @@
 import { sql } from 'saga'
-import type { ChatMessageRow, ChatRepository, ChatRow, Tool } from '../chat/types.js'
+import type { ChatMessageRow, ChatRepository, ChatRow } from '../chat/types.js'
 import { db } from './db.js'
-
-function decodeToolData(tool: Tool | null): Tool | null {
-	if (!tool?.data) return tool
-
-	return { type: tool.type, data: Buffer.from(tool.data, 'base64').toString('utf-8') }
-}
 
 export function createChatRepository(): ChatRepository {
 	return {
@@ -24,13 +18,10 @@ export function createChatRepository(): ChatRepository {
 			if (!chat) return null
 
 			const messages = await db.many<ChatMessageRow>(
-				sql`SELECT id, chat_id, role, type, content, tool, created_at FROM chat_messages WHERE chat_id = ${id} ORDER BY created_at`,
+				sql`SELECT id, chat_id, role, type, content, created_at FROM chat_messages WHERE chat_id = ${id} ORDER BY created_at`,
 			)
 
-			return {
-				...chat,
-				messages: messages.map((m) => ({ ...m, tool: decodeToolData(m.tool) })),
-			}
+			return { ...chat, messages }
 		},
 
 		async insertChat(id, userId) {
@@ -39,12 +30,12 @@ export function createChatRepository(): ChatRepository {
 			)
 		},
 
-		async insertMessage(id, chatId, role, type, content, tool) {
+		async insertMessage(id, chatId, role, type, content) {
 			return db.tx<ChatMessageRow>(async (tx) => {
 				const row = await tx.get<ChatMessageRow>(
-					sql`INSERT INTO chat_messages (id, chat_id, role, type, content, tool)
-						VALUES (${id}, ${chatId}, ${role}, ${type}, ${content}, ${tool ? sql`${JSON.stringify(tool)}::jsonb` : sql`NULL`})
-						RETURNING id, chat_id, role, type, content, tool, created_at`,
+					sql`INSERT INTO chat_messages (id, chat_id, role, type, content)
+						VALUES (${id}, ${chatId}, ${role}, ${type}, ${content})
+						RETURNING id, chat_id, role, type, content, created_at`,
 				)
 
 				await tx.exec(sql`UPDATE chats SET updated_at = now() WHERE id = ${chatId}`)

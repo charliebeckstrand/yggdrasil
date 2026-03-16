@@ -12,14 +12,6 @@ const ChatIdParamSchema = z.object({
 	id: z.string().uuid(),
 })
 
-const ToolSchema = z
-	.object({
-		type: z.string(),
-		data: z.string(),
-	})
-	.nullable()
-	.openapi('Tool')
-
 const ChatMessageResponseSchema = z
 	.object({
 		id: z.string(),
@@ -27,7 +19,6 @@ const ChatMessageResponseSchema = z
 		role: z.enum(['user', 'agent']),
 		type: z.string(),
 		content: z.string(),
-		tool: ToolSchema,
 		created_at: z.string(),
 	})
 	.openapi('ChatMessageResponse')
@@ -54,12 +45,6 @@ const CreateMessageRequestSchema = z
 		role: z.enum(['user', 'agent']),
 		type: z.string().default('text'),
 		content: z.string().min(1),
-		tool: z
-			.object({
-				type: z.string(),
-				data: z.string(),
-			})
-			.optional(),
 	})
 	.openapi('CreateMessageRequest')
 
@@ -178,7 +163,7 @@ chatRoutes.openapi(getChatRoute, async (c) => {
 
 chatRoutes.openapi(postMessageRoute, async (c) => {
 	const { id: chatId } = c.req.valid('param')
-	const { role, type, content, tool } = c.req.valid('json')
+	const { role, type, content } = c.req.valid('json')
 	const userId = await getUserId(c)
 
 	const existingChat = await chatRepository.getChatById(chatId, userId)
@@ -187,14 +172,7 @@ chatRoutes.openapi(postMessageRoute, async (c) => {
 		await chatRepository.insertChat(chatId, userId)
 	}
 
-	const chatMessage = await chatRepository.insertMessage(
-		randomUUID(),
-		chatId,
-		role,
-		type,
-		content,
-		tool ?? null,
-	)
+	const chatMessage = await chatRepository.insertMessage(randomUUID(), chatId, role, type, content)
 
 	return c.json(chatMessage, 201)
 })
