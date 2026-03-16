@@ -93,6 +93,7 @@ interface ScatterDataset {
 
 function scatterData(): { datasets: ScatterDataset[] } {
 	const count = rand(2, 3)
+
 	const colors = pick(COLORS, count)
 
 	return {
@@ -121,6 +122,7 @@ interface BubbleDataset {
 
 function bubbleData(): { datasets: BubbleDataset[] } {
 	const count = rand(2, 3)
+
 	const colors = pick(COLORS, count)
 
 	return {
@@ -191,6 +193,7 @@ function gridData(): GridData {
 	const rows = PRODUCT_NAMES.slice(0, rand(3, 6)).map((name) => {
 		const price = rand(10, 500)
 		const quantity = rand(1, 100)
+
 		return {
 			name,
 			category: categories[rand(0, categories.length - 1)],
